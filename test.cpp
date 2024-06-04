@@ -4,6 +4,7 @@
 #include "sdl_window.h"
 #include "sdl_button.h"
 #include "sdl_layer.h"
+
 using namespace std;
 
 void handle_button_event(void *userdata, void* event) {
