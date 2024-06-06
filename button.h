@@ -16,6 +16,15 @@ class Button:public Widget {
             m_height = h;
             m_skinFile = skin; 
         };
+        
+        Button(int x, int y, int w, int h, char *skin, char *name):Widget(name) {
+            m_posX = x;
+            m_posY = y;
+            m_width = w;
+            m_height = h;
+            m_skinFile = skin; 
+        };
+
         virtual ~Button() {};
         virtual int draw() { return 0; };
         virtual bool is_dirty() { return true; }

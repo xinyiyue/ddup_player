@@ -3,7 +3,7 @@
 
 #include <list>
 #include <string>
-
+#include <iostream>
 #include "layer.h"
 
 class SdlLayer:public Layer
@@ -22,6 +22,7 @@ class SdlLayer:public Layer
         
         virtual int update() final {
             for(auto widget:m_widgetList) {
+                std::cout << "widget:" << widget->m_name << ", is_dirty:" << widget->is_dirty() << std::endl;
                 if (widget->is_dirty())
                     widget->draw();
             }

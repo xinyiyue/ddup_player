@@ -3,12 +3,14 @@
 
 #define KISS_BUTTON_TYPE BUTTON_BASE_TYPE + 1
 using namespace std;
-SdlButton::SdlButton(char *skin,
+SdlButton::SdlButton(char *name,
+                     char *skin,
                      kiss_array *arr, 
                      kiss_window* win,
-                     SDL_Renderer *renderer):Button(0, 0, 0, 0, skin) {
+                     SDL_Renderer *renderer):Button(0, 0, 0, 0, skin, name) {
     m_pRenderer = renderer;
     m_pWindow = win;
+    m_dirty = false;
     kiss_image_new(&m_image, skin, arr, renderer);
     m_posX = m_pWindow->rect.w / 2 - m_image.w / 2;
     m_posY = m_pWindow->rect.h / 2 - m_image.h / 2;
@@ -18,11 +20,12 @@ SdlButton::SdlButton(char *skin,
     kiss_makerect(&m_resp_rect, m_posX, m_posY, m_image.w, m_image.h);
 }
 
-SdlButton::SdlButton(char *skin,
+SdlButton::SdlButton(char *name,
+                     char *skin,
                      kiss_array *arr, 
                      kiss_window* win,
                      SDL_Renderer *renderer,
-                     int x, int y, int w, int h):Button(x, y, w, h, skin) {
+                     int x, int y, int w, int h):Button(x, y, w, h, skin, name) {
     m_pRenderer = renderer;
     m_pWindow = win;
     kiss_image_new_scaled(&m_image, skin, arr, w, h, m_pRenderer);
