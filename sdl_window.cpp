@@ -29,7 +29,6 @@ int SdlWindow::event_handler(void *event) {
         }
         catched = layer->event_handler(event);
         if (catched) {
-            cout << "event was catched by layer:" << layer->m_name << endl;
             break;
         }
     }
@@ -48,7 +47,6 @@ int SdlWindow::show() {
                 break;
             }
             if (event_handler(&event)) {
-                cout << "update window" << endl;
                 update();
             }
         }

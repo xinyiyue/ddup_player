@@ -23,10 +23,12 @@ class SdlButton: public Button {
         virtual int get_type() final;
         virtual void *get_window() final;
         virtual void *get_renderer() final;
+        virtual void set_show(bool show, int time_ms) final;
         virtual int  event_handler(void *event) final;
         virtual int  set_event_resp_area(int x, int y, int w, int h) final;
         SDL_Renderer *m_pRenderer;
         kiss_window *m_pWindow;
+        SDL_TimerID m_hideDelayTimerId;
     private:
         kiss_image m_image;
         SDL_Rect m_rect;

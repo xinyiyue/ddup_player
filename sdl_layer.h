@@ -12,10 +12,13 @@ class SdlLayer:public Layer
         SdlLayer(char* name):Layer(name) {};
         virtual int event_handler(void *event) final {
             bool catched = false;
+            SDL_Event *e = (SDL_Event *)event;
             for(auto widget:m_widgetList) {
                 catched = widget->event_handler(event);
-                if (catched)
+                if (catched) {
+                    std::cout << "layer:" << m_name << ",widget:" << widget->m_name << ", catched event:" << e->type << std::endl;
                     break;
+                }
             }
             return catched;
         };
