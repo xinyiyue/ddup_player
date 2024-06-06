@@ -6,12 +6,14 @@
 
 class SdlButton: public Button {
     public:
-        SdlButton(char *skin, 
+        SdlButton( char *name,
+                   char *skin, 
                    kiss_array *arr,
                    kiss_window* win,
                    SDL_Renderer *renderer,
                    int x, int y, int w, int h);
-        SdlButton(char *skin,
+        SdlButton( char *name,
+                   char *skin,
                    kiss_array *arr,
                    kiss_window* win,
                    SDL_Renderer *renderer);
@@ -29,6 +31,5 @@ class SdlButton: public Button {
         kiss_image m_image;
         SDL_Rect m_rect;
         SDL_Rect m_resp_rect;
-        bool m_dirty;
 };
 #endif
