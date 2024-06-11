@@ -15,7 +15,7 @@ class Widget {
     public:
         Widget() { m_actionCB = nullptr; m_userdata = nullptr; m_hideDelayTime = -1; }
         Widget(char *name) { m_actionCB = nullptr; m_userdata = nullptr; m_name = name; }
-        virtual bool is_dirty() = 0;
+        virtual bool is_dirty() { return m_dirty; };
         virtual int draw() = 0;
         virtual int get_type() = 0;
         virtual int event_handler(void *event) = 0;

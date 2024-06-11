@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 project(sdl_player)
 add_executable(pcw player_control_bar.cpp ./kiss_sdl/kiss_widgets.c ./kiss_sdl/kiss_draw.c ./kiss_sdl/kiss_general.c ./kiss_sdl/kiss_posix.c)
-add_executable(test test.cpp sdl_progress_bar.cpp sdl_button.cpp sdl_window.cpp ./kiss_sdl/kiss_widgets.c ./kiss_sdl/kiss_draw.c ./kiss_sdl/kiss_general.c ./kiss_sdl/kiss_posix.c)
+add_executable(test test.cpp sdl_progress_bar.cpp sdl_button.cpp sdl_window.cpp sdl_video.cpp ./third_party/FIFO/FIFO.c ./kiss_sdl/kiss_widgets.c ./kiss_sdl/kiss_draw.c ./kiss_sdl/kiss_general.c ./kiss_sdl/kiss_posix.c)
 include_directories(
 	/usr/include/SDL2
 	./kiss_sdl

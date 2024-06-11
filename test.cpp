@@ -5,6 +5,7 @@
 #include "sdl_button.h"
 #include "sdl_layer.h"
 #include "sdl_progress_bar.h"
+#include "third_party/FIFO/FIFO.h"
 
 using namespace std;
 
@@ -26,7 +27,43 @@ void handle_bar_event(void *userdata, void* event) {
     }
 }
 
+int test_fifo() {
+    char data[] = "Hola Mundo1234";
+    fifo_t myfifo;
+
+    myfifo = fifo_create(10, sizeof(char));
+
+    if (myfifo == NULL) {
+        cout << "Cannot create FIFO... halting!" << endl;
+    } else {
+        cout << "FIFO created successfully" << endl;
+    }
+
+  cout << "\r\nFILLING FIFO WITH DATA..." << endl;
+  for (unsigned int i = 0; i < sizeof(data); i++)
+  {
+    cout << "Add item to FIFO: " << data[i];
+    if (fifo_add(myfifo, &data[i])) {
+      cout <<" OK!" << endl;
+    } else {
+      cout << " FAIL !!!" << endl;
+    }
+  }
+
+  cout << "\r\nGETTING DATA FROM FIFO..." << endl;
+  // dump data from FIFO to serial monitor
+  while (!fifo_is_empty(myfifo)) {
+    char c;
+    fifo_get(myfifo, &c);
+    cout << "get fifo:" << c << endl;
+  }
+  return 0;
+
+}
+
 int main(int argc, char* argv[]) {
+    test_fifo();
+#if 0
     SdlWindow *win = new SdlWindow((char *)"win_test", 800, 480);
     win->create();
     SdlLayer *layer = new SdlLayer((char *)"button");
@@ -49,5 +86,6 @@ int main(int argc, char* argv[]) {
     delete pause_button;
     delete prog_bar;
     delete win;
+#endif
     return 0;
 }
