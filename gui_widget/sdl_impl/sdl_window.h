@@ -2,8 +2,8 @@
 #define __KISS_WINDOW__
 
 #include <pthread.h>
-#include "window.h"
-#include "kiss_sdl.h"
+#include "gui_widget/base/window.h"
+#include "third_party/kiss_sdl/kiss_sdl.h"
 
 class SdlWindow:public Window{
     public:

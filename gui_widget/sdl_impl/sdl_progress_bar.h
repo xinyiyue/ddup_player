@@ -1,10 +1,10 @@
 #ifndef __SDL_PROGRESS_BAR__
 #define __SDL_PROGRESS_BAR__
 
-#include "kiss_sdl.h"
-#include "widget.h"
-#include "progress_bar.h"
-#include "sdl_button.h"
+#include "third_party/kiss_sdl/kiss_sdl.h"
+#include "gui_widget/base/widget.h"
+#include "gui_widget/base/progress_bar.h"
+#include "gui_widget/sdl_impl/sdl_button.h"
 
 typedef struct action {
     PLAYBACK_STATE_E state;

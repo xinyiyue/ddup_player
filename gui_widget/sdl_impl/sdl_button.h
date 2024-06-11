@@ -1,8 +1,8 @@
 #ifndef __KISS_BUTTON__
 #define __KISS_BUTTON__
 
-#include "button.h"
-#include "kiss_sdl.h"
+#include "gui_widget/base/button.h"
+#include "third_party/kiss_sdl/kiss_sdl.h"
 
 class SdlButton: public Button {
     public:

@@ -1,7 +1,7 @@
 #ifndef __PROGRESS_BAR__
 #define __PROGRESS_BAR__
 
-#include "widget.h"
+#include "gui_widget/base/widget.h"
 
 typedef enum PLAYBACK_STATE {
     PLAYBACK_NON,

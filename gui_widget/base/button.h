@@ -1,6 +1,6 @@
 #ifndef __BUTTON__
 #include <string>
-#include "widget.h"
+#include "gui_widget/base/widget.h"
 
 class Button:public Widget {
     public:

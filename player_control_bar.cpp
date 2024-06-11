@@ -1,4 +1,4 @@
-#include "kiss_sdl.h"
+#include "third_party/kiss_sdl/kiss_sdl.h"
 #include <iostream>
 
 using namespace std;

@@ -1,6 +1,6 @@
 #include <iostream>
-#include "sdl_user_event.h"
-#include "sdl_button.h"
+#include "gui_widget/sdl_impl/sdl_user_event.h"
+#include "gui_widget/sdl_impl/sdl_button.h"
 
 #define KISS_BUTTON_TYPE BUTTON_BASE_TYPE + 1
 using namespace std;
