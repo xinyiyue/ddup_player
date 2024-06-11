@@ -1,6 +1,6 @@
 #include <iostream>
-#include "sdl_user_event.h"
-#include "sdl_video.h"
+#include "gui_widget/sdl_impl/sdl_user_event.h"
+#include "gui_widget/sdl_impl/sdl_video.h"
 
 using namespace std;
 

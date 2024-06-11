@@ -1,6 +1,6 @@
 #include <ostream>
 #include <iostream>
-#include "sdl_window.h"
+#include "gui_widget/sdl_impl/sdl_window.h"
 
 using namespace std;
 

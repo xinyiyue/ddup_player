@@ -1,34 +1,55 @@
 cmake_minimum_required(VERSION 3.0)
 project(sdl_player)
-add_executable(pcw player_control_bar.cpp ./kiss_sdl/kiss_widgets.c ./kiss_sdl/kiss_draw.c ./kiss_sdl/kiss_general.c ./kiss_sdl/kiss_posix.c)
-add_executable(test test.cpp sdl_progress_bar.cpp sdl_button.cpp sdl_window.cpp sdl_video.cpp ./third_party/FIFO/FIFO.c ./kiss_sdl/kiss_widgets.c ./kiss_sdl/kiss_draw.c ./kiss_sdl/kiss_general.c ./kiss_sdl/kiss_posix.c)
+
+set(KISS_SDL_SOURCE
+./third_party/kiss_sdl/kiss_widgets.c
+./third_party/kiss_sdl/kiss_draw.c
+./third_party/kiss_sdl/kiss_general.c
+./third_party/kiss_sdl/kiss_posix.c
+)
+
+set(FIFO_SOURCE
+./third_party/FIFO/FIFO.c
+)
+
+set(SDL_IMPL_SOURCE
+./gui_widget/sdl_impl/sdl_button.cpp
+./gui_widget/sdl_impl/sdl_window.cpp
+./gui_widget/sdl_impl/sdl_video.cpp
+./gui_widget/sdl_impl/sdl_progress_bar.cpp
+)
+
+add_executable(pcw player_control_bar.cpp ${KISS_SDL_SOURCE})
+add_executable(test test.cpp ${SDL_IMPL_SOURCE} ${FIFO_SOURCE} ${KISS_SDL_SOURCE})
+message("当前源代码目录：" ${CMAKE_CURRENT_SOURCE_DIR})
+message("当前二进制目录：" ${CMAKE_CURRENT_BINARY_DIR})
 include_directories(
 	/usr/include/SDL2
-	./kiss_sdl
+    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 set(RESOURCE
-./kiss_sdl/kiss_active.png
-./kiss_sdl/kiss_bar_org.png
-./kiss_sdl/kiss_bar.png
-./kiss_sdl/kiss_combo.png
-./kiss_sdl/kiss_down.png
-./kiss_sdl/kiss_hslider.png
-./kiss_sdl/kiss_left.png
-./kiss_sdl/kiss_normal.png
-./kiss_sdl/kiss_prelight.png
-./kiss_sdl/kiss_right.png
-./kiss_sdl/kiss_selected.png
-./kiss_sdl/kiss_unselected.png
-./kiss_sdl/kiss_up.png
-./kiss_sdl/kiss_vslider.png
-./kiss_sdl/kiss_wood.png
-./kiss_sdl/pause.png
-./kiss_sdl/picture1.png
-./kiss_sdl/picture2.png
-./kiss_sdl/picture3.png
-./kiss_sdl/resume.png
-./kiss_sdl/kiss_font.ttf
+./third_party/kiss_sdl/kiss_active.png
+./third_party/kiss_sdl/kiss_bar_org.png
+./third_party/kiss_sdl/kiss_bar.png
+./third_party/kiss_sdl/kiss_combo.png
+./third_party/kiss_sdl/kiss_down.png
+./third_party/kiss_sdl/kiss_hslider.png
+./third_party/kiss_sdl/kiss_left.png
+./third_party/kiss_sdl/kiss_normal.png
+./third_party/kiss_sdl/kiss_prelight.png
+./third_party/kiss_sdl/kiss_right.png
+./third_party/kiss_sdl/kiss_selected.png
+./third_party/kiss_sdl/kiss_unselected.png
+./third_party/kiss_sdl/kiss_up.png
+./third_party/kiss_sdl/kiss_vslider.png
+./third_party/kiss_sdl/kiss_wood.png
+./third_party/kiss_sdl/pause.png
+./third_party/kiss_sdl/picture1.png
+./third_party/kiss_sdl/picture2.png
+./third_party/kiss_sdl/picture3.png
+./third_party/kiss_sdl/resume.png
+./third_party/kiss_sdl/kiss_font.ttf
 )
 
 find_library(SDL2_LIBRARY       SDL2       /usr/lib/x86_64-linux-gnu)

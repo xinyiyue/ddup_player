@@ -1,10 +1,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
 #include <iostream>
-#include "sdl_window.h"
-#include "sdl_button.h"
-#include "sdl_layer.h"
-#include "sdl_progress_bar.h"
+#include "gui_widget/sdl_impl/sdl_window.h"
+#include "gui_widget/sdl_impl/sdl_button.h"
+#include "gui_widget/sdl_impl/sdl_layer.h"
+#include "gui_widget/sdl_impl/sdl_progress_bar.h"
 #include "third_party/FIFO/FIFO.h"
 
 using namespace std;

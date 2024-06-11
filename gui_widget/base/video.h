@@ -1,7 +1,7 @@
 #ifndef __VIDEO_H_H__
 #define __VIDEO_H_H__
 
-#include "widget.h"
+#include "gui_widget/base/widget.h"
 
 class Video:public Widget {
     public:

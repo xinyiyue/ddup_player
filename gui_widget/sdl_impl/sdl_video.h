@@ -1,9 +1,9 @@
 #ifndef __SDL_VIDEO_H_H__
 #define __SDL_VIDEO_H_H__
 
-#include "kiss_sdl.h"
-#include "./third_party/FIFO/FIFO.h"
-#include "video.h"
+#include "third_party/kiss_sdl/kiss_sdl.h"
+#include "third_party/FIFO/FIFO.h"
+#include "gui_widget/base/video.h"
 
 typedef struct renderBuffer {
     char *data;
