@@ -19,8 +19,13 @@ set(SDL_IMPL_SOURCE
 ./gui_widget/sdl_impl/sdl_progress_bar.cpp
 )
 
+set(PLAYER_SOURCE
+./player/ddup_player.cpp
+./player/pipeline.cpp
+)
+
 add_executable(pcw player_control_bar.cpp ${KISS_SDL_SOURCE})
-add_executable(test test.cpp ${SDL_IMPL_SOURCE} ${FIFO_SOURCE} ${KISS_SDL_SOURCE})
+add_executable(test test.cpp ${SDL_IMPL_SOURCE} ${FIFO_SOURCE} ${KISS_SDL_SOURCE} ${PLAYER_SOURCE})
 message("当前源代码目录：" ${CMAKE_CURRENT_SOURCE_DIR})
 message("当前二进制目录：" ${CMAKE_CURRENT_BINARY_DIR})
 include_directories(
