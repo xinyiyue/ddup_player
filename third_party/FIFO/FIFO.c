@@ -58,6 +58,16 @@ fifo_t fifo_create(uint16_t count, size_t size)
 	return NULL;
 }
 
+void fifo_destory(fifo_t fifo)
+{
+  if (fifo != NULL) {
+    if (fifo->itemspace != NULL) {
+      free(fifo->itemspace);
+    }
+    free(fifo);
+  }
+}
+
 fifo_t fifo_create_static(fifo_t fifo, void * buf, uint16_t count, size_t size)
 {
 	// Sanity check for memory and element sizes
