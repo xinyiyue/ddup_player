@@ -117,6 +117,16 @@ extern "C" {
 	 * something fails.
 	 */
 	fifo_t fifo_create(uint16_t count, size_t size);
+	
+  /**
+	 * @brief destory a FIFO
+	 *
+	 * This function is used to free the buffer in fifo and the fifo descriptor
+	 *
+	 * @param fifo The fifi to be destoryed
+	 */
+
+  void  fifo_destory(fifo_t fifo);
 
 	/**
 	 * @brief Creates a statically allocated FIFO buffer

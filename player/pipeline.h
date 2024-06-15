@@ -1,7 +1,8 @@
 #ifndef __DDUP__PIPELINE_H__
 #define __DDUP__PIPELINE_H__
 
-#include "event_listener.h"
+#include "player/demux.h"
+#include "player/event_listener.h"
 
 class Pipeline : public EventListener {
  public:
@@ -18,7 +19,8 @@ class Pipeline : public EventListener {
   virtual void notify_error(int error_type) final;
 
  private:
-  // Demux *demux_;
+  Demux *demux_;
+  EventListener *listener_;
 };
 
 #endif

@@ -22,6 +22,10 @@ set(SDL_IMPL_SOURCE
 set(PLAYER_SOURCE
 ./player/ddup_player.cpp
 ./player/pipeline.cpp
+./player/demux.cpp
+./player/component.cpp
+./player/ffmpeg_impl/ffmpeg_demux.cpp
+./player/ffmpeg_impl/ffmpeg_stream.cpp
 )
 
 add_executable(pcw player_control_bar.cpp ${KISS_SDL_SOURCE})
@@ -30,7 +34,8 @@ message("当前源代码目录：" ${CMAKE_CURRENT_SOURCE_DIR})
 message("当前二进制目录：" ${CMAKE_CURRENT_BINARY_DIR})
 include_directories(
 	/usr/include/SDL2
-    ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ffmpeg-7.0.1/include
 )
 
 set(RESOURCE
@@ -60,8 +65,12 @@ set(RESOURCE
 find_library(SDL2_LIBRARY       SDL2       /usr/lib/x86_64-linux-gnu)
 find_library(SDL2_IMAGE_LIBRARY SDL2_image /usr/lib/x86_64-linux-gnu)
 find_library(SDL2_TTF_LIBRARY   SDL2_ttf   /usr/lib/x86_64-linux-gnu)
+find_library(PTHREAD_LIBRARY    pthread    /usr/lib/x86_64-linux-gnu)
+find_library(AVFORMAT_LIBRARY   avformat   ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ffmpeg-7.0.1/lib)
+find_library(AVCODEC_LIBRARY    avcodec    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ffmpeg-7.0.1/lib)
+find_library(AVUTIL_LIBRARY     avutil     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ffmpeg-7.0.1/lib)
 target_link_libraries(pcw ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY} ${SDL2_LIBRARY})
-target_link_libraries(test ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY})
+target_link_libraries(test ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY} ${PTHREAD_LIBRARY} ${AVFORMAT_LIBRARY} ${AVCODEC_LIBRARY} ${AVUTIL_LIBRARY})
 install(TARGETS pcw DESTINATION result)
 install(TARGETS test DESTINATION result)
 install(FILES ${RESOURCE} DESTINATION result)
