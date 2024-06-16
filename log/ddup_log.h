@@ -42,7 +42,7 @@ static void log(LogLevel level, const char *tag, const char *format, ...) {
 }
 
 #define LOGE(TAG, FORMART, ...) log(ERROR, TAG, FORMART, __VA_ARGS__)
-#define LOGI(TAG, FORMART, ...) log(ERROR, TAG, FORMART, __VA_ARGS__)
+#define LOGI(TAG, FORMART, ...) log(INFO, TAG, FORMART, __VA_ARGS__)
 #define LOGW(TAG, FORMART, ...) log(WARNING, TAG, FORMART, __VA_ARGS__)
 #define LOGD(TAG, FORMART, ...) log(DEBUG, TAG, FORMART, __VA_ARGS__)
 

@@ -11,29 +11,81 @@ Pipeline::Pipeline(EventListener *listener) { listener_ = listener; }
 
 Pipeline::~Pipeline() {}
 
-int Pipeline::open(char *url) {
-  LOGI(TAG, "open url:%s", url);
-  int ret = CreateDemux(this, url, &demux_);
+int Pipeline::open() {
+  int ret = CreateDemux(this, &demux_);
   if (ret < 0) {
     LOGE(TAG, "%s", "create demux failed");
+    return ret;
   } else {
-    LOGE(TAG, "%s", "create demux success");
+    LOGI(TAG, "%s", "create demux success");
   }
-  demux_->init();
   demux_->open();
-  demux_->create_stream();
   return 0;
 }
 
-int Pipeline::play(float speed) { return 0; }
+int Pipeline::prepare(char *url) {
+  int ret = demux_->prepare(url);
+  if (ret < 0) {
+    LOGE(TAG, "prepare failed:%s", url);
+  } else {
+    LOGI(TAG, "prepare success:%s", url);
+  }
+  return ret;
+}
 
-int Pipeline::pause() { return 0; }
+int Pipeline::play(float speed) {
+  int ret = demux_->play(speed);
+  if (ret < 0) {
+    LOGE(TAG, "play %f failed:%d", speed, ret);
+  } else {
+    LOGI(TAG, "play %f success", speed);
+  }
+  return ret;
+}
 
-int Pipeline::seek(long long seek_time) { return 0; }
+int Pipeline::pause() {
+  int ret = demux_->pause();
+  if (ret < 0) {
+    LOGE(TAG, "pause failed:%d", ret);
+  } else {
+    LOGI(TAG, "%s", "pause success");
+  }
 
-int Pipeline::stop() { return 0; }
+  return ret;
+}
 
-int Pipeline::close() { return 0; }
+int Pipeline::seek(long long seek_time) {
+  int ret = demux_->seek(seek_time);
+  if (ret < 0) {
+    LOGE(TAG, "seek :%lldms failed:%d", seek_time, ret);
+  } else {
+    LOGI(TAG, "seek :%lldms success", seek_time);
+  }
+
+  return ret;
+}
+
+int Pipeline::stop() {
+  int ret = demux_->stop();
+  if (ret < 0) {
+    LOGE(TAG, "stop failed:%d", ret);
+  } else {
+    LOGI(TAG, "%s", "stop success");
+  }
+
+  return ret;
+}
+
+int Pipeline::close() {
+  int ret = demux_->close();
+  if (ret < 0) {
+    LOGE(TAG, "close failed:%d", ret);
+  } else {
+    LOGI(TAG, "%s", "close success");
+  }
+
+  return ret;
+}
 
 void Pipeline::notify_event(int event_type) {}
 

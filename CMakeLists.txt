@@ -23,6 +23,7 @@ set(PLAYER_SOURCE
 ./player/ddup_player.cpp
 ./player/pipeline.cpp
 ./player/demux.cpp
+./player/stream.cpp
 ./player/component.cpp
 ./player/ffmpeg_impl/ffmpeg_demux.cpp
 ./player/ffmpeg_impl/ffmpeg_stream.cpp

@@ -15,23 +15,35 @@ typedef enum DEMUX_EVENT_TYPE {
   DEMUX_ERROR,
 } demux_event_t;
 
+class AutoLock {
+ public:
+  AutoLock(pthread_mutex_t *mutex) {
+    mutex_ = mutex;
+    pthread_mutex_lock(mutex_);
+  };
+  ~AutoLock() { pthread_mutex_unlock(mutex_); }
+
+ private:
+  pthread_mutex_t *mutex_;
+};
+
 class Demux : public EventListener {
  public:
-  Demux(EventListener *listener, char *url);
+  Demux(EventListener *listener);
   virtual ~Demux();
 
   virtual void notify_event(int event_type, void *ret);
   virtual void notify_error(int error_type);
 
-  virtual int init();
-  virtual int open() = 0;
-  virtual int create_stream() = 0;
-  virtual int play(float speed) = 0;
-  virtual int pause() = 0;
-  virtual int seek(long long seek_time) = 0;
-  virtual int stop() = 0;
-  virtual int close() = 0;
+  virtual int open();
+  virtual int prepare(char *url);
+  virtual int play(float speed);
+  virtual int pause();
+  virtual int seek(long long seek_time);
+  virtual int stop();
+  virtual int close();
   virtual demux_event_t read_input_data(av_data_s *data) = 0;
+  virtual int free_input_data(void *data) = 0;
 
   void request_input_data();
   static void *input_thread(void *arg);
@@ -43,9 +55,15 @@ class Demux : public EventListener {
   pthread_t input_thread_id_;
   pthread_mutex_t mutex_;
   pthread_cond_t cond_;
+  pthread_mutex_t cmd_mutex_;
   bool input_thread_exit_;
   EventListener *listener_;
   bool ready_to_read_data_;
+
+ private:
+  int init();
+  int uninit();
+  virtual int create_stream() = 0;
 };
 
 #endif

@@ -14,16 +14,14 @@ extern "C" {
 
 class FFmpegDemux : public Demux {
  public:
-  FFmpegDemux(EventListener *listener, char *url) : Demux(listener, url){};
+  FFmpegDemux(EventListener *listener) : Demux(listener){};
   virtual ~FFmpegDemux(){};
-  virtual int open() final;
+  virtual int prepare(char *url) final;
   virtual int create_stream() final;
-  virtual int play(float speed) final;
-  virtual int pause() final;
-  virtual int seek(long long seek_time) final;
   virtual int stop() final;
-  virtual int close() final;
+  virtual int seek(long long seek_time) final;
   virtual demux_event_t read_input_data(av_data_s *data) final;
+  virtual int free_input_data(void *data) final;
 
  private:
   AVFormatContext *fmt_ctx_;

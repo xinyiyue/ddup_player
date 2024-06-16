@@ -36,7 +36,8 @@ class DDupPlayer : public EventListener {
  public:
   DDupPlayer(error_listener_func listener);
   ~DDupPlayer();
-  int open(char *url);
+  int open();
+  int prepare(char *url);
   int play(float speed);
   int pause();
   int seek(long long seek_time);

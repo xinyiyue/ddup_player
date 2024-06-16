@@ -10,24 +10,19 @@ typedef struct av_data {
   void *data;
 } av_data_s;
 
+class Demux;
 class Stream {
  public:
-  Stream(stream_type_t type) {
-    eos_ = false;
-    fifo_ = fifo_create(10, sizeof(void *));
-    stream_type_ = type;
-  };
-
-  virtual ~Stream() { fifo_destory(fifo_); };
-  virtual int open() = 0;
+  Stream(stream_type_t type);
+  virtual ~Stream();
+  virtual int stream_on() = 0;
+  virtual int stream_off() = 0;
   virtual int play(float speed) = 0;
   virtual int pause() = 0;
-  virtual int seek(long long seek_time) = 0;
-  virtual int stop() = 0;
-  virtual int close() = 0;
-  bool append_data(void *data) { return fifo_add(fifo_, data); };
-  bool is_fifo_full() { return fifo_is_full(fifo_); };
-  void set_eos() { eos_ = true; }
+  virtual int clear_data(Demux *demux);
+  bool append_data(void *data);
+  bool is_fifo_full();
+  void set_eos();
 
   stream_type_t stream_type_;
 
