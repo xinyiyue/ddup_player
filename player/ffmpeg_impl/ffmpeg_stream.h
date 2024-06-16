@@ -11,12 +11,10 @@ class FFmpegStream : public Stream {
     ff_stream_ = stream;
   };
   virtual ~FFmpegStream(){};
-  virtual int open() final;
+  virtual int stream_on() final;
   virtual int play(float speed) final;
   virtual int pause() final;
-  virtual int seek(long long seek_time) final;
-  virtual int stop() final;
-  virtual int close() final;
+  virtual int stream_off() final;
 
  private:
   AVStream *ff_stream_;

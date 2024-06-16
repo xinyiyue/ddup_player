@@ -20,8 +20,13 @@ DDupPlayer::~DDupPlayer() {
   }
 }
 
-int DDupPlayer::open(char *url) {
-  pipeline_->open(url);
+int DDupPlayer::open() {
+  pipeline_->open();
+  return 0;
+}
+
+int DDupPlayer::prepare(char *url) {
+  pipeline_->prepare(url);
   return 0;
 }
 

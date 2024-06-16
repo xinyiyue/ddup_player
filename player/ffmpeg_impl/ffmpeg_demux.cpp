@@ -5,10 +5,10 @@
 
 #define TAG "FfmpegDemux"
 
-int FFmpegDemux::open() {
+int FFmpegDemux::prepare(char *url) {
   int ret = 0;
   fmt_ctx_ = avformat_alloc_context();
-  ret = avformat_open_input(&fmt_ctx_, (char *)url_.c_str(), NULL, NULL);
+  ret = avformat_open_input(&fmt_ctx_, url, NULL, NULL);
   if (ret < 0) {
     LOGE(TAG, "open input error:%d", ret);
     return ret;
@@ -19,7 +19,13 @@ int FFmpegDemux::open() {
     LOGE(TAG, "find stream info error:%d", ret);
     return ret;
   }
+  Demux::prepare(url);
+  return 0;
+}
 
+int FFmpegDemux::stop() {
+  avformat_close_input(&fmt_ctx_);
+  Demux::stop();
   return 0;
 }
 
@@ -58,7 +64,21 @@ int FFmpegDemux::create_stream() {
   return 0;
 }
 
+int FFmpegDemux::seek(long long seek_time) {
+  AutoLock lock(&cmd_mutex_);
+  int flag = AVSEEK_FLAG_BACKWARD;
+  int ret = avformat_seek_file(fmt_ctx_, -1, INT64_MIN, seek_time * 1000,
+                               INT64_MAX, flag);
+  if (ret < 0) {
+    LOGE(TAG, "seek:%d ms failed", seek_time);
+  }
+  Demux::seek(seek_time);
+  LOGE(TAG, "seek:%d ms success", seek_time);
+  return ret;
+}
+
 demux_event_t FFmpegDemux::read_input_data(av_data_s *data) {
+  AutoLock lock(&cmd_mutex_);
   int ret;
   AVPacket *pkt = av_packet_alloc();
   if (!pkt) return DEMUX_ERROR;
@@ -80,12 +100,15 @@ demux_event_t FFmpegDemux::read_input_data(av_data_s *data) {
   return DEMUX_OK;
 }
 
-int FFmpegDemux::play(float speed) { return 0; }
-
-int FFmpegDemux::pause() { return 0; }
-
-int FFmpegDemux::seek(long long seek_time) { return 0; }
-
-int FFmpegDemux::stop() { return 0; }
-
-int FFmpegDemux::close() { return 0; }
+int FFmpegDemux::free_input_data(void *data) {
+  AVPacket *pkt = (AVPacket *)data;
+  if (!pkt) return -1;
+  if (pkt->stream_index == audio_stream_index_) {
+    LOGI(TAG, "free audio pkt:%p", pkt);
+  } else {
+    LOGI(TAG, "free video pkt:%p", pkt);
+  }
+  av_packet_unref(pkt);
+  av_packet_free(&pkt);
+  return 0;
+}

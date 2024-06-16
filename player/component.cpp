@@ -6,8 +6,8 @@
 #include "player/ffmpeg_impl/ffmpeg_demux.h"
 #include "player/ffmpeg_impl/ffmpeg_stream.h"
 
-int CreateDemux(EventListener *listener, char *url, Demux **demux) {
-  *demux = new FFmpegDemux(listener, url);
+int CreateDemux(EventListener *listener, Demux **demux) {
+  *demux = new FFmpegDemux(listener);
   if (*demux == nullptr) {
     return -1;
   }
