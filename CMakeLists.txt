@@ -25,6 +25,7 @@ set(PLAYER_SOURCE
 ./player/demux.cpp
 ./player/stream.cpp
 ./player/component.cpp
+./player/fifo_controller.cpp
 ./player/ffmpeg_impl/ffmpeg_demux.cpp
 ./player/ffmpeg_impl/ffmpeg_stream.cpp
 )

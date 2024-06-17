@@ -15,18 +15,6 @@ typedef enum DEMUX_EVENT_TYPE {
   DEMUX_ERROR,
 } demux_event_t;
 
-class AutoLock {
- public:
-  AutoLock(pthread_mutex_t *mutex) {
-    mutex_ = mutex;
-    pthread_mutex_lock(mutex_);
-  };
-  ~AutoLock() { pthread_mutex_unlock(mutex_); }
-
- private:
-  pthread_mutex_t *mutex_;
-};
-
 class Demux : public EventListener {
  public:
   Demux(EventListener *listener);

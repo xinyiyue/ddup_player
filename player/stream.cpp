@@ -12,13 +12,32 @@ Stream::Stream(stream_type_t type) {
 
 Stream::~Stream() { fifo_destory(fifo_); };
 
+int Stream::stream_on() {
+  return 0;
+}
+
+int Stream::stream_off() {
+  return 0;
+}
+
+int Stream::play(float speed) {
+  return 0;
+}
+
+int Stream::pause() {
+  return 0;
+}
+
+bool Stream::consume_data(void *data) { return true; }
+
+
 bool Stream::append_data(void *data) { return fifo_add(fifo_, data); };
 
 bool Stream::is_fifo_full() { return fifo_is_full(fifo_); };
 
 void Stream::set_eos() { eos_ = true; }
 
-int Stream::clear_data(Demux *demux) {
+int Stream::flush_data(Demux *demux) {
   LOGI(TAG, "enter clear data, fifo empty:%d", fifo_is_empty(fifo_));
   void *data;
   while (!fifo_is_empty(fifo_)) {

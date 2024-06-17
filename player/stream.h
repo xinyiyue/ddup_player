@@ -1,6 +1,7 @@
 #ifndef __STREAM__H__
 #define __STREAM__H__
 
+#include "player/decoder.h"
 #include "third_party/FIFO/FIFO.h"
 
 typedef enum STREAM_TYPE { AUDIO_STREAM, VIDEO_STREAM } stream_type_t;
@@ -15,12 +16,13 @@ class Stream {
  public:
   Stream(stream_type_t type);
   virtual ~Stream();
-  virtual int stream_on() = 0;
-  virtual int stream_off() = 0;
-  virtual int play(float speed) = 0;
-  virtual int pause() = 0;
-  virtual int clear_data(Demux *demux);
+  virtual int stream_on();
+  virtual int stream_off();
+  virtual int play(float speed);
+  virtual int pause();
+  int  flush_data(Demux *demux);
   bool append_data(void *data);
+  bool consume_data(void *data);
   bool is_fifo_full();
   void set_eos();
 
@@ -29,6 +31,7 @@ class Stream {
  private:
   fifo_t fifo_;
   bool eos_;
+  Decoder *decoder_;
 };
 
 #endif
