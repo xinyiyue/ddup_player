@@ -157,8 +157,8 @@ int Demux::pause() {
 }
 
 int Demux::seek(long long seek_time) {
-  if (audio_stream_) audio_stream_->clear_data(this);
-  if (video_stream_) video_stream_->clear_data(this);
+  if (audio_stream_) audio_stream_->flush_data(this);
+  if (video_stream_) video_stream_->flush_data(this);
   request_input_data();
   return 0;
 }
@@ -173,7 +173,7 @@ int Demux::stop() {
       return ret;
     }
     LOGI(TAG, "%s", "clear audio stream data");
-    audio_stream_->clear_data(this);
+    audio_stream_->flush_data(this);
   }
   if (video_stream_) {
     ret = video_stream_->stream_off();
@@ -182,7 +182,7 @@ int Demux::stop() {
       return ret;
     }
     LOGI(TAG, "%s", "clear video stream data");
-    video_stream_->clear_data(this);
+    video_stream_->flush_data(this);
   }
 
   return 0;

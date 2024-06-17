@@ -8,13 +8,13 @@ class Pipeline : public EventListener {
  public:
   Pipeline(EventListener *listener);
   ~Pipeline();
-  int open();
-  int prepare(char *url);
-  int play(float speed);
-  int pause();
-  int seek(long long seek_time);
-  int stop();
-  int close();
+  virtual int open();
+  virtual int prepare(char *url);
+  virtual int play(float speed);
+  virtual int pause();
+  virtual int seek(long long seek_time);
+  virtual int stop();
+  virtual int close();
 
   virtual void notify_event(int event_type) final;
   virtual void notify_error(int error_type) final;
