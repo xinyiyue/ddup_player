@@ -92,10 +92,10 @@ demux_event_t FFmpegDemux::read_input_data(av_data_s *data) {
   data->data = (void *)pkt;
   if (pkt->stream_index == video_stream_index_) {
     data->type_ = VIDEO_STREAM;
-    LOGI(TAG, "%s", "ffmpag read video pkt");
+    LOGI(TAG, "%s", "ffmpeg read video pkt");
   } else {
     data->type_ = AUDIO_STREAM;
-    LOGI(TAG, "%s", "ffmpag read audio pkt");
+    LOGI(TAG, "%s", "ffmpeg read audio pkt");
   }
   return DEMUX_OK;
 }
