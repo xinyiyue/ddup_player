@@ -18,6 +18,7 @@ class FFmpegDemux : public Demux {
   virtual ~FFmpegDemux(){};
   virtual int prepare(char *url) final;
   virtual int create_stream() final;
+  virtual int create_decoder() final;
   virtual int stop() final;
   virtual int seek(long long seek_time) final;
   virtual demux_event_t read_input_data(av_data_s *data) final;
@@ -25,8 +26,8 @@ class FFmpegDemux : public Demux {
 
  private:
   AVFormatContext *fmt_ctx_;
-  int audio_stream_index_;
-  int video_stream_index_;
+  int audio_stream_index_ = -1;
+  int video_stream_index_ = -1;
 };
 
 #endif

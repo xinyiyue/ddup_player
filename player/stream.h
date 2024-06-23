@@ -1,7 +1,6 @@
 #ifndef __STREAM__H__
 #define __STREAM__H__
 
-#include "player/decoder.h"
 #include "third_party/FIFO/FIFO.h"
 
 typedef enum STREAM_TYPE { AUDIO_STREAM, VIDEO_STREAM } stream_type_t;
@@ -31,7 +30,6 @@ class Stream {
  private:
   fifo_t fifo_;
   bool eos_;
-  Decoder *decoder_;
 };
 
 #endif

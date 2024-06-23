@@ -64,6 +64,31 @@ int FFmpegDemux::create_stream() {
   return 0;
 }
 
+int FFmpegDemux::create_decoder() {
+  int ret = 0;
+  if (video_stream_index_ >= 0) {
+    ret = CreateDecoder(fmt_ctx_->streams[video_stream_index_]->codecpar,
+                        this->video_stream_, &this->video_decoder_);
+    if (ret < 0) {
+      LOGE(TAG, "create video decoder failed:%d", ret);
+      return ret;
+    }
+    this->video_decoder_->open();
+  }
+
+  if (audio_stream_index_ >= 0) {
+    ret = CreateDecoder(fmt_ctx_->streams[audio_stream_index_]->codecpar,
+                        this->audio_stream_, &this->audio_decoder_);
+    if (ret < 0) {
+      LOGE(TAG, "create video decoder failed:%d", ret);
+      return ret;
+    }
+    this->audio_decoder_->open();
+  }
+
+  return 0;
+}
+
 int FFmpegDemux::seek(long long seek_time) {
   AutoLock lock(&cmd_mutex_);
   int flag = AVSEEK_FLAG_BACKWARD;
