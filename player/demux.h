@@ -40,8 +40,8 @@ class Demux : public EventListener {
  public:
   Stream *audio_stream_;
   Stream *video_stream_;
-  Decoder *video_decoder_;
-  Decoder *audio_decoder_;
+  Decoder *video_decoder_ = nullptr;
+  Decoder *audio_decoder_ = nullptr;
   std::string url_;
   pthread_t input_thread_id_;
   pthread_mutex_t mutex_;

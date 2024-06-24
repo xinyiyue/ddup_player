@@ -66,24 +66,22 @@ int FFmpegDemux::create_stream() {
 
 int FFmpegDemux::create_decoder() {
   int ret = 0;
-  if (video_stream_index_ >= 0) {
+  if (video_stream_index_ >= 0 && this->video_decoder_ == nullptr) {
     ret = CreateDecoder(fmt_ctx_->streams[video_stream_index_]->codecpar,
                         this->video_stream_, &this->video_decoder_);
     if (ret < 0) {
       LOGE(TAG, "create video decoder failed:%d", ret);
       return ret;
     }
-    this->video_decoder_->open();
   }
 
-  if (audio_stream_index_ >= 0) {
+  if (audio_stream_index_ >= 0 && this->audio_decoder_ == nullptr) {
     ret = CreateDecoder(fmt_ctx_->streams[audio_stream_index_]->codecpar,
                         this->audio_stream_, &this->audio_decoder_);
     if (ret < 0) {
-      LOGE(TAG, "create video decoder failed:%d", ret);
+      LOGE(TAG, "create audio decoder failed:%d", ret);
       return ret;
     }
-    this->audio_decoder_->open();
   }
 
   return 0;

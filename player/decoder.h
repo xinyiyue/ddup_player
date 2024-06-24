@@ -13,7 +13,9 @@ class Decoder {
   virtual int decode(void *data) = 0;
   virtual int flush() = 0;
   virtual int close();
-  static void *decode_thread(void *arg);
+
+ private:
+  void *decode_thread(void *arg);
 
  private:
   Stream *stream_;
