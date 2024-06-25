@@ -1,6 +1,5 @@
 #include "player/decoder.h"
 
-#include <thread>
 #include <functional>
 
 #include "log/ddup_log.h"
@@ -9,8 +8,10 @@
 
 int Decoder::open() {
   LOGI(TAG, "%s", "decoder open, create decoder thread");
-  std::thread t(std::bind(&Decoder::decode_thread, this, std::placeholders::_1), (void*)this);
-  t.detach();
+  dec_thread_ = std::thread(
+      std::bind(&Decoder::decode_thread, this, std::placeholders::_1),
+      (void *)this);
+  dec_thread_.detach();
   return 0;
 }
 

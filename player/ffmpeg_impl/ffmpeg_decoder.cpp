@@ -54,6 +54,12 @@ int FFmpegDecoder::decode(void *data) {
     return ret;
   }
 
+  frame = av_frame_alloc();
+  if (frame == NULL) {
+    LOGE(TAG, "%s", "malloc frame failed.\n");
+    return -ENOMEM;
+  }
+
   // get all the available frames from the decoder
   while (ret >= 0) {
     ret = avcodec_receive_frame(dec_ctx_, frame);

@@ -1,5 +1,6 @@
 #ifndef __DECODER_H__
 #define __DECODER_H__
+#include <thread>
 
 #include "player/stream.h"
 
@@ -19,7 +20,7 @@ class Decoder {
 
  private:
   Stream *stream_;
-  pthread_t decoder_thread_id_;
+  std::thread dec_thread_;
   bool running = true;
 };
 

@@ -45,6 +45,7 @@
         "cwctype": "cpp",
         "typeinfo": "cpp",
         "deque": "cpp",
-        "system_error": "cpp"
+        "system_error": "cpp",
+        "thread": "cpp"
     }
 }
