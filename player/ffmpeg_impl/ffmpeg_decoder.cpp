@@ -66,10 +66,10 @@ int FFmpegDecoder::decode(void *data) {
     if (ret < 0) {
       // those two return values are special and mean there is no output
       // frame available, but there were no errors during decoding
-      if (ret == AVERROR_EOF || ret == AVERROR(EAGAIN)) return 0;
+      if (ret == AVERROR_EOF || ret == AVERROR(EAGAIN)) goto out;
 
       LOGE(TAG, "Error during decoding %d\n", ret);
-      return ret;
+      break;
     }
 
     // todo: send decode frame to output fifo.
@@ -78,7 +78,10 @@ int FFmpegDecoder::decode(void *data) {
     av_frame_unref(frame);
   }
 
-  return 0;
+out:
+  av_frame_free(&frame);
+
+  return (ret == AVERROR(EAGAIN)) ? 0 : ret;
 }
 
 int FFmpegDecoder::flush() {
