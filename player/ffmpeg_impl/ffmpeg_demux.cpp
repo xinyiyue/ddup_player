@@ -64,6 +64,29 @@ int FFmpegDemux::create_stream() {
   return 0;
 }
 
+int FFmpegDemux::create_decoder() {
+  int ret = 0;
+  if (video_stream_index_ >= 0 && this->video_decoder_ == nullptr) {
+    ret = CreateDecoder(fmt_ctx_->streams[video_stream_index_]->codecpar,
+                        this->video_stream_, &this->video_decoder_);
+    if (ret < 0) {
+      LOGE(TAG, "create video decoder failed:%d", ret);
+      return ret;
+    }
+  }
+
+  if (audio_stream_index_ >= 0 && this->audio_decoder_ == nullptr) {
+    ret = CreateDecoder(fmt_ctx_->streams[audio_stream_index_]->codecpar,
+                        this->audio_stream_, &this->audio_decoder_);
+    if (ret < 0) {
+      LOGE(TAG, "create audio decoder failed:%d", ret);
+      return ret;
+    }
+  }
+
+  return 0;
+}
+
 int FFmpegDemux::seek(long long seek_time) {
   AutoLock lock(&cmd_mutex_);
   int flag = AVSEEK_FLAG_BACKWARD;
@@ -92,10 +115,10 @@ demux_event_t FFmpegDemux::read_input_data(av_data_s *data) {
   data->data = (void *)pkt;
   if (pkt->stream_index == video_stream_index_) {
     data->type_ = VIDEO_STREAM;
-    LOGI(TAG, "%s", "ffmpag read video pkt");
+    LOGI(TAG, "%s", "ffmpeg read video pkt");
   } else {
     data->type_ = AUDIO_STREAM;
-    LOGI(TAG, "%s", "ffmpag read audio pkt");
+    LOGI(TAG, "%s", "ffmpeg read audio pkt");
   }
   return DEMUX_OK;
 }

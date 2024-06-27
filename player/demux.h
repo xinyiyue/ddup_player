@@ -5,6 +5,7 @@
 
 #include <string>
 
+#include "player/decoder.h"
 #include "player/event_listener.h"
 #include "player/stream.h"
 
@@ -39,6 +40,8 @@ class Demux : public EventListener {
  public:
   Stream *audio_stream_;
   Stream *video_stream_;
+  Decoder *video_decoder_ = nullptr;
+  Decoder *audio_decoder_ = nullptr;
   std::string url_;
   pthread_t input_thread_id_;
   pthread_mutex_t mutex_;
@@ -52,6 +55,7 @@ class Demux : public EventListener {
   int init();
   int uninit();
   virtual int create_stream() = 0;
+  virtual int create_decoder() = 0;
 };
 
 #endif

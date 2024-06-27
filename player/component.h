@@ -3,8 +3,8 @@
 
 #include "player/demux.h"
 #include "player/event_listener.h"
-#include "player/stream.h"
 #include "player/pipeline.h"
+#include "player/stream.h"
 
 class AutoLock {
  public:
@@ -18,9 +18,9 @@ class AutoLock {
   pthread_mutex_t *mutex_;
 };
 
-
 int CreatePipeline(EventListener *listener, Pipeline **pipeline);
 int CreateDemux(EventListener *listener, Demux **demux);
 int CreateStream(stream_type_t type, void *stream_info, Stream **Stream);
+int CreateDecoder(void *codec_param, Stream *stream, Decoder **decoder);
 
 #endif
