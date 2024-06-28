@@ -219,6 +219,24 @@ int Demux::close() {
     LOGE(TAG, "pthread join failed:%d", ret);
     return ret;
   }
+
   LOGI(TAG, "%s", "input thread exit successfully");
+
+  if (video_decoder_) {
+    ret = video_decoder_->close();
+    if (ret < 0) {
+      LOGI(TAG, "%s", "video decoder close failed");
+      return ret;
+    }
+  }
+
+  if (audio_decoder_) {
+    ret = audio_decoder_->close();
+    if (ret < 0) {
+      LOGI(TAG, "%s", "audio decoder close failed");
+      return ret;
+    }
+  }
+
   return 0;
 }

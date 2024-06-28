@@ -26,6 +26,7 @@ class FFmpegDecoder : public Decoder {
   virtual int open() final;
   virtual int decode(void *data) final;
   virtual int flush() final;
+  virtual int close() final;
 
  private:
   AVCodecContext *dec_ctx_;

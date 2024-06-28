@@ -11,12 +11,13 @@ int Decoder::open() {
   dec_thread_ = std::thread(
       std::bind(&Decoder::decode_thread, this, std::placeholders::_1),
       (void *)this);
-  dec_thread_.detach();
   return 0;
 }
 
 int Decoder::close() {
   running = false;
+  if (dec_thread_.joinable()) dec_thread_.join();
+  LOGI(TAG, "%s", "decoder close.");
   return 0;
 }
 

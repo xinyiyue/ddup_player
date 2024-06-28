@@ -89,3 +89,11 @@ int FFmpegDecoder::flush() {
   decode(NULL);
   return 0;
 }
+
+
+int FFmpegDecoder::close() {
+  avcodec_free_context(&dec_ctx_);
+  Decoder::close();
+  return 0;
+}
+
