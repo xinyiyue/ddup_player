@@ -12,24 +12,15 @@ Stream::Stream(stream_type_t type) {
 
 Stream::~Stream() { fifo_destory(fifo_); };
 
-int Stream::stream_on() {
-  return 0;
-}
+int Stream::stream_on() { return 0; }
 
-int Stream::stream_off() {
-  return 0;
-}
+int Stream::stream_off() { return 0; }
 
-int Stream::play(float speed) {
-  return 0;
-}
+int Stream::play(float speed) { return 0; }
 
-int Stream::pause() {
-  return 0;
-}
+int Stream::pause() { return 0; }
 
-bool Stream::consume_data(void *data) { return true; }
-
+bool Stream::consume_data(void *data) { return fifo_get(fifo_, data); }
 
 bool Stream::append_data(void *data) { return fifo_add(fifo_, data); };
 

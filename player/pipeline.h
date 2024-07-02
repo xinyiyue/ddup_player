@@ -2,6 +2,7 @@
 #define __DDUP__PIPELINE_H__
 
 #include "player/demux.h"
+#include "player/decoder.h"
 #include "player/event_listener.h"
 
 class Pipeline : public EventListener {
@@ -21,6 +22,7 @@ class Pipeline : public EventListener {
 
  private:
   Demux *demux_;
+  Decoder *decoder_;
   EventListener *listener_;
 };
 

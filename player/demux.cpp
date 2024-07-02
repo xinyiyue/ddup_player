@@ -101,6 +101,12 @@ int Demux::prepare(char *url) {
     return ret;
   }
 
+  ret = create_decoder();
+  if (ret < 0) {
+    LOGE(TAG, "create decoder failed:%d", ret);
+    return ret;
+  }
+
   if (audio_stream_) {
     ret = audio_stream_->stream_on();
     if (ret < 0) {
@@ -115,6 +121,23 @@ int Demux::prepare(char *url) {
       return ret;
     }
   }
+
+  if (video_decoder_) {
+    ret = video_decoder_->open();
+    if (ret < 0) {
+      LOGI(TAG, "%s", "video decoder open failed");
+      return ret;
+    }
+  }
+
+  if (audio_decoder_) {
+    ret = audio_decoder_->open();
+    if (ret < 0) {
+      LOGI(TAG, "%s", "audio decoder open failed");
+      return ret;
+    }
+  }
+
   return 0;
 }
 
@@ -196,6 +219,24 @@ int Demux::close() {
     LOGE(TAG, "pthread join failed:%d", ret);
     return ret;
   }
+
   LOGI(TAG, "%s", "input thread exit successfully");
+
+  if (video_decoder_) {
+    ret = video_decoder_->close();
+    if (ret < 0) {
+      LOGI(TAG, "%s", "video decoder close failed");
+      return ret;
+    }
+  }
+
+  if (audio_decoder_) {
+    ret = audio_decoder_->close();
+    if (ret < 0) {
+      LOGI(TAG, "%s", "audio decoder close failed");
+      return ret;
+    }
+  }
+
   return 0;
 }
