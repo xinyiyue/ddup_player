@@ -1,10 +1,12 @@
 #include "player/demux.h"
 
+#include <functional>
+
 #include "log/ddup_log.h"
 
 #define TAG "Demux"
 
-Demux::Demux(EventListener *listener) {
+Demux::Demux(EventListener* listener) {
   LOGI(TAG, "%s", "construct Demux begin");
   video_stream_ = nullptr;
   audio_stream_ = nullptr;
@@ -24,16 +26,16 @@ Demux::~Demux() {
   pthread_mutex_destroy(&cmd_mutex_);
 }
 
-void Demux::notify_event(int event_type, void *ret) {}
+void Demux::notify_event(int event_type, void* ret) {}
 
 void Demux::notify_error(int error_type) {
   listener_->notify_error(error_type);
 }
 
-void *Demux::input_thread(void *arg) {
+void* Demux::input_thread(void* arg) {
   LOGI(TAG, "%s", "input thread enter !!!");
 
-  Demux *demux = (Demux *)arg;
+  Demux* demux = (Demux*)arg;
   bool audio_writeable;
   bool video_writeable;
 
@@ -89,11 +91,14 @@ void Demux::request_input_data() {
 
 int Demux::open() {
   LOGI(TAG, "%s", "demux open, create input thread");
-  pthread_create(&input_thread_id_, NULL, &Demux::input_thread, (void *)this);
+  input_thread_ =
+      std::thread(std::bind(&Demux::input_thread, this, std::placeholders::_1),
+                  (void*)this);
+
   return 0;
 }
 
-int Demux::prepare(char *url) {
+int Demux::prepare(char* url) {
   url_ = url;
   int ret = create_stream();
   if (ret < 0) {
@@ -212,12 +217,11 @@ int Demux::stop() {
 }
 
 int Demux::close() {
+  int ret = 0;
   input_thread_exit_ = true;
   request_input_data();
-  int ret = pthread_join(input_thread_id_, NULL);
-  if (ret != 0) {
-    LOGE(TAG, "pthread join failed:%d", ret);
-    return ret;
+  if (input_thread_.joinable()) {
+    input_thread_.join();
   }
 
   LOGI(TAG, "%s", "input thread exit successfully");

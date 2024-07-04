@@ -35,7 +35,6 @@ class Demux : public EventListener {
   virtual int free_input_data(void *data) = 0;
 
   void request_input_data();
-  static void *input_thread(void *arg);
 
  public:
   Stream *audio_stream_;
@@ -43,7 +42,7 @@ class Demux : public EventListener {
   Decoder *video_decoder_ = nullptr;
   Decoder *audio_decoder_ = nullptr;
   std::string url_;
-  pthread_t input_thread_id_;
+
   pthread_mutex_t mutex_;
   pthread_cond_t cond_;
   pthread_mutex_t cmd_mutex_;
@@ -52,10 +51,14 @@ class Demux : public EventListener {
   bool ready_to_read_data_;
 
  private:
+  std::thread input_thread_;
+
+ private:
   int init();
   int uninit();
   virtual int create_stream() = 0;
   virtual int create_decoder() = 0;
+  void *input_thread(void *arg);
 };
 
 #endif
