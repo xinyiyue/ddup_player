@@ -1,9 +1,8 @@
 #include "player/ffmpeg_impl/ffmpeg_stream.h"
+#include "player/component.h"
 
-int FFmpegStream::stream_on() { return 0; }
-
-int FFmpegStream::play(float speed) { return 0; }
-
-int FFmpegStream::pause() { return 0; }
-
-int FFmpegStream::stream_off() { return 0; }
+  
+int FFmpegStream::create_decoder() { 
+  CreateDecoder(ff_stream_->codecpar, &decoder_);
+  return 0;
+};

@@ -2,59 +2,103 @@
 #define __FIFO_CONTROLLER_H__
 
 #include <pthread.h>
+#include <sys/epoll.h>
+#include <sys/eventfd.h>
+#include <unistd.h>
+
+#include <string>
+#include <vector>
+
+#include "log/ddup_log.h"
+#include "player/util.h"
 #include "third_party/FIFO/FIFO.h"
 
+#define TAGF "FIFO_CTLER"
+#define MAX_EVENTS 10
+
+typedef enum FIFO_TYPE {
+  COMMON_FIFO,
+  AUDIO_FIFO,
+  VIDEO_FIFO,
+} fifo_type_t;
+
 class FreeHandler {
-  public:
-   virtual int free_data(void *data) { return 0; };
-};
-class FifoProducer;
-class FifoConsumer {
  public:
-  FifoConsumer(fifo_t fifo, pthread_mutex_t *mutex, FreeHandler *handler);
-  ~FifoConsumer();
-  void set_producer(FifoProducer *producer);
+  virtual int free_data(void *data) { return 0; };
+};
+
+class Fifo {
+ public:
+  Fifo(int count, int size, fifo_type_t type, FreeHandler *handler);
+  ~Fifo();
+  int wakeup(bool flag);
+  bool append(void *data);
   bool consume(void *data);
   int discard();
-  int wait();
-  int wakeup();
- private:
+  int discard(void *data);
+  bool is_full();
+  bool is_empty();
 
-  pthread_mutex_t mutex_;    
-  pthread_mutex_t *mutex_fifo_;    
-  pthread_cond_t cond_;
+ public:
+  fifo_type_t type_;
+  int efd_write_;
+  int efd_read_;
+
+ private:
   fifo_t fifo_;
-  FifoProducer *producer_;
   FreeHandler *free_hdl_;
+  pthread_mutex_t mutex_;
 };
 
-class FifoProducer {
+class BufferBase {
  public:
-  FifoProducer(fifo_t fifo, pthread_mutex_t *mutex);
-  ~FifoProducer();
-  void set_consumer(FifoConsumer *consumer);
-  bool append(void *data);
+  BufferBase();
+  ~BufferBase();
+
+  virtual bool append(void *data, fifo_type_t type = COMMON_FIFO);
+  virtual bool consume(void *data, fifo_type_t type = COMMON_FIFO);
+  virtual int discard(fifo_type_t type = COMMON_FIFO);
+
+  bool bind(Fifo *fifo, bool flag);
   int wait();
-  int wakeup();
+  int abort(int flag, fifo_type_t type = COMMON_FIFO);
+  bool is_fifo_full(fifo_type_t type = COMMON_FIFO);
+  bool is_fifo_empty(fifo_type_t type = COMMON_FIFO);
+
  private:
-  pthread_mutex_t *mutex_fifo_;    
-  pthread_mutex_t mutex_;    
-  pthread_cond_t cond_;    
-  fifo_t fifo_;
-  FifoConsumer *consumer_;
+  Fifo *get_fifo(fifo_type_t type);
+
+ private:
+  std::vector<Fifo *> fifo_arr_;
+  int epollfd_;
+  struct epoll_event events[MAX_EVENTS];
+  int abort_flag_;
 };
 
-
-class FifoController {
+class BufferConsumer : public BufferBase {
  public:
-  FifoController(FreeHandler *handler);
-  ~FifoController();
-  FifoConsumer *consumer_;
-  FifoProducer *producer_;
+  BufferConsumer(char *name) : BufferBase() { name_ = name; }
+  ~BufferConsumer(){};
+
+  bool bind_fifo(Fifo *fifo);
+  bool consume_abort(fifo_type_t type = COMMON_FIFO);
+  bool consume(void *data, fifo_type_t type = COMMON_FIFO) override;
+  int discard(fifo_type_t type = COMMON_FIFO) override;
+
  private:
-  fifo_t fifo_;
-  pthread_mutex_t mutex_fifo_;    
-    
+  std::string name_;
+};
+
+class BufferProducer : public BufferBase {
+ public:
+  BufferProducer(char *name) : BufferBase() { name_ = name; };
+  ~BufferProducer(){};
+  bool bind_fifo(Fifo *fifo);
+  bool append_abort(fifo_type_t type = COMMON_FIFO);
+  bool append(void *data, fifo_type_t type = COMMON_FIFO) override;
+
+ private:
+  std::string name_;
 };
 
 #endif

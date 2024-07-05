@@ -25,6 +25,8 @@ int FFmpegDecoder::open() {
     return -ENOMEM;
   }
 
+  LOGE(TAG, "create decoder:%s sucessfully ..............\n",dec_ctx_->codec->name);
+
   int ret = avcodec_parameters_to_context(dec_ctx_, codec_param_);
   if (ret < 0) {
     LOGE(TAG, "Failed to copy %s codec parameters to decoder context\n",
@@ -39,61 +41,50 @@ int FFmpegDecoder::open() {
     return ret;
   }
 
-  Decoder::open();
-
   return 0;
 }
 
-int FFmpegDecoder::decode(void *data) {
+int FFmpegDecoder::decode(void *data, out_cb cb, void *arg) {
   int ret = 0;
-  AVFrame *frame = NULL;
+  bool frame_remain = true;
+  
   AVPacket *pkt = (AVPacket *)data;
+  LOGE(TAG, "decoder:%s will decode pkt:%p ..............\n",dec_ctx_->codec->name, pkt);
   ret = avcodec_send_packet(dec_ctx_, pkt);
   if (ret < 0) {
     LOGE(TAG, "Error submitting a packet for decoding (%d)\n", ret);
     return ret;
   }
 
-  frame = av_frame_alloc();
-  if (frame == NULL) {
-    LOGE(TAG, "%s", "malloc frame failed.\n");
-    return -ENOMEM;
-  }
+  while(frame_remain) {
+    AVFrame *frame = NULL;
+    frame = av_frame_alloc();
+    if (frame == NULL) {
+      LOGE(TAG, "%s", "malloc frame failed.\n");
+      return -ENOMEM;
+    }
 
-  // get all the available frames from the decoder
-  while (ret >= 0) {
     ret = avcodec_receive_frame(dec_ctx_, frame);
     if (ret < 0) {
       // those two return values are special and mean there is no output
       // frame available, but there were no errors during decoding
-      if (ret == AVERROR_EOF || ret == AVERROR(EAGAIN)) goto out;
-
-      LOGE(TAG, "Error during decoding %d\n", ret);
-      break;
+      if (ret == AVERROR_EOF || ret == AVERROR(EAGAIN)) {
+        LOGE(TAG, "Error during decoding %d\n", ret);
+      }
+      frame_remain = false;
+      av_frame_free(&frame);
+    } else {
+      // process raw data
+      LOGI(TAG, "decodc a %s frame.", frame->width ? "video" : "audio");
+      cb(frame, arg);
     }
-
-    // todo: send decode frame to output fifo.
-    LOGI(TAG, "decodc a %s frame.", frame->width ? "video" : "audio");
-
-    av_frame_unref(frame);
   }
-
-out:
-  av_frame_free(&frame);
-
-  return (ret == AVERROR(EAGAIN)) ? 0 : ret;
-}
-
-int FFmpegDecoder::flush() {
-  // send null frame to decoder
-  decode(NULL);
-  return 0;
+  return ret;
 }
 
 
 int FFmpegDecoder::close() {
   avcodec_free_context(&dec_ctx_);
-  Decoder::close();
   return 0;
 }
 

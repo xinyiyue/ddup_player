@@ -29,8 +29,8 @@ int CreateStream(stream_type_t type, void *stream_info, Stream **stream) {
   return 0;
 }
 
-int CreateDecoder(void *codec_param, Stream *stream, Decoder **decoder) {
-  *decoder = new FFmpegDecoder(stream, codec_param);
+int CreateDecoder(void *codec_param, Decoder **decoder) {
+  *decoder = new FFmpegDecoder(codec_param);
   if (*decoder == nullptr) {
     return -1;
   }
