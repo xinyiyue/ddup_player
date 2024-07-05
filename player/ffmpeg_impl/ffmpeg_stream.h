@@ -11,10 +11,7 @@ class FFmpegStream : public Stream {
     ff_stream_ = stream;
   };
   virtual ~FFmpegStream(){};
-  virtual int stream_on() final;
-  virtual int play(float speed) final;
-  virtual int pause() final;
-  virtual int stream_off() final;
+  virtual int create_decoder() final;
 
  private:
   AVStream *ff_stream_;

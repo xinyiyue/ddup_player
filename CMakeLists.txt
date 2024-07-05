@@ -24,7 +24,6 @@ set(PLAYER_SOURCE
 ./player/pipeline.cpp
 ./player/demux.cpp
 ./player/stream.cpp
-./player/decoder.cpp
 ./player/component.cpp
 ./player/fifo_controller.cpp
 ./player/ffmpeg_impl/ffmpeg_demux.cpp

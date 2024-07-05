@@ -24,6 +24,10 @@ int FFmpegDemux::prepare(char *url) {
 }
 
 int FFmpegDemux::stop() {
+  if (!fmt_ctx_) {
+    LOGE(TAG, "%s", "stop failed, fmt_ctx is null");
+    return -1;
+  }
   avformat_close_input(&fmt_ctx_);
   Demux::stop();
   return 0;
@@ -60,48 +64,32 @@ int FFmpegDemux::create_stream() {
       return ret;
     }
   }
-  request_input_data();
-  return 0;
-}
-
-int FFmpegDemux::create_decoder() {
-  int ret = 0;
-  if (video_stream_index_ >= 0 && this->video_decoder_ == nullptr) {
-    ret = CreateDecoder(fmt_ctx_->streams[video_stream_index_]->codecpar,
-                        this->video_stream_, &this->video_decoder_);
-    if (ret < 0) {
-      LOGE(TAG, "create video decoder failed:%d", ret);
-      return ret;
-    }
-  }
-
-  if (audio_stream_index_ >= 0 && this->audio_decoder_ == nullptr) {
-    ret = CreateDecoder(fmt_ctx_->streams[audio_stream_index_]->codecpar,
-                        this->audio_stream_, &this->audio_decoder_);
-    if (ret < 0) {
-      LOGE(TAG, "create audio decoder failed:%d", ret);
-      return ret;
-    }
-  }
-
   return 0;
 }
 
 int FFmpegDemux::seek(long long seek_time) {
   AutoLock lock(&cmd_mutex_);
+  if (!fmt_ctx_) {
+    LOGE(TAG, "seek:%d ms failed, fmt_ctx is null", seek_time);
+    return -1;
+  }
+  Demux::seek(seek_time);
   int flag = AVSEEK_FLAG_BACKWARD;
   int ret = avformat_seek_file(fmt_ctx_, -1, INT64_MIN, seek_time * 1000,
                                INT64_MAX, flag);
   if (ret < 0) {
     LOGE(TAG, "seek:%d ms failed", seek_time);
   }
-  Demux::seek(seek_time);
   LOGE(TAG, "seek:%d ms success", seek_time);
   return ret;
 }
 
 demux_event_t FFmpegDemux::read_input_data(av_data_s *data) {
   AutoLock lock(&cmd_mutex_);
+  if (!fmt_ctx_) {
+    LOGE(TAG, "%s", "demux ctx is null");
+    return DEMUX_ERROR;
+  }
   int ret;
   AVPacket *pkt = av_packet_alloc();
   if (!pkt) return DEMUX_ERROR;
@@ -115,15 +103,13 @@ demux_event_t FFmpegDemux::read_input_data(av_data_s *data) {
   data->data = (void *)pkt;
   if (pkt->stream_index == video_stream_index_) {
     data->type_ = VIDEO_STREAM;
-    LOGI(TAG, "%s", "ffmpeg read video pkt");
   } else {
     data->type_ = AUDIO_STREAM;
-    LOGI(TAG, "%s", "ffmpeg read audio pkt");
   }
   return DEMUX_OK;
 }
 
-int FFmpegDemux::free_input_data(void *data) {
+int FFmpegDemux::free_data(void *data) {
   AVPacket *pkt = (AVPacket *)data;
   if (!pkt) return -1;
   if (pkt->stream_index == audio_stream_index_) {

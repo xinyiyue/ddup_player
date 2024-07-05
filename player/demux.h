@@ -5,9 +5,9 @@
 
 #include <string>
 
-#include "player/decoder.h"
 #include "player/event_listener.h"
 #include "player/stream.h"
+#include "player/fifo_controller.h"
 
 typedef enum DEMUX_EVENT_TYPE {
   DEMUX_OK,
@@ -16,7 +16,18 @@ typedef enum DEMUX_EVENT_TYPE {
   DEMUX_ERROR,
 } demux_event_t;
 
-class Demux : public EventListener {
+typedef enum DEMUX_STATE_TYPE {
+  DEMUX_STATE_OPEN,
+  DEMUX_STATE_PREPARE,
+  DEMUX_STATE_PLAY,
+  DEMUX_STATE_PAUSE,
+  DEMUX_STATE_PLAY_SEEK,
+  DEMUX_STATE_PAUSE_SEEK,
+  DEMUX_STATE_STOP,
+  DEMUX_STATE_CLOSE
+} demux_state_t;
+
+class Demux : public EventListener, public BufferProducer, public FreeHandler {
  public:
   Demux(EventListener *listener);
   virtual ~Demux();
@@ -32,16 +43,18 @@ class Demux : public EventListener {
   virtual int stop();
   virtual int close();
   virtual demux_event_t read_input_data(av_data_s *data) = 0;
-  virtual int free_input_data(void *data) = 0;
+  virtual int free_data(void *data) override { return 0; };
 
-  void request_input_data();
+  void set_ready();
+  void check_wait_ready();
+  demux_state_t get_state() { return state_; };
+  int check_discard_data();
+  int read_data_abort();
   static void *input_thread(void *arg);
 
  public:
   Stream *audio_stream_;
   Stream *video_stream_;
-  Decoder *video_decoder_ = nullptr;
-  Decoder *audio_decoder_ = nullptr;
   std::string url_;
   pthread_t input_thread_id_;
   pthread_mutex_t mutex_;
@@ -49,13 +62,12 @@ class Demux : public EventListener {
   pthread_mutex_t cmd_mutex_;
   bool input_thread_exit_;
   EventListener *listener_;
-  bool ready_to_read_data_;
 
  private:
-  int init();
-  int uninit();
   virtual int create_stream() = 0;
-  virtual int create_decoder() = 0;
+  Fifo *audio_fifo_;
+  Fifo *video_fifo_;
+  demux_state_t state_;
 };
 
 #endif
