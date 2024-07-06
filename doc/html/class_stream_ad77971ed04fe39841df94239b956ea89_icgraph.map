@@ -1,0 +1,5 @@
+<map id="Stream::play" name="Stream::play">
+<area shape="rect" id="node1" title=" " alt="" coords="297,5,393,32"/>
+<area shape="rect" id="node2" href="$class_demux.html#ab3ce4d07220655c48bd86e31532dd2a3" title=" " alt="" coords="153,5,249,32"/>
+<area shape="rect" id="node3" href="$class_pipeline.html#a608ce4da5eff00f325a58dcda024f058" title=" " alt="" coords="5,5,105,32"/>
+</map>

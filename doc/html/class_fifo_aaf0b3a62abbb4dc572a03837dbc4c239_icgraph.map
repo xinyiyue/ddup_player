@@ -1,0 +1,11 @@
+<map id="Fifo::discard" name="Fifo::discard">
+<area shape="rect" id="node1" title=" " alt="" coords="1132,31,1227,57"/>
+<area shape="rect" id="node2" href="$class_buffer_base.html#a611e3f4eb911fc58bc811062c38b54eb" title=" " alt="" coords="947,5,1084,32"/>
+<area shape="rect" id="node7" href="$class_buffer_base.html#acdf2985c9ec07d9b27ac3078c1439307" title=" " alt="" coords="947,56,1084,83"/>
+<area shape="rect" id="node3" href="$class_buffer_producer.html#add60c6542518e19e812e8d084746dc9d" title=" " alt="" coords="511,5,669,32"/>
+<area shape="rect" id="node4" href="$class_demux.html#af2e2bb1444b5e10b7117c92308765025" title=" " alt="" coords="305,31,448,57"/>
+<area shape="rect" id="node5" href="$class_demux.html#a09853224e4c953a526df5e975db20eda" title=" " alt="" coords="157,31,257,57"/>
+<area shape="rect" id="node6" href="$class_pipeline.html#a912d9d6f767048e1661c8a0a7177bb4e" title=" " alt="" coords="5,31,109,57"/>
+<area shape="rect" id="node8" href="$class_buffer_consumer.html#a6d48beb5f7d243a49079e4b0fb85b653" title=" " alt="" coords="732,56,899,83"/>
+<area shape="rect" id="node9" href="$class_demux.html#aa7f5854ba82f745544fc6e579f33202c" title=" " alt="" coords="496,56,684,83"/>
+</map>

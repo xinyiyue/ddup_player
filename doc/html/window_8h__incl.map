@@ -1,0 +1,10 @@
+<map id="gui_widget/base/window.h" name="gui_widget/base/window.h">
+<area shape="rect" id="node1" title=" " alt="" coords="81,5,255,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,80,80,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="205,229,259,256"/>
+<area shape="rect" id="node4" title=" " alt="" coords="155,155,194,181"/>
+<area shape="rect" id="node5" title=" " alt="" coords="206,80,271,107"/>
+<area shape="rect" id="node6" href="$layer_8h.html" title=" " alt="" coords="295,80,355,107"/>
+<area shape="rect" id="node7" href="$widget_8h.html" title=" " alt="" coords="270,155,439,181"/>
+<area shape="rect" id="node8" title=" " alt="" coords="319,229,391,256"/>
+</map>

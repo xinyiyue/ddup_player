@@ -1,0 +1,9 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$class_widget.html" title=" " alt="" coords="5,56,68,83"/>
+<area shape="rect" id="node2" href="$class_button.html" title=" " alt="" coords="121,5,181,32"/>
+<area shape="rect" id="node4" href="$class_prog_bar.html" title=" " alt="" coords="116,56,185,83"/>
+<area shape="rect" id="node6" href="$class_video.html" title=" " alt="" coords="123,107,178,133"/>
+<area shape="rect" id="node3" href="$class_sdl_button.html" title=" " alt="" coords="238,5,317,32"/>
+<area shape="rect" id="node5" href="$class_sdl_prog_bar.html" title=" " alt="" coords="233,56,321,83"/>
+<area shape="rect" id="node7" href="$class_sdl_video.html" title=" " alt="" coords="240,107,315,133"/>
+</map>

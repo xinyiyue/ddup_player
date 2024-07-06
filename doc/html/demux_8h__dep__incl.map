@@ -1,0 +1,15 @@
+<map id="player/demux.h" name="player/demux.h">
+<area shape="rect" id="node1" title=" " alt="" coords="619,5,729,32"/>
+<area shape="rect" id="node2" href="$component_8h.html" title=" " alt="" coords="510,162,646,189"/>
+<area shape="rect" id="node9" href="$pipeline_8h.html" title=" " alt="" coords="616,80,732,107"/>
+<area shape="rect" id="node11" href="$ffmpeg__demux_8h.html" title=" " alt="" coords="183,155,315,196"/>
+<area shape="rect" id="node12" href="$demux_8cpp.html" title=" " alt="" coords="757,80,882,107"/>
+<area shape="rect" id="node13" href="$stream_8cpp.html" title=" " alt="" coords="907,80,1033,107"/>
+<area shape="rect" id="node3" href="$component_8cpp.html" title=" " alt="" coords="5,251,156,278"/>
+<area shape="rect" id="node4" href="$ddup__player_8cpp.html" title=" " alt="" coords="671,251,826,278"/>
+<area shape="rect" id="node5" href="$ffmpeg__decoder_8cpp.html" title=" " alt="" coords="341,244,484,285"/>
+<area shape="rect" id="node6" href="$ffmpeg__demux_8cpp.html" title=" " alt="" coords="180,244,317,285"/>
+<area shape="rect" id="node7" href="$ffmpeg__stream_8cpp.html" title=" " alt="" coords="509,244,647,285"/>
+<area shape="rect" id="node8" href="$pipeline_8cpp.html" title=" " alt="" coords="850,251,981,278"/>
+<area shape="rect" id="node10" href="$ddup__player_8h.html" title=" " alt="" coords="674,162,815,189"/>
+</map>

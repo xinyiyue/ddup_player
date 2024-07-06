@@ -1,0 +1,10 @@
+<map id="Demux::check_discard_data" name="Demux::check_discard_data">
+<area shape="rect" id="node1" title=" " alt="" coords="5,107,193,133"/>
+<area shape="rect" id="node2" href="$class_buffer_consumer.html#a6d48beb5f7d243a49079e4b0fb85b653" title=" " alt="" coords="241,107,408,133"/>
+<area shape="rect" id="node3" href="$class_buffer_base.html#acdf2985c9ec07d9b27ac3078c1439307" title=" " alt="" coords="456,81,593,108"/>
+<area shape="rect" id="node8" href="$class_buffer_base.html#a801e2e43bb032c4b455f4b18a224e838" title=" " alt="" coords="641,132,819,159"/>
+<area shape="rect" id="node4" href="$class_fifo.html#aaf0b3a62abbb4dc572a03837dbc4c239" title=" " alt="" coords="683,31,777,57"/>
+<area shape="rect" id="node7" href="$class_buffer_base.html#aad84b9690026b9da88d76d276b47470d" title=" " alt="" coords="661,81,799,108"/>
+<area shape="rect" id="node5" href="$class_free_handler.html#a15544d3026fdca95f0cfbae1a7408bf1" title=" " alt="" coords="867,5,1021,32"/>
+<area shape="rect" id="node6" href="$class_fifo.html#a66c5afd32d254833776d8229bd0b2965" title=" " alt="" coords="895,56,993,83"/>
+</map>
