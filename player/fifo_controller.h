@@ -65,6 +65,8 @@ class BufferBase {
   bool is_fifo_full(fifo_type_t type = COMMON_FIFO);
   bool is_fifo_empty(fifo_type_t type = COMMON_FIFO);
 
+  const char *get_fifo_name(fifo_type_t type);
+
  private:
   Fifo *get_fifo(fifo_type_t type);
 

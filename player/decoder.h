@@ -10,7 +10,7 @@ typedef int (*out_cb)(void *data, void *handle);
 
 class Decoder {
  public:
-  Decoder() { }
+  Decoder() {}
   virtual ~Decoder(){};
   virtual int open() = 0;
   virtual int decode(void *data, out_cb cb, void *arg) = 0;

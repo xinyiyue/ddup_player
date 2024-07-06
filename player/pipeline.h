@@ -1,8 +1,8 @@
 #ifndef __DDUP__PIPELINE_H__
 #define __DDUP__PIPELINE_H__
 
-#include "player/demux.h"
 #include "player/decoder.h"
+#include "player/demux.h"
 #include "player/event_listener.h"
 
 class Pipeline : public EventListener {

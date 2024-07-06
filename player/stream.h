@@ -2,10 +2,11 @@
 #define __STREAM__H__
 
 #include <thread>
+
 #include "player/decoder.h"
-#include "third_party/FIFO/FIFO.h"
 #include "player/fifo_controller.h"
 #include "player/processer.h"
+#include "third_party/FIFO/FIFO.h"
 
 typedef enum STREAM_TYPE { AUDIO_STREAM, VIDEO_STREAM } stream_type_t;
 
@@ -14,7 +15,7 @@ typedef struct av_data {
   void *data;
 } av_data_s;
 
-class Stream:public BufferConsumer {
+class Stream : public BufferConsumer {
  public:
   Stream(stream_type_t type);
   virtual ~Stream();
@@ -27,12 +28,13 @@ class Stream:public BufferConsumer {
   void set_eos();
   stream_type_t stream_type_;
   bool dec_thread_exit_;
- 
+
   Decoder *decoder_;
   Processer *processer_;
+
  private:
   void *process_thread(void *arg);
-  
+
   bool eos_;
   std::thread process_thread_;
 };
