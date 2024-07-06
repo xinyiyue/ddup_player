@@ -1,5 +1,5 @@
+#include <functional>
 #include "player/demux.h"
-
 #include "log/ddup_log.h"
 
 #define TAG "Demux"
@@ -92,7 +92,11 @@ void Demux::set_state(demux_state_t state) {
 int Demux::open() {
   LOGI(TAG, "%s", "demux open, create input thread");
   set_state(DEMUX_STATE_OPEN);
-  pthread_create(&input_thread_id_, NULL, &Demux::input_thread, (void *)this);
+  state_ = DEMUX_STATE_OPEN;
+  input_thread_ =
+      std::thread(std::bind(&Demux::input_thread, this, std::placeholders::_1),
+                  (void*)this);
+
   return 0;
 }
 
@@ -233,10 +237,8 @@ int Demux::close() {
   set_state(DEMUX_STATE_CLOSE);
   input_thread_exit_ = true;
   set_ready();
-  int ret = pthread_join(input_thread_id_, NULL);
-  if (ret != 0) {
-    LOGE(TAG, "pthread join failed:%d", ret);
-    return ret;
+  if (input_thread_.joinable()) {
+      input_thread_.join();
   }
   LOGI(TAG, "%s", "input thread exit successfully");
   return 0;
