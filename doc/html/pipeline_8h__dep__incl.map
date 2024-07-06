@@ -1,0 +1,11 @@
+<map id="player/pipeline.h" name="player/pipeline.h">
+<area shape="rect" id="node1" title=" " alt="" coords="454,5,570,32"/>
+<area shape="rect" id="node2" href="$component_8h.html" title=" " alt="" coords="444,80,580,107"/>
+<area shape="rect" id="node8" href="$pipeline_8cpp.html" title=" " alt="" coords="851,162,981,189"/>
+<area shape="rect" id="node9" href="$ddup__player_8h.html" title=" " alt="" coords="187,80,328,107"/>
+<area shape="rect" id="node3" href="$component_8cpp.html" title=" " alt="" coords="185,162,335,189"/>
+<area shape="rect" id="node4" href="$ddup__player_8cpp.html" title=" " alt="" coords="5,162,160,189"/>
+<area shape="rect" id="node5" href="$ffmpeg__decoder_8cpp.html" title=" " alt="" coords="359,155,502,196"/>
+<area shape="rect" id="node6" href="$ffmpeg__demux_8cpp.html" title=" " alt="" coords="526,155,663,196"/>
+<area shape="rect" id="node7" href="$ffmpeg__stream_8cpp.html" title=" " alt="" coords="688,155,827,196"/>
+</map>

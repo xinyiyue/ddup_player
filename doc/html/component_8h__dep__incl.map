@@ -1,0 +1,9 @@
+<map id="player/component.h" name="player/component.h">
+<area shape="rect" id="node1" title=" " alt="" coords="445,5,581,32"/>
+<area shape="rect" id="node2" href="$component_8cpp.html" title=" " alt="" coords="5,87,156,114"/>
+<area shape="rect" id="node3" href="$ddup__player_8cpp.html" title=" " alt="" coords="181,87,335,114"/>
+<area shape="rect" id="node4" href="$ffmpeg__decoder_8cpp.html" title=" " alt="" coords="360,80,503,121"/>
+<area shape="rect" id="node5" href="$ffmpeg__demux_8cpp.html" title=" " alt="" coords="527,80,664,121"/>
+<area shape="rect" id="node6" href="$ffmpeg__stream_8cpp.html" title=" " alt="" coords="689,80,827,121"/>
+<area shape="rect" id="node7" href="$pipeline_8cpp.html" title=" " alt="" coords="851,87,982,114"/>
+</map>

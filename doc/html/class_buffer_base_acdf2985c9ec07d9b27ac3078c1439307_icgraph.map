@@ -1,0 +1,8 @@
+<map id="BufferBase::discard" name="BufferBase::discard">
+<area shape="rect" id="node1" title=" " alt="" coords="947,5,1084,32"/>
+<area shape="rect" id="node2" href="$class_buffer_consumer.html#a6d48beb5f7d243a49079e4b0fb85b653" title=" " alt="" coords="732,5,899,32"/>
+<area shape="rect" id="node3" href="$class_demux.html#aa7f5854ba82f745544fc6e579f33202c" title=" " alt="" coords="496,5,684,32"/>
+<area shape="rect" id="node4" href="$class_demux.html#af2e2bb1444b5e10b7117c92308765025" title=" " alt="" coords="305,5,448,32"/>
+<area shape="rect" id="node5" href="$class_demux.html#a09853224e4c953a526df5e975db20eda" title=" " alt="" coords="157,5,257,32"/>
+<area shape="rect" id="node6" href="$class_pipeline.html#a912d9d6f767048e1661c8a0a7177bb4e" title=" " alt="" coords="5,5,109,32"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="BufferBase::consume" name="BufferBase::consume">
+<area shape="rect" id="node1" title=" " alt="" coords="996,31,1144,57"/>
+<area shape="rect" id="node2" href="$class_buffer_consumer.html#addd003a088b10c697729e731f77b3bfd" title=" " alt="" coords="769,31,948,57"/>
+<area shape="rect" id="node3" href="$class_stream.html#a346edfae844caa31dcb4678d0be12681" title=" " alt="" coords="560,31,721,57"/>
+<area shape="rect" id="node4" href="$class_stream.html#a920a4c79dae94b690c7160da47293bb8" title=" " alt="" coords="379,31,512,57"/>
+<area shape="rect" id="node5" href="$class_demux.html#a5eef7588114eb499fbc2dd6df397e29d" title=" " alt="" coords="216,31,331,57"/>
+<area shape="rect" id="node6" href="$class_pipeline.html#a249cdde2154c38d931fb6e3d2cb8da79" title=" " alt="" coords="27,5,146,32"/>
+<area shape="rect" id="node7" href="$class_f_fmpeg_demux.html#aa59cf517ce805dfe3a72983527e559b5" title=" " alt="" coords="5,56,168,83"/>
+</map>

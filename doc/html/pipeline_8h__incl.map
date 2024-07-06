@@ -1,0 +1,21 @@
+<map id="player/pipeline.h" name="player/pipeline.h">
+<area shape="rect" id="node1" title=" " alt="" coords="759,5,875,32"/>
+<area shape="rect" id="node2" href="$decoder_8h.html" title=" " alt="" coords="276,229,393,256"/>
+<area shape="rect" id="node3" href="$demux_8h.html" title=" " alt="" coords="762,80,873,107"/>
+<area shape="rect" id="node6" href="$event__listener_8h.html" title=" " alt="" coords="905,155,1057,181"/>
+<area shape="rect" id="node4" title=" " alt="" coords="927,379,1003,405"/>
+<area shape="rect" id="node5" title=" " alt="" coords="849,379,903,405"/>
+<area shape="rect" id="node7" href="$fifo__controller_8h.html" title=" " alt="" coords="529,304,679,331"/>
+<area shape="rect" id="node17" href="$stream_8h.html" title=" " alt="" coords="463,155,575,181"/>
+<area shape="rect" id="node8" title=" " alt="" coords="739,379,824,405"/>
+<area shape="rect" id="node9" title=" " alt="" coords="192,379,293,405"/>
+<area shape="rect" id="node10" title=" " alt="" coords="318,379,386,405"/>
+<area shape="rect" id="node11" title=" " alt="" coords="411,379,469,405"/>
+<area shape="rect" id="node12" href="$ddup__log_8h.html" title=" " alt="" coords="493,379,600,405"/>
+<area shape="rect" id="node15" href="$util_8h.html" title=" " alt="" coords="625,379,714,405"/>
+<area shape="rect" id="node16" title=" " alt="" coords="5,379,168,405"/>
+<area shape="rect" id="node13" title=" " alt="" coords="467,453,536,480"/>
+<area shape="rect" id="node14" title=" " alt="" coords="560,453,621,480"/>
+<area shape="rect" id="node18" title=" " alt="" coords="519,229,577,256"/>
+<area shape="rect" id="node19" href="$processer_8h.html" title=" " alt="" coords="601,229,729,256"/>
+</map>

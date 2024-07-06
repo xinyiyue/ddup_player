@@ -1,0 +1,9 @@
+<map id="BufferConsumer::discard" name="BufferConsumer::discard">
+<area shape="rect" id="node1" title=" " alt="" coords="5,107,172,133"/>
+<area shape="rect" id="node2" href="$class_buffer_base.html#acdf2985c9ec07d9b27ac3078c1439307" title=" " alt="" coords="220,81,357,108"/>
+<area shape="rect" id="node7" href="$class_buffer_base.html#a801e2e43bb032c4b455f4b18a224e838" title=" " alt="" coords="405,132,583,159"/>
+<area shape="rect" id="node3" href="$class_fifo.html#aaf0b3a62abbb4dc572a03837dbc4c239" title=" " alt="" coords="447,31,541,57"/>
+<area shape="rect" id="node6" href="$class_buffer_base.html#aad84b9690026b9da88d76d276b47470d" title=" " alt="" coords="425,81,563,108"/>
+<area shape="rect" id="node4" href="$class_free_handler.html#a15544d3026fdca95f0cfbae1a7408bf1" title=" " alt="" coords="631,5,785,32"/>
+<area shape="rect" id="node5" href="$class_fifo.html#a66c5afd32d254833776d8229bd0b2965" title=" " alt="" coords="659,56,757,83"/>
+</map>

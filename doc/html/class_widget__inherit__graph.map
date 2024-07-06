@@ -1,0 +1,9 @@
+<map id="Widget" name="Widget">
+<area shape="rect" id="node1" title=" " alt="" coords="121,5,184,32"/>
+<area shape="rect" id="node2" href="$class_button.html" title=" " alt="" coords="24,80,84,107"/>
+<area shape="rect" id="node4" href="$class_prog_bar.html" title=" " alt="" coords="118,80,187,107"/>
+<area shape="rect" id="node6" href="$class_video.html" title=" " alt="" coords="221,80,276,107"/>
+<area shape="rect" id="node3" href="$class_sdl_button.html" title=" " alt="" coords="5,155,84,181"/>
+<area shape="rect" id="node5" href="$class_sdl_prog_bar.html" title=" " alt="" coords="109,155,197,181"/>
+<area shape="rect" id="node7" href="$class_sdl_video.html" title=" " alt="" coords="221,155,295,181"/>
+</map>

@@ -1,0 +1,8 @@
+<map id="BufferBase::bind" name="BufferBase::bind">
+<area shape="rect" id="node1" title=" " alt="" coords="601,31,720,57"/>
+<area shape="rect" id="node2" href="$class_buffer_consumer.html#a6b5209f0043cb591ee1a4543a0b1b28a" title=" " alt="" coords="379,5,553,32"/>
+<area shape="rect" id="node6" href="$class_buffer_producer.html#ae938e76707cd668cdf6e20fde8052721" title=" " alt="" coords="383,56,549,83"/>
+<area shape="rect" id="node3" href="$class_demux.html#a5eef7588114eb499fbc2dd6df397e29d" title=" " alt="" coords="216,31,331,57"/>
+<area shape="rect" id="node4" href="$class_pipeline.html#a249cdde2154c38d931fb6e3d2cb8da79" title=" " alt="" coords="27,5,146,32"/>
+<area shape="rect" id="node5" href="$class_f_fmpeg_demux.html#aa59cf517ce805dfe3a72983527e559b5" title=" " alt="" coords="5,56,168,83"/>
+</map>
