@@ -6,8 +6,8 @@
 #include <string>
 
 #include "player/event_listener.h"
-#include "player/stream.h"
 #include "player/fifo_controller.h"
+#include "player/stream.h"
 
 typedef enum DEMUX_EVENT_TYPE {
   DEMUX_OK,
@@ -24,7 +24,8 @@ typedef enum DEMUX_STATE_TYPE {
   DEMUX_STATE_PLAY_SEEK,
   DEMUX_STATE_PAUSE_SEEK,
   DEMUX_STATE_STOP,
-  DEMUX_STATE_CLOSE
+  DEMUX_STATE_CLOSE,
+  DEMUX_STATE_EOS
 } demux_state_t;
 
 class Demux : public EventListener, public BufferProducer, public FreeHandler {
@@ -46,6 +47,7 @@ class Demux : public EventListener, public BufferProducer, public FreeHandler {
   virtual int free_data(void *data) override { return 0; };
 
   void set_ready();
+  void set_state(demux_state_t state);
   void check_wait_ready();
   demux_state_t get_state() { return state_; };
   int check_discard_data();

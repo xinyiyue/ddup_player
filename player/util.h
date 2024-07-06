@@ -13,8 +13,4 @@ class AutoLock {
   pthread_mutex_t *mutex_;
 };
 
-
-
-
-
 #endif

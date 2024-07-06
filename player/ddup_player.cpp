@@ -1,16 +1,15 @@
 #include "player/ddup_player.h"
-#include "player/component.h"
 
 #include <iostream>
 
 #include "log/ddup_log.h"
+#include "player/component.h"
 
 using namespace std;
 
 #define TAG "DDupPlayer"
 
 DDupPlayer::DDupPlayer(error_listener_func listener) {
- 
   error_listener_ = listener;
 }
 
@@ -22,11 +21,11 @@ DDupPlayer::~DDupPlayer() {
 }
 
 int DDupPlayer::open() {
-   int ret = CreatePipeline(static_cast<EventListener *>(this), &pipeline_);
+  int ret = CreatePipeline(static_cast<EventListener *>(this), &pipeline_);
   if (ret < 0) {
     LOGE(TAG, "create pipeline failed:%d", ret);
     return ret;
-  } 
+  }
   pipeline_->open();
   return 0;
 }

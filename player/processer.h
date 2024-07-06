@@ -3,7 +3,7 @@
 
 #include "player/fifo_controller.h"
 
-class Processer:public BufferProducer, public FreeHandler {
+class Processer : public BufferProducer, public FreeHandler {
  public:
   Processer();
   virtual ~Processer();
@@ -11,6 +11,7 @@ class Processer:public BufferProducer, public FreeHandler {
   virtual int process_data(void *data);
   virtual int uninit();
   virtual int set_speead(float speed);
+
  private:
   Fifo *raw_fifo_;
 };

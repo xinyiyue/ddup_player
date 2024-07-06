@@ -2,10 +2,9 @@
 
 #include "log/ddup_log.h"
 
-
 #define TAG "Demux"
 
-Demux::Demux(EventListener *listener):BufferProducer("demux") {
+Demux::Demux(EventListener *listener) : BufferProducer("demux") {
   LOGI(TAG, "%s", "construct Demux begin");
   video_stream_ = nullptr;
   audio_stream_ = nullptr;
@@ -39,16 +38,19 @@ void *Demux::input_thread(void *arg) {
     demux->check_discard_data();
     demux->check_wait_ready();
     av_data_s data;
-    LOGI(TAG, "%s", "input thread read data !!!");
+    LOGD(TAG, "%s", "input thread read data !!!");
     int ret = demux->read_input_data(&data);
     if (ret > 0) {
       if (ret == DEMUX_EOS) {
         if (demux->audio_stream_) demux->audio_stream_->set_eos();
         if (demux->video_stream_) demux->video_stream_->set_eos();
+        LOGE(TAG, "%s", "input thread read eos");
+        demux->set_state(DEMUX_STATE_EOS);
+        continue;
       } else if (ret == DEMUX_EAGAN) {
         continue;
       } else {
-        LOGI(TAG, "input thread read data error:%d", ret);
+        LOGE(TAG, "input thread read data error:%d", ret);
         demux->notify_error((int)ret);
         continue;
       }
@@ -61,7 +63,6 @@ void *Demux::input_thread(void *arg) {
       LOGI(TAG, "input thread append audio pkt:%p", data.data);
       demux->append(&data.data, AUDIO_FIFO);
     }
-    LOGI(TAG, "input thread append end:%p", data.data);
   }
   LOGI(TAG, "%s", "input thread exit !!!");
   return NULL;
@@ -83,15 +84,20 @@ void Demux::set_ready() {
   pthread_mutex_unlock(&mutex_);
 }
 
+void Demux::set_state(demux_state_t state) {
+  LOGI(TAG, "set state from:%d to :%d.", state_, state);
+  state_ = state;
+}
+
 int Demux::open() {
   LOGI(TAG, "%s", "demux open, create input thread");
-  state_ = DEMUX_STATE_OPEN;
+  set_state(DEMUX_STATE_OPEN);
   pthread_create(&input_thread_id_, NULL, &Demux::input_thread, (void *)this);
   return 0;
 }
 
 int Demux::prepare(char *url) {
-  state_ = DEMUX_STATE_PREPARE;
+  set_state(DEMUX_STATE_PREPARE);
   url_ = url;
   int ret = create_stream();
   if (ret < 0) {
@@ -125,7 +131,7 @@ int Demux::prepare(char *url) {
 
 int Demux::play(float speed) {
   int ret = 0;
-  state_ = DEMUX_STATE_PLAY;
+  set_state(DEMUX_STATE_PLAY);
   if (audio_stream_) {
     audio_stream_->play(speed);
     if (ret < 0) {
@@ -146,7 +152,7 @@ int Demux::play(float speed) {
 
 int Demux::pause() {
   int ret = 0;
-  state_ = DEMUX_STATE_PAUSE;
+  set_state(DEMUX_STATE_PAUSE);
   if (audio_stream_) {
     ret = audio_stream_->pause();
     if (ret < 0) {
@@ -165,15 +171,16 @@ int Demux::pause() {
 }
 
 int Demux::check_discard_data() {
-  if (state_ == DEMUX_STATE_STOP || state_ == DEMUX_STATE_PLAY_SEEK || state_ == DEMUX_STATE_PAUSE_SEEK) {
-      LOGI(TAG, "%s", "input thread discard data");
-      if (audio_stream_) audio_stream_->discard(AUDIO_FIFO);
-      if (video_stream_) video_stream_->discard(VIDEO_FIFO);
-      if (state_ == DEMUX_STATE_PLAY_SEEK) {
-        state_ = DEMUX_STATE_PLAY;
-      } else if (state_ = DEMUX_STATE_PAUSE_SEEK) {
-        state_ = DEMUX_STATE_PAUSE;
-      }
+  if (state_ == DEMUX_STATE_STOP || state_ == DEMUX_STATE_PLAY_SEEK ||
+      state_ == DEMUX_STATE_PAUSE_SEEK) {
+    LOGI(TAG, "%s", "input thread discard data");
+    if (audio_stream_) audio_stream_->discard(AUDIO_FIFO);
+    if (video_stream_) video_stream_->discard(VIDEO_FIFO);
+    if (state_ == DEMUX_STATE_PLAY_SEEK) {
+      state_ = DEMUX_STATE_PLAY;
+    } else if (state_ = DEMUX_STATE_PAUSE_SEEK) {
+      state_ = DEMUX_STATE_PAUSE;
+    }
   }
 
   return 0;
@@ -189,9 +196,9 @@ int Demux::seek(long long seek_time) {
   LOGI(TAG, "seek:%lld", seek_time);
   demux_state_t pre_state = state_;
   if (pre_state == DEMUX_STATE_PLAY) {
-    state_ = DEMUX_STATE_PLAY_SEEK;
+    set_state(DEMUX_STATE_PLAY_SEEK);
   } else if (pre_state = DEMUX_STATE_PAUSE) {
-    state_ = DEMUX_STATE_PAUSE_SEEK;
+    set_state(DEMUX_STATE_PAUSE_SEEK);
   }
   read_data_abort();
   return 0;
@@ -200,7 +207,8 @@ int Demux::seek(long long seek_time) {
 int Demux::stop() {
   LOGI(TAG, "%s", "enter demux stop");
   int ret = 0;
-  state_ = DEMUX_STATE_STOP;
+  set_state(DEMUX_STATE_STOP);
+  set_ready();
   read_data_abort();
   if (audio_stream_) {
     ret = audio_stream_->stream_off();
@@ -216,12 +224,13 @@ int Demux::stop() {
       return ret;
     }
   }
+  LOGI(TAG, "%s", "enter demux stop end");
   return 0;
 }
 
 int Demux::close() {
   LOGI(TAG, "%s", "close, to exit input thread");
-  state_ = DEMUX_STATE_CLOSE;
+  set_state(DEMUX_STATE_CLOSE);
   input_thread_exit_ = true;
   set_ready();
   int ret = pthread_join(input_thread_id_, NULL);
