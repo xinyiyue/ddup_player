@@ -52,13 +52,11 @@ class Demux : public EventListener, public BufferProducer, public FreeHandler {
   demux_state_t get_state() { return state_; };
   int check_discard_data();
   int read_data_abort();
-  static void *input_thread(void *arg);
 
  public:
   Stream *audio_stream_;
   Stream *video_stream_;
   std::string url_;
-  pthread_t input_thread_id_;
   pthread_mutex_t mutex_;
   pthread_cond_t cond_;
   pthread_mutex_t cmd_mutex_;
@@ -67,7 +65,9 @@ class Demux : public EventListener, public BufferProducer, public FreeHandler {
 
  private:
   virtual int create_stream() = 0;
-  Fifo *audio_fifo_;
+  void *input_thread(void *arg);
+  std::thread input_thread_;
+  Fifo* audio_fifo_;
   Fifo *video_fifo_;
   demux_state_t state_;
 };
