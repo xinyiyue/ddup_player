@@ -1,6 +1,8 @@
 #ifndef _UTIL_H__
 #define _UTIL_H__
 
+#include <pthread.h>
+
 class AutoLock {
  public:
   AutoLock(pthread_mutex_t *mutex) {

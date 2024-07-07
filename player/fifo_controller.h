@@ -13,7 +13,6 @@
 #include "player/util.h"
 #include "third_party/FIFO/FIFO.h"
 
-#define TAGF "FIFO_CTLER"
 #define MAX_EVENTS 10
 
 #define DEFAULT_FIFO_SIZE 10
@@ -36,6 +35,7 @@ class Fifo {
   ~Fifo();
   int wakeup(bool flag);
   bool append(void *data);
+  bool append(void **data);
   bool consume(void *data);
   int discard();
   int discard(void *data);
