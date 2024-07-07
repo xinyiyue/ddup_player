@@ -1,6 +1,6 @@
 #include "player/fifo_controller.h"
 
-#define TAGF "FIFO_CTLER"
+#define TAGF "FCTLER"
 
 Fifo::Fifo(const char *name, int count, int size, fifo_type_t type,
            FreeHandler *handler) {
@@ -35,8 +35,8 @@ int Fifo::wakeup(bool flag) {
   } else {
     efd = efd_read_;
   }
-  LOGD(TAGF, "write string:%s event to %s fd:%d", test,
-       flag ? "writing" : "reading", efd);
+  LOGD(TAGF, "write string:%s event to %s fd:%d to wakeup %s", test,
+       flag ? "writing" : "reading", efd, flag ? "producer":"consumer");
   write(efd, test, 10);
   return 0;
 }
@@ -47,8 +47,15 @@ bool Fifo::append(void *data) {
   if (!ret) {
     LOGE(TAGF, "%s add failed:%d", name_.c_str(), ret);
   }
+  LOGE(TAGF, "%s append data success:%p", name_.c_str(), data);
   wakeup(false);
   return ret;
+}
+
+
+bool Fifo::append(void **data) {
+  LOGD(TAGF, "%s append addr data success:%p", name_.c_str(),*data);
+  return append((void *)data);
 }
 
 bool Fifo::consume(void *data) {
@@ -215,7 +222,7 @@ int BufferBase::abort(int flag, fifo_type_t type) {
 }
 
 int BufferBase::wait() {
-  LOGI(TAGF, "wait eoll fd: %d\n", epollfd_);
+  LOGI(TAGF, "wait eoll fd: %d", epollfd_);
   int nfds = epoll_wait(epollfd_, events, MAX_EVENTS, -1);
   if (nfds == -1) {
     perror("epoll_wait");

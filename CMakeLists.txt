@@ -34,14 +34,21 @@ set(PLAYER_SOURCE
 ./player/ffmpeg_impl/ffmpeg_processer.cpp
 )
 
+set(GMOCK_PLAYER_SOURCE
+./player/gmock/gmock_test.cpp
+./player/gmock/gmock_fifo.cpp
+)
+
 add_executable(pcw player_control_bar.cpp ${KISS_SDL_SOURCE})
 add_executable(test test.cpp ${SDL_IMPL_SOURCE} ${FIFO_SOURCE} ${KISS_SDL_SOURCE} ${PLAYER_SOURCE})
+add_executable(gtest ./player/gmock/gmock_main.cpp ./player/gmock/gmock_fifo.cpp ./player/fifo_controller.cpp ${FIFO_SOURCE})
 message("当前源代码目录：" ${CMAKE_CURRENT_SOURCE_DIR})
 message("当前二进制目录：" ${CMAKE_CURRENT_BINARY_DIR})
 include_directories(
 	/usr/include/SDL2
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ffmpeg-7.0.1/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/GoogleTest/include
 )
 
 set(RESOURCE
@@ -75,8 +82,14 @@ find_library(PTHREAD_LIBRARY    pthread    /usr/lib/x86_64-linux-gnu)
 find_library(AVFORMAT_LIBRARY   avformat   ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ffmpeg-7.0.1/lib)
 find_library(AVCODEC_LIBRARY    avcodec    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ffmpeg-7.0.1/lib)
 find_library(AVUTIL_LIBRARY     avutil     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ffmpeg-7.0.1/lib)
+find_library(GTEST_LIBRARY      gtest      ${CMAKE_CURRENT_SOURCE_DIR}/third_party/GoogleTest/lib)
+find_library(GTEST_MAIN_LIBRARY gtest_main ${CMAKE_CURRENT_SOURCE_DIR}/third_party/GoogleTest/lib)
+find_library(GMOCK_LIBRARY      gmock      ${CMAKE_CURRENT_SOURCE_DIR}/third_party/GoogleTest/lib)
+find_library(GMOCK_MAIN_LIBRARY gmock_main ${CMAKE_CURRENT_SOURCE_DIR}/third_party/GoogleTest/lib)
 target_link_libraries(pcw ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY} ${SDL2_LIBRARY})
 target_link_libraries(test ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY} ${PTHREAD_LIBRARY} ${AVFORMAT_LIBRARY} ${AVCODEC_LIBRARY} ${AVUTIL_LIBRARY})
+target_link_libraries(gtest ${GTEST_LIBRARY} ${GTEST_MAIN_LIBRARY} ${GMOCK_LIBRARY} ${GMOCK_MAIN_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY} ${PTHREAD_LIBRARY} ${AVFORMAT_LIBRARY} ${AVCODEC_LIBRARY} ${AVUTIL_LIBRARY})
 install(TARGETS pcw DESTINATION result)
 install(TARGETS test DESTINATION result)
+install(TARGETS gtest DESTINATION result)
 install(FILES ${RESOURCE} DESTINATION result)
