@@ -5,6 +5,7 @@ var fifo__controller_8h =
     [ "BufferBase", "class_buffer_base.html", "class_buffer_base" ],
     [ "BufferConsumer", "class_buffer_consumer.html", "class_buffer_consumer" ],
     [ "BufferProducer", "class_buffer_producer.html", "class_buffer_producer" ],
+    [ "DEFAULT_FIFO_SIZE", "fifo__controller_8h.html#afd8dee94fd231e8bd2eeb97a7985b4c5", null ],
     [ "MAX_EVENTS", "fifo__controller_8h.html#ae42954bb8545d24e3e9dcde5920c9a0b", null ],
     [ "TAGF", "fifo__controller_8h.html#a7b83e4e0d53810f4c83c8416c1bf3711", null ],
     [ "fifo_type_t", "fifo__controller_8h.html#af8aec5d0a164de5993ad441b2991153f", null ],

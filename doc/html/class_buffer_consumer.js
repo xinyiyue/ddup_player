@@ -1,6 +1,6 @@
 var class_buffer_consumer =
 [
-    [ "BufferConsumer", "class_buffer_consumer.html#ac4c47b43c8ccb6904d0919ae115f11cb", null ],
+    [ "BufferConsumer", "class_buffer_consumer.html#a1805ecd707b162db0ca1d6063f7b7217", null ],
     [ "~BufferConsumer", "class_buffer_consumer.html#a7f7b3defd5afcaf2043f637003742f91", null ],
     [ "bind_fifo", "class_buffer_consumer.html#a6b5209f0043cb591ee1a4543a0b1b28a", null ],
     [ "consume", "class_buffer_consumer.html#addd003a088b10c697729e731f77b3bfd", null ],

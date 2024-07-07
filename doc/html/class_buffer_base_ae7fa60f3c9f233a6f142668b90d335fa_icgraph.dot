@@ -1,0 +1,37 @@
+digraph "BufferBase::wait"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="RL";
+  Node1 [label="BufferBase::wait",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="BufferBase::append",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_buffer_base.html#a611e3f4eb911fc58bc811062c38b54eb",tooltip=" "];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="BufferProducer::append",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_buffer_producer.html#add60c6542518e19e812e8d084746dc9d",tooltip=" "];
+  Node3 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="Demux::input_thread",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_demux.html#af2e2bb1444b5e10b7117c92308765025",tooltip=" "];
+  Node4 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="Demux::open",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_demux.html#a09853224e4c953a526df5e975db20eda",tooltip=" "];
+  Node5 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="Pipeline::open",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pipeline.html#a912d9d6f767048e1661c8a0a7177bb4e",tooltip=" "];
+  Node3 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="Processer::process_data",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_processer.html#ade9765442a05c2415f80900469d427c1",tooltip=" "];
+  Node7 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="Stream::process_raw_data",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_stream.html#adbe4eb3f5bf605a94848976b3915fee9",tooltip=" "];
+  Node8 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="Stream::process_thread",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_stream.html#a346edfae844caa31dcb4678d0be12681",tooltip=" "];
+  Node9 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="Stream::stream_on",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_stream.html#a920a4c79dae94b690c7160da47293bb8",tooltip=" "];
+  Node10 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="Demux::prepare",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_demux.html#a5eef7588114eb499fbc2dd6df397e29d",tooltip=" "];
+  Node11 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 [label="Pipeline::prepare",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pipeline.html#a249cdde2154c38d931fb6e3d2cb8da79",tooltip=" "];
+  Node11 -> Node13 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 [label="FFmpegDemux::prepare",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_f_fmpeg_demux.html#aa59cf517ce805dfe3a72983527e559b5",tooltip=" "];
+  Node1 -> Node14 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node14 [label="BufferBase::consume",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_buffer_base.html#a76e6959faff94d7a0561003d390d84c8",tooltip=" "];
+  Node14 -> Node15 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node15 [label="BufferConsumer::consume",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_buffer_consumer.html#addd003a088b10c697729e731f77b3bfd",tooltip=" "];
+  Node15 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+}

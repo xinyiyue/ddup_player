@@ -20,14 +20,17 @@ class Stream : public BufferConsumer {
   Stream(stream_type_t type);
   virtual ~Stream();
   virtual int create_decoder() = 0;
+  virtual int create_processer() = 0;
   virtual int stream_on();
   virtual int stream_off();
   virtual int play(float speed);
   virtual int pause();
   static int process_raw_data(void *data, void *handle);
+  int flush();
   void set_eos();
   stream_type_t stream_type_;
   bool dec_thread_exit_;
+  bool need_flush_;
 
   Decoder *decoder_;
   Processer *processer_;

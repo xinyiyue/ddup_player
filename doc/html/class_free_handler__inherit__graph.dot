@@ -1,0 +1,17 @@
+digraph "FreeHandler"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="FreeHandler",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Demux",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_demux.html",tooltip=" "];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="FFmpegDemux",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_f_fmpeg_demux.html",tooltip=" "];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="Processer",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_processer.html",tooltip=" "];
+  Node4 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="FFmpegAudioProcesser",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_f_fmpeg_audio_processer.html",tooltip=" "];
+  Node4 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="FFmpegVideoProcesser",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_f_fmpeg_video_processer.html",tooltip=" "];
+}

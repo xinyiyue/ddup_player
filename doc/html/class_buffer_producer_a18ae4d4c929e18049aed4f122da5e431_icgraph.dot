@@ -1,0 +1,25 @@
+digraph "BufferProducer::append_abort"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="RL";
+  Node1 [label="BufferProducer::append\l_abort",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Stream::flush",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_stream.html#a2d04afb7b7f3a600b8f74f94972f663b",tooltip=" "];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Demux::seek",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_demux.html#aa3b569b91ffc209fb1d481dfea2bbd30",tooltip=" "];
+  Node3 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="Pipeline::seek",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pipeline.html#a18466bc7c0f2ee5a3c0aec69d4a4cbc7",tooltip=" "];
+  Node3 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="FFmpegDemux::seek",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_f_fmpeg_demux.html#a38bc667928f757f1ecc676a7468df806",tooltip=" "];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="Demux::read_data_abort",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_demux.html#ac13e149abf0296c815710958ca1fc36a",tooltip=" "];
+  Node6 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="Demux::stop",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_demux.html#ae08104aa04f971a54097b5232bcc560e",tooltip=" "];
+  Node7 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="Pipeline::stop",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pipeline.html#a86920dae4768875dfb12bf19323e0b37",tooltip=" "];
+  Node7 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="FFmpegDemux::stop",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_f_fmpeg_demux.html#a5ca4c2d03fec816a804625cdfdfeca10",tooltip=" "];
+}
