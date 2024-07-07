@@ -12,6 +12,7 @@ class FFmpegStream : public Stream {
   };
   virtual ~FFmpegStream(){};
   virtual int create_decoder() final;
+  virtual int create_processer() final;
 
  private:
   AVStream *ff_stream_;

@@ -5,6 +5,7 @@ var hierarchy =
     [ "av_data", "structav__data.html", null ],
     [ "BufferBase", "class_buffer_base.html", [
       [ "BufferConsumer", "class_buffer_consumer.html", [
+        [ "Sink", "class_sink.html", null ],
         [ "Stream", "class_stream.html", [
           [ "FFmpegStream", "class_f_fmpeg_stream.html", null ]
         ] ]
@@ -13,7 +14,10 @@ var hierarchy =
         [ "Demux", "class_demux.html", [
           [ "FFmpegDemux", "class_f_fmpeg_demux.html", null ]
         ] ],
-        [ "Processer", "class_processer.html", null ]
+        [ "Processer", "class_processer.html", [
+          [ "FFmpegAudioProcesser", "class_f_fmpeg_audio_processer.html", null ],
+          [ "FFmpegVideoProcesser", "class_f_fmpeg_video_processer.html", null ]
+        ] ]
       ] ]
     ] ],
     [ "Decoder", "class_decoder.html", [

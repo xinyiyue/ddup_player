@@ -67,7 +67,7 @@ class Demux : public EventListener, public BufferProducer, public FreeHandler {
   virtual int create_stream() = 0;
   void *input_thread(void *arg);
   std::thread input_thread_;
-  Fifo* audio_fifo_;
+  Fifo *audio_fifo_;
   Fifo *video_fifo_;
   demux_state_t state_;
 };

@@ -102,6 +102,7 @@ $(document).ready(function(){initNavTree('component_8cpp.html',''); initResizabl
 <div class="textblock"><code>#include &quot;<a class="el" href="component_8h_source.html">player/component.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="ffmpeg__decoder_8h_source.html">player/ffmpeg_impl/ffmpeg_decoder.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="ffmpeg__demux_8h_source.html">player/ffmpeg_impl/ffmpeg_demux.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="ffmpeg__processer_8h_source.html">player/ffmpeg_impl/ffmpeg_processer.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="ffmpeg__stream_8h_source.html">player/ffmpeg_impl/ffmpeg_stream.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for component.cpp:</div>
@@ -171,6 +172,10 @@ Functions</h2></td></tr>
 <tr class="separator:a1d6a3c04ee379aa218da228eae611a69"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aab9abc2bd150d81b93398df0e7a0ffab"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="component_8cpp.html#aab9abc2bd150d81b93398df0e7a0ffab">CreateDecoder</a> (void *codec_param, <a class="el" href="class_decoder.html">Decoder</a> **decoder)</td></tr>
 <tr class="separator:aab9abc2bd150d81b93398df0e7a0ffab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a30ba4bc3ccca6574bf986346575b39"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="component_8cpp.html#a0a30ba4bc3ccca6574bf986346575b39">CreateProcesser</a> (<a class="el" href="processer_8h.html#ad33e41495bcd43f862cfe565ebe33c1b">processer_type_t</a> type, void *codec_param, <a class="el" href="class_processer.html">Processer</a> **processer)</td></tr>
+<tr class="separator:a0a30ba4bc3ccca6574bf986346575b39"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adcb538324d8020896ba39abd43deada6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="component_8cpp.html#adcb538324d8020896ba39abd43deada6">CreateSink</a> (<a class="el" href="sink_8h.html#a8e8eaa961d8e4e2d28cef31971d780c2">sink_type_t</a> type, <a class="el" href="class_sink.html">Sink</a> **sink)</td></tr>
+<tr class="separator:adcb538324d8020896ba39abd43deada6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="aab9abc2bd150d81b93398df0e7a0ffab"></a>
@@ -280,6 +285,78 @@ Here is the caller graph for this function:</div>
 <area shape="rect" title=" " alt="" coords="183,5,289,32"/>
 <area shape="rect" href="class_d_dup_player.html#a318022c442e27a78f3a9abf1de0bb93c" title=" " alt="" coords="5,5,135,32"/>
 </map>
+</div>
+
+</div>
+</div>
+<a id="a0a30ba4bc3ccca6574bf986346575b39"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a30ba4bc3ccca6574bf986346575b39">&#9670;&nbsp;</a></span>CreateProcesser()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int CreateProcesser </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="processer_8h.html#ad33e41495bcd43f862cfe565ebe33c1b">processer_type_t</a>&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>codec_param</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_processer.html">Processer</a> **&#160;</td>
+          <td class="paramname"><em>processer</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="component_8cpp_a0a30ba4bc3ccca6574bf986346575b39_icgraph.png" border="0" usemap="#component_8cpp_a0a30ba4bc3ccca6574bf986346575b39_icgraph" alt=""/></div>
+</div>
+
+</div>
+</div>
+<a id="adcb538324d8020896ba39abd43deada6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adcb538324d8020896ba39abd43deada6">&#9670;&nbsp;</a></span>CreateSink()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int CreateSink </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="sink_8h.html#a8e8eaa961d8e4e2d28cef31971d780c2">sink_type_t</a>&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_sink.html">Sink</a> **&#160;</td>
+          <td class="paramname"><em>sink</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="component_8cpp_adcb538324d8020896ba39abd43deada6_icgraph.png" border="0" usemap="#component_8cpp_adcb538324d8020896ba39abd43deada6_icgraph" alt=""/></div>
 </div>
 
 </div>

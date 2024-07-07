@@ -113,9 +113,9 @@ int FFmpegDemux::free_data(void *data) {
   AVPacket *pkt = (AVPacket *)data;
   if (!pkt) return -1;
   if (pkt->stream_index == audio_stream_index_) {
-    LOGI(TAG, "free audio pkt:%p", pkt);
+    LOGD(TAG, "free audio pkt:%p", pkt);
   } else {
-    LOGI(TAG, "free video pkt:%p", pkt);
+    LOGD(TAG, "free video pkt:%p", pkt);
   }
   av_packet_unref(pkt);
   av_packet_free(&pkt);

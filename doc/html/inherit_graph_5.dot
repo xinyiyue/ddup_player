@@ -1,0 +1,37 @@
+digraph "Graphical Class Hierarchy"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node25 [label="BufferBase",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_buffer_base.html",tooltip=" "];
+  Node25 -> Node26 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node26 [label="BufferConsumer",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_buffer_consumer.html",tooltip=" "];
+  Node26 -> Node27 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node27 [label="Sink",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_sink.html",tooltip=" "];
+  Node26 -> Node28 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node28 [label="Stream",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_stream.html",tooltip=" "];
+  Node28 -> Node29 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node29 [label="FFmpegStream",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_f_fmpeg_stream.html",tooltip=" "];
+  Node25 -> Node30 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node30 [label="BufferProducer",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_buffer_producer.html",tooltip=" "];
+  Node30 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 [label="Demux",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_demux.html",tooltip=" "];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="FFmpegDemux",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_f_fmpeg_demux.html",tooltip=" "];
+  Node30 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Processer",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_processer.html",tooltip=" "];
+  Node3 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="FFmpegAudioProcesser",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_f_fmpeg_audio_processer.html",tooltip=" "];
+  Node3 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="FFmpegVideoProcesser",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_f_fmpeg_video_processer.html",tooltip=" "];
+  Node20 [label="EventListener",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_event_listener.html",tooltip=" "];
+  Node20 -> Node21 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node21 [label="DDupPlayer",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_d_dup_player.html",tooltip=" "];
+  Node20 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node20 -> Node22 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node22 [label="Pipeline",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pipeline.html",tooltip=" "];
+  Node0 [label="FreeHandler",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_free_handler.html",tooltip=" "];
+  Node0 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node0 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+}

@@ -1,0 +1,16 @@
+digraph "Stream::create_processer"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="RL";
+  Node1 [label="Stream::create_processer",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Stream::stream_on",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_stream.html#a920a4c79dae94b690c7160da47293bb8",tooltip=" "];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Demux::prepare",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_demux.html#a5eef7588114eb499fbc2dd6df397e29d",tooltip=" "];
+  Node3 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="Pipeline::prepare",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_pipeline.html#a249cdde2154c38d931fb6e3d2cb8da79",tooltip=" "];
+  Node3 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="FFmpegDemux::prepare",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_f_fmpeg_demux.html#aa59cf517ce805dfe3a72983527e559b5",tooltip=" "];
+}

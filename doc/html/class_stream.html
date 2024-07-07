@@ -141,6 +141,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a6dc4517a9e6a87abb662fcd14c2ea969"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1eef561073cb65b7fa2a1932dfb506ab"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_stream.html#a1eef561073cb65b7fa2a1932dfb506ab">create_decoder</a> ()=0</td></tr>
 <tr class="separator:a1eef561073cb65b7fa2a1932dfb506ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afca9b8802d72a98ca5e82052aa03f068"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_stream.html#afca9b8802d72a98ca5e82052aa03f068">create_processer</a> ()=0</td></tr>
+<tr class="separator:afca9b8802d72a98ca5e82052aa03f068"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a920a4c79dae94b690c7160da47293bb8"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_stream.html#a920a4c79dae94b690c7160da47293bb8">stream_on</a> ()</td></tr>
 <tr class="separator:a920a4c79dae94b690c7160da47293bb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acbcd02a56b926b833184965fb245dd4f"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_stream.html#acbcd02a56b926b833184965fb245dd4f">stream_off</a> ()</td></tr>
@@ -149,11 +151,13 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad77971ed04fe39841df94239b956ea89"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aecbab2e27ee1177641226ac016e3a7e1"><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_stream.html#aecbab2e27ee1177641226ac016e3a7e1">pause</a> ()</td></tr>
 <tr class="separator:aecbab2e27ee1177641226ac016e3a7e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d04afb7b7f3a600b8f74f94972f663b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_stream.html#a2d04afb7b7f3a600b8f74f94972f663b">flush</a> ()</td></tr>
+<tr class="separator:a2d04afb7b7f3a600b8f74f94972f663b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe3d9d63a1233b24f6f31b72c338634d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_stream.html#abe3d9d63a1233b24f6f31b72c338634d">set_eos</a> ()</td></tr>
 <tr class="separator:abe3d9d63a1233b24f6f31b72c338634d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_buffer_consumer"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_buffer_consumer')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_buffer_consumer.html">BufferConsumer</a></td></tr>
-<tr class="memitem:ac4c47b43c8ccb6904d0919ae115f11cb inherit pub_methods_class_buffer_consumer"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer_consumer.html#ac4c47b43c8ccb6904d0919ae115f11cb">BufferConsumer</a> (char *name)</td></tr>
-<tr class="separator:ac4c47b43c8ccb6904d0919ae115f11cb inherit pub_methods_class_buffer_consumer"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1805ecd707b162db0ca1d6063f7b7217 inherit pub_methods_class_buffer_consumer"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer_consumer.html#a1805ecd707b162db0ca1d6063f7b7217">BufferConsumer</a> (const char *name)</td></tr>
+<tr class="separator:a1805ecd707b162db0ca1d6063f7b7217 inherit pub_methods_class_buffer_consumer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f7b3defd5afcaf2043f637003742f91 inherit pub_methods_class_buffer_consumer"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer_consumer.html#a7f7b3defd5afcaf2043f637003742f91">~BufferConsumer</a> ()</td></tr>
 <tr class="separator:a7f7b3defd5afcaf2043f637003742f91 inherit pub_methods_class_buffer_consumer"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b5209f0043cb591ee1a4543a0b1b28a inherit pub_methods_class_buffer_consumer"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer_consumer.html#a6b5209f0043cb591ee1a4543a0b1b28a">bind_fifo</a> (<a class="el" href="class_fifo.html">Fifo</a> *fifo)</td></tr>
@@ -195,6 +199,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a7fa202fcc9024d0abaa96d18a42858c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae24fb830d24929d75c3a99e20c100d09"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_stream.html#ae24fb830d24929d75c3a99e20c100d09">dec_thread_exit_</a></td></tr>
 <tr class="separator:ae24fb830d24929d75c3a99e20c100d09"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff3cd073b6f4f7393d1336fdc9655eed"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_stream.html#aff3cd073b6f4f7393d1336fdc9655eed">need_flush_</a></td></tr>
+<tr class="separator:aff3cd073b6f4f7393d1336fdc9655eed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb92fa9c58fa0d002fd4903265dc6360"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_decoder.html">Decoder</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_stream.html#adb92fa9c58fa0d002fd4903265dc6360">decoder_</a></td></tr>
 <tr class="separator:adb92fa9c58fa0d002fd4903265dc6360"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf381d68c18925e7c6fd7ebeb50c2757"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_processer.html">Processer</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_stream.html#abf381d68c18925e7c6fd7ebeb50c2757">processer_</a></td></tr>
@@ -292,6 +298,65 @@ Here is the caller graph for this function:</div>
 <area shape="rect" href="class_pipeline.html#a249cdde2154c38d931fb6e3d2cb8da79" title=" " alt="" coords="27,5,146,32"/>
 <area shape="rect" href="class_f_fmpeg_demux.html#aa59cf517ce805dfe3a72983527e559b5" title=" " alt="" coords="5,56,168,83"/>
 </map>
+</div>
+
+</div>
+</div>
+<a id="afca9b8802d72a98ca5e82052aa03f068"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afca9b8802d72a98ca5e82052aa03f068">&#9670;&nbsp;</a></span>create_processer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual int Stream::create_processer </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="class_f_fmpeg_stream.html#a4aebdb7cbd332bb732077d53815f0fa7">FFmpegStream</a>.</p>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_stream_afca9b8802d72a98ca5e82052aa03f068_icgraph.png" border="0" usemap="#class_stream_afca9b8802d72a98ca5e82052aa03f068_icgraph" alt=""/></div>
+</div>
+
+</div>
+</div>
+<a id="a2d04afb7b7f3a600b8f74f94972f663b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d04afb7b7f3a600b8f74f94972f663b">&#9670;&nbsp;</a></span>flush()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int Stream::flush </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_stream_a2d04afb7b7f3a600b8f74f94972f663b_cgraph.png" border="0" usemap="#class_stream_a2d04afb7b7f3a600b8f74f94972f663b_cgraph" alt=""/></div>
+</div>
+<div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_stream_a2d04afb7b7f3a600b8f74f94972f663b_icgraph.png" border="0" usemap="#class_stream_a2d04afb7b7f3a600b8f74f94972f663b_icgraph" alt=""/></div>
 </div>
 
 </div>
@@ -665,6 +730,20 @@ Here is the caller graph for this function:</div>
 <span class="mlabels"><span class="mlabel">private</span></span>  </td>
   </tr>
 </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aff3cd073b6f4f7393d1336fdc9655eed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff3cd073b6f4f7393d1336fdc9655eed">&#9670;&nbsp;</a></span>need_flush_</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Stream::need_flush_</td>
+        </tr>
+      </table>
 </div><div class="memdoc">
 
 </div>

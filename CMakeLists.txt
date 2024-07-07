@@ -24,11 +24,14 @@ set(PLAYER_SOURCE
 ./player/pipeline.cpp
 ./player/demux.cpp
 ./player/stream.cpp
+./player/processer.cpp
+./player/sink.cpp
 ./player/component.cpp
 ./player/fifo_controller.cpp
 ./player/ffmpeg_impl/ffmpeg_demux.cpp
 ./player/ffmpeg_impl/ffmpeg_stream.cpp
 ./player/ffmpeg_impl/ffmpeg_decoder.cpp
+./player/ffmpeg_impl/ffmpeg_processer.cpp
 )
 
 add_executable(pcw player_control_bar.cpp ${KISS_SDL_SOURCE})

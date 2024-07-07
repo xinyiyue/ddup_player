@@ -2,18 +2,28 @@
 #define __PROCESSER__H__
 
 #include "player/fifo_controller.h"
+#include "player/sink.h"
+
+typedef enum PROCESSER_TYPE {
+  AUDIO_PROCESSER,
+  VIDEO_PROCESSER
+} processer_type_t;
 
 class Processer : public BufferProducer, public FreeHandler {
  public:
-  Processer();
+  Processer(processer_type_t type);
   virtual ~Processer();
-  virtual int init(void *format);
+  virtual int init();
   virtual int process_data(void *data);
+  virtual int process(void *data) = 0;
   virtual int uninit();
   virtual int set_speead(float speed);
+  int flush();
 
  private:
   Fifo *raw_fifo_;
+  processer_type_t type_;
+  Sink *sink_;
 };
 
 #endif

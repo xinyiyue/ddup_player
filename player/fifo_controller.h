@@ -16,6 +16,8 @@
 #define TAGF "FIFO_CTLER"
 #define MAX_EVENTS 10
 
+#define DEFAULT_FIFO_SIZE 10
+
 typedef enum FIFO_TYPE {
   COMMON_FIFO,
   AUDIO_FIFO,
@@ -29,7 +31,8 @@ class FreeHandler {
 
 class Fifo {
  public:
-  Fifo(int count, int size, fifo_type_t type, FreeHandler *handler);
+  Fifo(const char *name, int count, int size, fifo_type_t type,
+       FreeHandler *handler);
   ~Fifo();
   int wakeup(bool flag);
   bool append(void *data);
@@ -38,6 +41,7 @@ class Fifo {
   int discard(void *data);
   bool is_full();
   bool is_empty();
+  const char *get_name();
 
  public:
   fifo_type_t type_;
@@ -48,6 +52,7 @@ class Fifo {
   fifo_t fifo_;
   FreeHandler *free_hdl_;
   pthread_mutex_t mutex_;
+  std::string name_;
 };
 
 class BufferBase {
@@ -79,7 +84,7 @@ class BufferBase {
 
 class BufferConsumer : public BufferBase {
  public:
-  BufferConsumer(char *name) : BufferBase() { name_ = name; }
+  BufferConsumer(const char *name) : BufferBase() { name_ = name; }
   ~BufferConsumer(){};
 
   bool bind_fifo(Fifo *fifo);
@@ -93,7 +98,7 @@ class BufferConsumer : public BufferBase {
 
 class BufferProducer : public BufferBase {
  public:
-  BufferProducer(char *name) : BufferBase() { name_ = name; };
+  BufferProducer(const char *name) : BufferBase() { name_ = name; };
   ~BufferProducer(){};
   bool bind_fifo(Fifo *fifo);
   bool append_abort(fifo_type_t type = COMMON_FIFO);

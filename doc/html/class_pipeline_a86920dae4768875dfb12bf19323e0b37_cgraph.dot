@@ -1,0 +1,54 @@
+digraph "Pipeline::stop"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="Pipeline::stop",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Demux::stop",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_demux.html#ae08104aa04f971a54097b5232bcc560e",tooltip=" "];
+  Node2 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Demux::read_data_abort",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_demux.html#ac13e149abf0296c815710958ca1fc36a",tooltip=" "];
+  Node3 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="BufferProducer::append\l_abort",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_buffer_producer.html#a18ae4d4c929e18049aed4f122da5e431",tooltip=" "];
+  Node4 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="BufferBase::abort",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_buffer_base.html#a851b22de6f6f587c912ebd54f77110e9",tooltip=" "];
+  Node5 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="BufferBase::get_fifo",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_buffer_base.html#aad84b9690026b9da88d76d276b47470d",tooltip=" "];
+  Node5 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="Fifo::get_name",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_fifo.html#a8d1a5745a600502cd67bfc642a2b1eb6",tooltip=" "];
+  Node5 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="Fifo::wakeup",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_fifo.html#a66c5afd32d254833776d8229bd0b2965",tooltip=" "];
+  Node4 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="BufferBase::get_fifo_name",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_buffer_base.html#a801e2e43bb032c4b455f4b18a224e838",tooltip=" "];
+  Node9 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 -> Node10 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="Demux::set_ready",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_demux.html#a8392895e1eab7e3d1b6697bbc72141a4",tooltip=" "];
+  Node2 -> Node11 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="Demux::set_state",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_demux.html#a5813d0c8b87aa457e09233dba0de4a3f",tooltip=" "];
+  Node2 -> Node12 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 [label="Stream::stream_off",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_stream.html#acbcd02a56b926b833184965fb245dd4f",tooltip=" "];
+  Node12 -> Node13 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 [label="Decoder::close",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_decoder.html#ae01773dd0b71251bf8046efda189f738",tooltip=" "];
+  Node12 -> Node14 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node14 [label="BufferConsumer::consume\l_abort",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_buffer_consumer.html#a5f1cf755856843e892f40bdcdbdc5b0f",tooltip=" "];
+  Node14 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node14 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 -> Node15 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node15 [label="Processer::uninit",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_processer.html#adc8da48ec64e1666e19abf952d964698",tooltip=" "];
+  Node15 -> Node16 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node16 [label="Processer::flush",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_processer.html#a7250f01dd404dbd825f5820f7f06966d",tooltip=" "];
+  Node16 -> Node17 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node17 [label="BufferConsumer::discard",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_buffer_consumer.html#a6d48beb5f7d243a49079e4b0fb85b653",tooltip=" "];
+  Node17 -> Node18 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node18 [label="BufferBase::discard",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_buffer_base.html#acdf2985c9ec07d9b27ac3078c1439307",tooltip=" "];
+  Node18 -> Node19 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node19 [label="Fifo::discard",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_fifo.html#aaf0b3a62abbb4dc572a03837dbc4c239",tooltip=" "];
+  Node19 -> Node20 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node20 [label="FreeHandler::free_data",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_free_handler.html#a15544d3026fdca95f0cfbae1a7408bf1",tooltip=" "];
+  Node19 -> Node8 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node18 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node18 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node17 -> Node9 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+}

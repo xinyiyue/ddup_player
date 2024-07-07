@@ -25,8 +25,7 @@ int FFmpegDecoder::open() {
     return -ENOMEM;
   }
 
-  LOGE(TAG, "create decoder:%s sucessfully ..............",
-       dec_ctx_->codec->name);
+  LOGE(TAG, "create decoder:%s sucessfully", dec_ctx_->codec->name);
 
   int ret = avcodec_parameters_to_context(dec_ctx_, codec_param_);
   if (ret < 0) {
@@ -50,8 +49,7 @@ int FFmpegDecoder::decode(void *data, out_cb cb, void *arg) {
   bool frame_remain = true;
 
   AVPacket *pkt = (AVPacket *)data;
-  LOGI(TAG, "decoder:%s will decode pkt:%p ..............",
-       dec_ctx_->codec->name, pkt);
+  LOGI(TAG, "decoder:%s will decode pkt:%p", dec_ctx_->codec->name, pkt);
   ret = avcodec_send_packet(dec_ctx_, pkt);
   if (ret < 0) {
     LOGE(TAG, "Error submitting a packet for decoding (%d)", ret);
@@ -77,7 +75,8 @@ int FFmpegDecoder::decode(void *data, out_cb cb, void *arg) {
       av_frame_free(&frame);
     } else {
       // process raw data
-      LOGI(TAG, "decoder %s  decode out %s frame", dec_ctx_->codec->name, frame->width ? "video" : "audio");
+      LOGI(TAG, "decoder %s  decode out %s frame:%p", dec_ctx_->codec->name,
+           frame->width ? "video" : "audio", frame);
       cb(frame, arg);
     }
   }
