@@ -5,6 +5,8 @@
 #include "player/ffmpeg_impl/ffmpeg_demux.h"
 #include "player/ffmpeg_impl/ffmpeg_processer.h"
 #include "player/ffmpeg_impl/ffmpeg_stream.h"
+#include "player/sdl_sink_impl/sdl_audio_sink.h"
+#include "player/sdl_sink_impl/sdl_video_sink.h"
 
 int CreatePipeline(EventListener *listener, Pipeline **pipeline) {
   *pipeline = new Pipeline(listener);
@@ -52,6 +54,9 @@ int CreateProcesser(processer_type_t type, void *codec_param,
 }
 
 int CreateSink(sink_type_t type, Sink **sink) {
-  *sink = new Sink(type);  // just test, need to create impl sink
+  if (type == AUDIO_SINK)
+    *sink = new SDLAudioSink();
+  else
+    *sink = new SDLVideoSink();
   return 0;
 }

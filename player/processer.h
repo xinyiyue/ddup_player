@@ -11,7 +11,7 @@ typedef enum PROCESSER_TYPE {
 
 class Processer : public BufferProducer, public FreeHandler {
  public:
-  Processer(processer_type_t type);
+  Processer(processer_type_t type, void *codec_param);
   virtual ~Processer();
   virtual int init();
   virtual int process_data(void *data);
@@ -23,6 +23,7 @@ class Processer : public BufferProducer, public FreeHandler {
  private:
   Fifo *raw_fifo_;
   processer_type_t type_;
+  void *codec_param_;
   Sink *sink_;
 };
 

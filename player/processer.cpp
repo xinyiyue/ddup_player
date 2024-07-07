@@ -6,10 +6,11 @@
 
 #define TAG "Processer"
 
-Processer::Processer(processer_type_t type)
+Processer::Processer(processer_type_t type, void *codec_param)
     : BufferProducer(type == AUDIO_PROCESSER ? "audio_processer"
                                              : "video_processer") {
   type_ = type;
+  codec_param_ = codec_param;
 }
 
 Processer::~Processer() {
@@ -32,6 +33,13 @@ int Processer::init() {
   bind_fifo(raw_fifo_);
   LOGI(TAG, "init, bind fifo:%s", type_ == AUDIO_PROCESSER ? "audio" : "video");
   CreateSink(sink_type, &sink_);
+  if (sink_->open(codec_param_) < 0) {
+    LOGE(TAG, "%s", "open sink failed");
+    return -1;
+  }
+
+  sink_->start();
+
   LOGI(TAG, "init, create %s sink:%p",
        type_ == AUDIO_PROCESSER ? "audio" : "video", sink_);
   sink_->bind_fifo(raw_fifo_);
@@ -52,6 +60,7 @@ int Processer::process_data(void *data) {
 }
 
 int Processer::uninit() {
+  sink_->close();
   flush();
   return 0;
 }

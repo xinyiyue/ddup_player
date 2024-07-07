@@ -70,7 +70,7 @@ void error_listener(ddup_error_t err) {}
 int test_player() {
   DDupPlayer *player = new DDupPlayer(error_listener);
   player->open();
-  player->prepare((char *)"../res/birds.mp4");
+  player->prepare((char *)"../res/The_Shawshank_Redemption.mp4");
   player->play(1.0);
   sleep(5);
   player->seek(5000);

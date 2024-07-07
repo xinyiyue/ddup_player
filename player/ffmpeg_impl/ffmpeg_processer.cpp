@@ -8,7 +8,7 @@
 
 FFmpegAudioProcesser::FFmpegAudioProcesser(processer_type_t type,
                                            void *codec_param)
-    : Processer(type) {
+    : Processer(type, codec_param) {
   codec_param_ = (AVCodecParameters *)codec_param;
 }
 
@@ -24,7 +24,7 @@ int FFmpegAudioProcesser::free_data(void *data) {
 
 FFmpegVideoProcesser::FFmpegVideoProcesser(processer_type_t type,
                                            void *codec_param)
-    : Processer(type) {
+    : Processer(type, codec_param) {
   codec_param_ = (AVCodecParameters *)codec_param;
 }
 

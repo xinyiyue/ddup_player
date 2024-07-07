@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 project(sdl_player)
 
+add_compile_options(-g)
+
 set(KISS_SDL_SOURCE
 ./third_party/kiss_sdl/kiss_widgets.c
 ./third_party/kiss_sdl/kiss_draw.c
@@ -32,6 +34,8 @@ set(PLAYER_SOURCE
 ./player/ffmpeg_impl/ffmpeg_stream.cpp
 ./player/ffmpeg_impl/ffmpeg_decoder.cpp
 ./player/ffmpeg_impl/ffmpeg_processer.cpp
+./player/sdl_sink_impl/sdl_audio_sink.cpp
+./player/sdl_sink_impl/sdl_video_sink.cpp
 )
 
 set(GMOCK_PLAYER_SOURCE

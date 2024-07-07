@@ -10,6 +10,11 @@ class Sink : public BufferConsumer {
   Sink(sink_type_t type);
   virtual ~Sink();
 
+  virtual int open(void* codec_param) = 0;
+  virtual int start() = 0;
+  virtual int stop() = 0;
+  virtual int close() = 0;
+
  private:
   sink_type_t type_;
 };
