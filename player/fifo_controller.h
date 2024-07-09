@@ -33,9 +33,7 @@ class Fifo {
   Fifo(const char *name, int count, int size, fifo_type_t type,
        FreeHandler *handler);
   ~Fifo();
-  int wakeup(bool flag);
   bool append(void *data);
-  bool append(void **data);
   bool consume(void *data);
   int discard();
   int discard(void *data);
@@ -47,9 +45,9 @@ class Fifo {
   fifo_type_t type_;
   int efd_write_;
   int efd_read_;
+  fifo_t fifo_;
 
  private:
-  fifo_t fifo_;
   FreeHandler *free_hdl_;
   pthread_mutex_t mutex_;
   std::string name_;
@@ -57,23 +55,25 @@ class Fifo {
 
 class BufferBase {
  public:
-  BufferBase();
+  BufferBase(const char *name);
   ~BufferBase();
 
-  virtual bool append(void *data, fifo_type_t type = COMMON_FIFO);
-  virtual bool consume(void *data, fifo_type_t type = COMMON_FIFO);
-  virtual int discard(fifo_type_t type = COMMON_FIFO);
-
-  bool bind(Fifo *fifo, bool flag);
-  int wait();
-  int abort(int flag, fifo_type_t type = COMMON_FIFO);
   bool is_fifo_full(fifo_type_t type = COMMON_FIFO);
   bool is_fifo_empty(fifo_type_t type = COMMON_FIFO);
-
   const char *get_fifo_name(fifo_type_t type);
+  std::string name_;
+
+ protected:
+  bool append(void *data, fifo_type_t type = COMMON_FIFO);
+  bool consume(void *data, fifo_type_t type = COMMON_FIFO);
+  bool abort(int is_producer, fifo_type_t type = COMMON_FIFO);
+  bool discard(fifo_type_t type = COMMON_FIFO);
+  bool bind(Fifo *fifo, bool flag);
 
  private:
   Fifo *get_fifo(fifo_type_t type);
+  bool wakeup(Fifo *fifo, bool is_producer);
+  bool wait();
 
  private:
   std::vector<Fifo *> fifo_arr_;
@@ -84,28 +84,22 @@ class BufferBase {
 
 class BufferConsumer : public BufferBase {
  public:
-  BufferConsumer(const char *name) : BufferBase() { name_ = name; }
+  BufferConsumer(const char *name) : BufferBase(name) {}
   ~BufferConsumer(){};
 
   bool bind_fifo(Fifo *fifo);
+  bool consume_buffer(void *data, fifo_type_t type = COMMON_FIFO);
   bool consume_abort(fifo_type_t type = COMMON_FIFO);
-  bool consume(void *data, fifo_type_t type = COMMON_FIFO) override;
-  int discard(fifo_type_t type = COMMON_FIFO) override;
-
- private:
-  std::string name_;
+  int discard_buffer(fifo_type_t type = COMMON_FIFO);
 };
 
 class BufferProducer : public BufferBase {
  public:
-  BufferProducer(const char *name) : BufferBase() { name_ = name; };
+  BufferProducer(const char *name) : BufferBase(name){};
   ~BufferProducer(){};
   bool bind_fifo(Fifo *fifo);
   bool append_abort(fifo_type_t type = COMMON_FIFO);
-  bool append(void *data, fifo_type_t type = COMMON_FIFO) override;
-
- private:
-  std::string name_;
+  bool append_buffer(void *data, fifo_type_t type = COMMON_FIFO);
 };
 
 #endif

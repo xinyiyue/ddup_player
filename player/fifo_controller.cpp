@@ -26,36 +26,13 @@ Fifo::~Fifo() {
   }
 };
 
-int Fifo::wakeup(bool flag) {
-  int event_count = 0;
-  char test[10] = "123456789";
-  int efd = 0;
-  if (flag) {
-    efd = efd_write_;
-  } else {
-    efd = efd_read_;
-  }
-  LOGD(TAGF, "write string:%s event to %s fd:%d to wakeup %s", test,
-       flag ? "writing" : "reading", efd, flag ? "producer":"consumer");
-  write(efd, test, 10);
-  return 0;
-}
-
 bool Fifo::append(void *data) {
   AutoLock lock(&mutex_);
   int ret = fifo_add(fifo_, data);
   if (!ret) {
     LOGE(TAGF, "%s add failed:%d", name_.c_str(), ret);
   }
-  LOGE(TAGF, "%s append data success:%p", name_.c_str(), data);
-  wakeup(false);
   return ret;
-}
-
-
-bool Fifo::append(void **data) {
-  LOGD(TAGF, "%s append addr data success:%p", name_.c_str(),*data);
-  return append((void *)data);
 }
 
 bool Fifo::consume(void *data) {
@@ -64,7 +41,6 @@ bool Fifo::consume(void *data) {
   if (!ret) {
     LOGE(TAGF, "%s get failed:%d", name_.c_str(), ret);
   }
-  wakeup(true);
   return ret;
 }
 
@@ -77,7 +53,6 @@ int Fifo::discard() {
     free_hdl_->free_data(data);
   }
   LOGI(TAGF, "%s discard data finish,wake up producer", name_.c_str());
-  wakeup(true);
   return 0;
 }
 
@@ -94,7 +69,7 @@ bool Fifo::is_empty() { return fifo_is_empty(fifo_); }
 
 const char *Fifo::get_name() { return name_.c_str(); }
 
-BufferBase::BufferBase() {
+BufferBase::BufferBase(const char *name) : name_(name) {
   abort_flag_ = 0;
   epollfd_ = epoll_create1(EPOLL_CLOEXEC);
   if (epollfd_ < 0) {
@@ -156,60 +131,91 @@ bool BufferBase::is_fifo_empty(fifo_type_t type) {
 }
 
 bool BufferBase::append(void *data, fifo_type_t type) {
+  bool ret = true;
   Fifo *fifo = get_fifo(type);
   if (!fifo) {
     LOGE(TAGF, "get fifo faied, type:%d, name:%s", type, get_fifo_name(type));
     return false;
   }
-  void *temp = nullptr;
   while (fifo->is_full() && !abort_flag_) {
-    memcpy(&temp, data, sizeof(void *));
-    LOGI(TAGF, "%s is full, wait consumer to consume data,pending buffer:%p",
-         fifo->get_name(), temp);
+    LOGI(TAGF,
+         "%s is full, producer:%s wait consumer to consume data,pending "
+         "buffer:%p",
+         fifo->get_name(), name_.c_str(), *(void **)data);
     wait();
   }
 
   if (abort_flag_) {
-    LOGI(TAGF, "%s is full, and abort append, discard data:%p",
-         fifo->get_name(), temp);
-    fifo->discard(temp);
+    LOGI(TAGF, "%s is full,producer:%s abort append, discard data:%p",
+         fifo->get_name(), name_.c_str(), *(void **)data);
+    ret = fifo->discard(*(void **)data);
+    if (!ret) {
+      LOGI(TAGF, "%s is full,producer:%s discard data:%p failed",
+           fifo->get_name(), name_.c_str(), *(void **)data);
+    }
     abort_flag_ = 0;
+    ret = false;
   } else {
-    fifo->append(data);
+    LOGD(TAGF, "producer %s append buffer:%p to fifo:%s", name_.c_str(),
+         *(void **)data, fifo->get_name());
+    ret = fifo->append(data);
+    if (ret) {
+      ret = wakeup(fifo, false);
+    } else {
+      LOGE(TAGF, "producer %s append buffer:%p to fifo:%s failed",
+           name_.c_str(), *(void **)data, fifo->get_name());
+    }
   }
-  return true;
+  return ret;
 }
 
 bool BufferBase::consume(void *data, fifo_type_t type) {
+  bool ret = true;
   Fifo *fifo = get_fifo(type);
   if (!fifo) {
     LOGE(TAGF, "get fifo faied, type:%d, name:%s", type, get_fifo_name(type));
     return false;
   }
   while (fifo->is_empty() && !abort_flag_) {
-    LOGI(TAGF, "%s is empty, wait producer to produce data", fifo->get_name());
+    LOGI(TAGF, "%s is empty,consumer:%s wait producer to produce data",
+         fifo->get_name(), name_.c_str());
     wait();
   }
   if (abort_flag_) {
-    LOGI(TAGF, "%s is empty, and abort consume", fifo->get_name());
+    LOGI(TAGF, "%s is empty, and consumer:%s abort consume", fifo->get_name(),
+         name_.c_str());
     abort_flag_ = false;
+    ret = false;
   } else {
-    fifo->consume(data);
+    ret = fifo->consume(data);
+    if (ret) {
+      LOGD(TAGF, "consumer %s consume buffer:%p from fifo:%s", name_.c_str(),
+           *(void **)data, fifo->get_name());
+      ret = wakeup(fifo, true);
+    } else {
+      LOGE(TAGF, "consumer %s consume buffer from fifo:%s failed",
+           name_.c_str(), fifo->get_name());
+    }
   }
-  return true;
+  return ret;
 }
 
-int BufferBase::discard(fifo_type_t type) {
+bool BufferBase::discard(fifo_type_t type) {
+  bool ret = 0;
   Fifo *fifo = get_fifo(type);
   if (!fifo) {
     LOGE(TAGF, "get fifo faied, type:%d, name:%s", type, get_fifo_name(type));
     return false;
   }
+  LOGD(TAGF, "consumer %s discard buffer from fifo:%s", name_.c_str(),
+       fifo->get_name());
   fifo->discard();
-  return 0;
+  ret = wakeup(fifo, true);
+  return ret;
 }
 
-int BufferBase::abort(int flag, fifo_type_t type) {
+bool BufferBase::abort(int is_producer, fifo_type_t type) {
+  bool ret = true;
   Fifo *fifo = get_fifo(type);
   if (!fifo) {
     LOGE(TAGF, "ABORT,get fifo faied, type:%d, name:%s", type,
@@ -217,24 +223,40 @@ int BufferBase::abort(int flag, fifo_type_t type) {
     return false;
   }
   abort_flag_ = 1;
-  fifo->wakeup(flag);
-  return 0;
+  ret = wakeup(fifo, is_producer);
+  return ret;
 }
 
-int BufferBase::wait() {
-  LOGI(TAGF, "wait eoll fd: %d", epollfd_);
+bool BufferBase::wakeup(Fifo *fifo, bool is_producer) {
+  int event_count = 0;
+  char test[10] = "123456789";
+  int efd = 0;
+  if (is_producer) {
+    efd = fifo->efd_write_;
+  } else {
+    efd = fifo->efd_read_;
+  }
+  LOGD(TAGF, "%s write string:%s event to %s fd:%d to wakeup %s", name_.c_str(),
+       test, is_producer ? "writing" : "reading", efd,
+       is_producer ? "producer" : "consumer");
+  write(efd, test, 10);
+  return true;
+}
+
+bool BufferBase::wait() {
+  LOGI(TAGF, "%s wait event from eoll fd: %d", name_.c_str(), epollfd_);
   int nfds = epoll_wait(epollfd_, events, MAX_EVENTS, -1);
   if (nfds == -1) {
     perror("epoll_wait");
-    return -1;
+    return false;
   }
   for (int i = 0; i < nfds; i++) {
     char test[10] = {'0'};
     read(events[i].data.fd, test, 10);
-    LOGD(TAGF, "Received event: %s from fd:%d, epoll fd:%d wakeup", test,
-         events[i].data.fd, epollfd_);
+    LOGI(TAGF, "%s Received event: %s from fd:%d, epoll fd:%d wakeup",
+         name_.c_str(), test, events[i].data.fd, epollfd_);
   }
-  return 0;
+  return true;
 }
 
 Fifo *BufferBase::get_fifo(fifo_type_t type) {
@@ -248,49 +270,26 @@ Fifo *BufferBase::get_fifo(fifo_type_t type) {
   return ret;
 }
 
-bool BufferConsumer::bind_fifo(Fifo *fifo) {
-  bind(fifo, false);
-  return true;
-}
+bool BufferConsumer::bind_fifo(Fifo *fifo) { return bind(fifo, false); }
 
 bool BufferConsumer::consume_abort(fifo_type_t type) {
-  LOGI(TAGF, "consumer:%s,consume abort from:%s", name_.c_str(),
-       get_fifo_name(type));
-  abort(false, type);
-  return true;
+  return abort(false, type);
 }
 
-bool BufferConsumer::consume(void *data, fifo_type_t type) {
-  int ret = BufferBase::consume(data, type);
-  void *temp = nullptr;
-  memcpy(&temp, data, sizeof(void *));
-  LOGI(TAGF, "consumer:%s,consume data:%p from:%s", name_.c_str(), temp,
-       get_fifo_name(type));
-  return ret;
+bool BufferConsumer::consume_buffer(void *data, fifo_type_t type) {
+  return BufferBase::consume(data, type);
 }
 
-int BufferConsumer::discard(fifo_type_t type) {
-  LOGI(TAGF, "consumer:%s,discard data from:%s", name_.c_str(),
-       get_fifo_name(type));
+int BufferConsumer::discard_buffer(fifo_type_t type) {
   return BufferBase::discard(type);
 }
 
-bool BufferProducer::bind_fifo(Fifo *fifo) {
-  bind(fifo, true);
-  return true;
-}
+bool BufferProducer::bind_fifo(Fifo *fifo) { return bind(fifo, true); }
 
 bool BufferProducer::append_abort(fifo_type_t type) {
-  LOGI(TAGF, "producer:%s, append abort to:%s", name_.c_str(),
-       get_fifo_name(type));
-  abort(true, type);
-  return true;
+  return abort(true, type);
 }
 
-bool BufferProducer::append(void *data, fifo_type_t type) {
-  void *temp = nullptr;
-  memcpy(&temp, data, sizeof(void *));
-  LOGD(TAGF, "producer:%s, append data:%p to:%s", name_.c_str(), temp,
-       get_fifo_name(type));
+bool BufferProducer::append_buffer(void *data, fifo_type_t type) {
   return BufferBase::append(data, type);
 }
