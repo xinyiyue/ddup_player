@@ -49,9 +49,14 @@ int Stream::flush() {
 }
 
 int Stream::stream_off() {
+  LOGE(TAG, "%s stream off", stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
   dec_thread_exit_ = true;
   consume_abort(stream_type_ == AUDIO_STREAM ? AUDIO_FIFO : VIDEO_FIFO);
+  processer_->append_abort(stream_type_ == AUDIO_STREAM ? AUDIO_FIFO
+                                                        : VIDEO_FIFO);
   if (process_thread_.joinable()) process_thread_.join();
+  LOGE(TAG, "%s stream off, processer unint",
+       stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
   processer_->uninit();
   decoder_->close();
   return 0;
@@ -79,7 +84,7 @@ void *Stream::process_thread(void *arg) {
   Stream *stream = (Stream *)arg;
   while (!stream->dec_thread_exit_) {
     data = nullptr;
-    stream->consume(
+    stream->consume_buffer(
         &data, stream->stream_type_ == AUDIO_STREAM ? AUDIO_FIFO : VIDEO_FIFO);
     if (!data) {
       LOGE(TAG, "%s processer consume data empty,continue",

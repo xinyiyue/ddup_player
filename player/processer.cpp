@@ -41,7 +41,7 @@ int Processer::init() {
 int Processer::flush() {
   LOGI(TAG, "flush, %s sink discard data",
        type_ == AUDIO_PROCESSER ? "audio" : "video", sink_);
-  sink_->discard(type_ == AUDIO_PROCESSER ? AUDIO_FIFO : VIDEO_FIFO);
+  sink_->discard_buffer(type_ == AUDIO_PROCESSER ? AUDIO_FIFO : VIDEO_FIFO);
   return 0;
 }
 

@@ -68,10 +68,10 @@ void *Demux::input_thread(void *arg) {
 
     if (data.type_ == VIDEO_STREAM) {
       LOGI(TAG, "input thread append video pkt:%p", data.data);
-      demux->append(&data.data, VIDEO_FIFO);
+      demux->append_buffer(&data.data, VIDEO_FIFO);
     } else {
       LOGI(TAG, "input thread append audio pkt:%p", data.data);
-      demux->append(&data.data, AUDIO_FIFO);
+      demux->append_buffer(&data.data, AUDIO_FIFO);
     }
   }
   LOGI(TAG, "%s", "input thread exit !!!");
@@ -189,15 +189,14 @@ int Demux::check_discard_data() {
   if (state_ == DEMUX_STATE_STOP || state_ == DEMUX_STATE_PLAY_SEEK ||
       state_ == DEMUX_STATE_PAUSE_SEEK) {
     LOGI(TAG, "%s", "input thread discard data");
-    if (audio_stream_) audio_stream_->discard(AUDIO_FIFO);
-    if (video_stream_) video_stream_->discard(VIDEO_FIFO);
-#if 0
+    if (audio_stream_) audio_stream_->discard_buffer(AUDIO_FIFO);
+    if (video_stream_) video_stream_->discard_buffer(VIDEO_FIFO);
+
     if (state_ == DEMUX_STATE_PLAY_SEEK) {
       state_ = DEMUX_STATE_PLAY;
     } else if (state_ = DEMUX_STATE_PAUSE_SEEK) {
       state_ = DEMUX_STATE_PAUSE;
     }
-#endif
   }
 
   return 0;
