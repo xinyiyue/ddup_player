@@ -1,103 +1,100 @@
-#include <iostream>
 #include "gui_widget/sdl_impl/sdl_progress_bar.h"
+
+#include <iostream>
+
+#include "log/ddup_log.h"
+
+#define TAG "SdlProgBar"
 
 using namespace std;
 
-SdlProgBar::SdlProgBar(char *name,
-                       kiss_window* win,
-                       SDL_Renderer *renderer):ProgBar(name) {
-    m_pWindow = win;
-    m_pRenderer = renderer;
-    m_dirty = true;
-    m_state = PLAYBACK_PLAY;
-    kiss_progressbar_new(&m_bar, win, win->rect.x, win->rect.y + kiss_screen_height - 20, kiss_screen_width);
-    m_rect.x = m_bar.rect.x;
-    m_rect.y = m_bar.rect.y;
-    m_rect.w = m_bar.rect.w;
-    m_rect.h = m_bar.rect.h;
-    kiss_label_new(&m_timeLabel,win, (char*)"0:0:0", win->rect.x, win->rect.y + win->rect.h - 18);
-    kiss_label_new(&m_durLabel, win, (char*)"0:0:0", win->rect.w - 50, win->rect.h - 18);
-}
-        
-bool SdlProgBar::is_dirty() {
-    return m_dirty;
+SdlProgBar::SdlProgBar(const char *name, kiss_window *win,
+                       SDL_Renderer *renderer)
+    : ProgBar(name) {
+  window_ = win;
+  renderer_ = renderer;
+  dirty_ = true;
+  state_ = PLAYBACK_PLAY;
+  kiss_progressbar_new(&bar_, win, win->rect.x,
+                       win->rect.y + kiss_screen_height - 20,
+                       kiss_screen_width);
+  rect_.x = bar_.rect.x;
+  rect_.y = bar_.rect.y;
+  rect_.w = bar_.rect.w;
+  rect_.h = bar_.rect.h;
+  kiss_label_new(&time_label_, win, (char *)"0:0:0", win->rect.x,
+                 win->rect.y + win->rect.h - 18);
+  kiss_label_new(&dur_label_, win, (char *)"0:0:0", win->rect.w - 50,
+                 win->rect.h - 18);
 }
 
+bool SdlProgBar::is_dirty() { return dirty_; }
+
 void SdlProgBar::set_duration(long long duration) {
-    m_duration = duration;
-    int hour = m_duration / 3600;
-    int min  = (m_duration % 3600) / 60;
-    int sec  = (m_duration % 3600) % 60;
-    char buf[10];
-    snprintf(buf,10,"%d:%d:%d",hour, min, sec);
-    kiss_string_copy(m_durLabel.text, KISS_MAX_LABEL, buf, NULL);
-    m_bar.step = (1/(float)m_duration);
-    cout << "bar step:" << m_bar.step << endl;
-    m_bar.run = 1;
+  duration_ = duration;
+  int hour = duration_ / 3600;
+  int min = (duration_ % 3600) / 60;
+  int sec = (duration_ % 3600) % 60;
+  char buf[10];
+  snprintf(buf, 10, "%d:%d:%d", hour, min, sec);
+  kiss_string_copy(dur_label_.text, KISS_MAX_LABEL, buf, NULL);
+  bar_.step = (1 / (float)duration_);
+  LOGI(TAG, "bar step:%f", bar_.step);
+  bar_.run = 1;
 }
 
 void SdlProgBar::set_current_time(long long current) {
-    char buf[10];
-    if (current <= 0) {
-        return;
-    }
-    m_currentTime = current;
-    int hour = m_currentTime/ 3600;
-    int min  = (m_currentTime % 3600) / 60;
-    int sec  = (m_currentTime % 3600) % 60;
-    snprintf(buf,10,"%d:%d:%d",hour, min, sec);
-    kiss_string_copy(m_timeLabel.text, KISS_MAX_LABEL, buf, NULL);
-    m_bar.fraction = m_currentTime /(float)m_duration + 0.01;
+  char buf[10];
+  if (current <= 0) {
+    return;
+  }
+  current_time_ = current;
+  int hour = current_time_ / 3600;
+  int min = (current_time_ % 3600) / 60;
+  int sec = (current_time_ % 3600) % 60;
+  snprintf(buf, 10, "%d:%d:%d", hour, min, sec);
+  kiss_string_copy(time_label_.text, KISS_MAX_LABEL, buf, NULL);
+  bar_.fraction = current_time_ / (float)duration_ + 0.01;
 }
 
 int SdlProgBar::draw() {
-    kiss_progressbar_draw(&m_bar, m_pRenderer);
-    kiss_label_draw(&m_timeLabel, m_pRenderer);
-    kiss_label_draw(&m_durLabel, m_pRenderer);
-    return 0;
+  kiss_progressbar_draw(&bar_, renderer_);
+  kiss_label_draw(&time_label_, renderer_);
+  kiss_label_draw(&dur_label_, renderer_);
+  return 0;
 }
 
-int SdlProgBar::get_type() {
-    return 0;
-}
+int SdlProgBar::get_type() { return 0; }
 
 int SdlProgBar::event_handler(void *event) {
-    SDL_Event *e = (SDL_Event *)event;
-    if (e->type == SDL_MOUSEBUTTONDOWN) {
-        // check if mouse down point is outside of progress bar, then play or pause
-        if (!kiss_pointinrect(e->button.x, e->button.y,&m_rect)) {
-            if (m_state == PLAYBACK_PLAY) {
-                m_state = PLAYBACK_PAUSE;
-            } else if (m_state == PLAYBACK_PAUSE) {
-                m_state = PLAYBACK_PLAY;
-            }
-        } else {
-            m_seekTime = (e->button.x / (float)m_pWindow->rect.w) * m_duration;
-            set_current_time(m_seekTime);
-            m_state = PLAYBACK_SEEK;
-            cout << "check seek state" << endl;
-        }
-        m_dirty = true;
-        if (m_actionCB) {
-            action a;
-            a.state = m_state;
-            a.seek_time = m_seekTime;
-            m_actionCB(m_userdata, &a);
-        }
-        return 1;
+  SDL_Event *e = (SDL_Event *)event;
+  if (e->type == SDL_MOUSEBUTTONDOWN) {
+    // check if mouse down point is outside of progress bar, then play or pause
+    if (!kiss_pointinrect(e->button.x, e->button.y, &rect_)) {
+      if (state_ == PLAYBACK_PLAY) {
+        state_ = PLAYBACK_PAUSE;
+      } else if (state_ == PLAYBACK_PAUSE) {
+        state_ = PLAYBACK_PLAY;
+      }
+    } else {
+      seek_time_ = (e->button.x / (float)window_->rect.w) * duration_;
+      set_current_time(seek_time_);
+      state_ = PLAYBACK_SEEK;
     }
-    return 0;
+    dirty_ = true;
+    if (action_cb_) {
+      action a;
+      a.state = state_;
+      a.seek_time = seek_time_;
+      action_cb_(user_data_, &a);
+    }
+    return 1;
+  }
+  return 0;
 }
 
-int SdlProgBar::set_event_resp_area(int x, int y, int w, int h) {
-    return 0;
-}
+int SdlProgBar::set_event_resp_area(int x, int y, int w, int h) { return 0; }
 
-void *SdlProgBar::get_window() {
-    return m_pWindow;
-}
+void *SdlProgBar::get_window() { return window_; }
 
-void *SdlProgBar::get_renderer() {
-    return m_pRenderer;
-}
-
+void *SdlProgBar::get_renderer() { return renderer_; }
