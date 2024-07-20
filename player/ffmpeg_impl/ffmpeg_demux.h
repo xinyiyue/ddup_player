@@ -16,7 +16,7 @@ class FFmpegDemux : public Demux {
  public:
   FFmpegDemux(EventListener *listener) : Demux(listener){};
   virtual ~FFmpegDemux(){};
-  virtual int prepare(char *url) final;
+  virtual int prepare(const char *url) final;
   virtual int create_stream() final;
   virtual int stop() final;
   virtual int seek(long long seek_time) final;

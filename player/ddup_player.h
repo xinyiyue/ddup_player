@@ -30,16 +30,13 @@ typedef enum DDupEventType {
   DDUP_EVENT_CURRENT_TIME,
 } ddup_event_t;
 
-typedef void (*error_listener_func)(ddup_error_t err);
-
 class DDupPlayer : public EventListener {
  public:
-  DDupPlayer(error_listener_func listener);
+  DDupPlayer(EventListener *listener);
   ~DDupPlayer();
   int open();
-  int prepare(char *url);
-  int play(float speed);
-  int pause();
+  int prepare(const char *url);
+  int set_speed(float speed);
   int seek(long long seek_time);
   int stop();
   int close();
@@ -52,7 +49,6 @@ class DDupPlayer : public EventListener {
   Pipeline *pipeline_;
   ddup_state_t state_;
   long long current_time_;
-  error_listener_func error_listener_;
 };
 
 #endif

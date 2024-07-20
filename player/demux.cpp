@@ -6,12 +6,14 @@
 
 #define TAG "Demux"
 
-Demux::Demux(EventListener *listener) : BufferProducer("demux") {
+Demux::Demux(EventListener *listener)
+    : BufferProducer("demux"), EventListener("Demux") {
   LOGI(TAG, "%s", "construct Demux begin");
   video_stream_ = nullptr;
   audio_stream_ = nullptr;
   input_thread_exit_ = false;
   listener_ = listener;
+  listener_->print_name();
   url_ = "";
   pthread_cond_init(&cond_, NULL);
   pthread_mutex_init(&mutex_, NULL);
@@ -67,10 +69,10 @@ void *Demux::input_thread(void *arg) {
     }
 
     if (data.type_ == VIDEO_STREAM) {
-      LOGI(TAG, "input thread append video pkt:%p", data.data);
+      LOGD(TAG, "input thread append video pkt:%p", data.data);
       demux->append_buffer(&data.data, VIDEO_FIFO);
     } else {
-      LOGI(TAG, "input thread append audio pkt:%p", data.data);
+      LOGD(TAG, "input thread append audio pkt:%p", data.data);
       demux->append_buffer(&data.data, AUDIO_FIFO);
     }
   }
@@ -109,7 +111,7 @@ int Demux::open() {
   return 0;
 }
 
-int Demux::prepare(char *url) {
+int Demux::prepare(const char *url) {
   set_state(DEMUX_STATE_PREPARE);
   url_ = url;
   int ret = create_stream();
@@ -144,44 +146,16 @@ int Demux::prepare(char *url) {
   return 0;
 }
 
-int Demux::play(float speed) {
+int Demux::set_speed(float speed) {
   int ret = 0;
-  set_state(DEMUX_STATE_PLAY);
-  if (audio_stream_) {
-    audio_stream_->play(speed);
-    if (ret < 0) {
-      LOGI(TAG, "%s", "audio stream play failed");
-      return ret;
-    }
+  if (speed == 0.0) {
+    set_state(DEMUX_STATE_PAUSE);
+  } else {
+    set_state(DEMUX_STATE_PLAY);
+    set_ready();
   }
-  if (video_stream_) {
-    video_stream_->play(speed);
-    if (ret < 0) {
-      LOGI(TAG, "%s", "video stream play failed");
-      return ret;
-    }
-  }
-  set_ready();
-  return 0;
-}
-
-int Demux::pause() {
-  int ret = 0;
-  set_state(DEMUX_STATE_PAUSE);
-  if (audio_stream_) {
-    ret = audio_stream_->pause();
-    if (ret < 0) {
-      LOGI(TAG, "%s", "audio stream pause failed");
-      return ret;
-    }
-  }
-  if (video_stream_) {
-    ret = video_stream_->pause();
-    if (ret < 0) {
-      LOGI(TAG, "%s", "video stream pause failed");
-      return ret;
-    }
-  }
+  if (audio_stream_) audio_stream_->set_speed(speed);
+  if (video_stream_) video_stream_->set_speed(speed);
   return 0;
 }
 

@@ -6,13 +6,15 @@
 
 #define TAG "Stream"
 
-Stream::Stream(stream_type_t type)
-    : BufferConsumer(type == AUDIO_STREAM ? "audio_stream" : "video_Stream") {
+Stream::Stream(stream_type_t type, EventListener *listener)
+    : EventListener("Stream"),
+      BufferConsumer(type == AUDIO_STREAM ? "audio_stream" : "video_Stream") {
   eos_ = false;
   stream_type_ = type;
   dec_thread_exit_ = false;
   processer_ = nullptr;
   need_flush_ = false;
+  listener_ = listener;
 };
 
 Stream::~Stream() {
@@ -62,16 +64,14 @@ int Stream::stream_off() {
   return 0;
 }
 
-int Stream::play(float speed) { return 0; }
-
-int Stream::pause() { return 0; }
+int Stream::set_speed(float speed) { return 0; }
 
 void Stream::set_eos() { eos_ = true; }
 
 int Stream::process_raw_data(void *data, void *handle) {
   Stream *stream = (Stream *)handle;
   if (stream->processer_) {
-    LOGE(TAG, "process data %p", data);
+    LOGD(TAG, "process data %p", data);
     stream->processer_->process_data(data);
   }
   return 0;

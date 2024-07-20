@@ -15,16 +15,15 @@ typedef struct av_data {
   void *data;
 } av_data_s;
 
-class Stream : public BufferConsumer {
+class Stream : public BufferConsumer, public EventListener {
  public:
-  Stream(stream_type_t type);
+  Stream(stream_type_t type, EventListener *listener);
   virtual ~Stream();
   virtual int create_decoder() = 0;
   virtual int create_processer() = 0;
   virtual int stream_on();
   virtual int stream_off();
-  virtual int play(float speed);
-  virtual int pause();
+  virtual int set_speed(float speed);
   static int process_raw_data(void *data, void *handle);
   int flush();
   void set_eos();

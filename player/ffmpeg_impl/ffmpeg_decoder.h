@@ -12,7 +12,8 @@ extern "C" {
 class FFmpegDecoder : public Decoder {
  public:
   // codec_param is AVCodecParameters struct type.
-  FFmpegDecoder(void *codec_param) {
+  FFmpegDecoder(void *codec_param, EventListener *listener)
+      : Decoder(listener) {
     codec_param_ = (AVCodecParameters *)codec_param;
   };
 

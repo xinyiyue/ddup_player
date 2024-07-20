@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
   video_layer->set_show(true);
   SdlVideo *video_widget =
       new SdlVideo("video_widge", &win->array_, &win->window_, win->renderer_,
-                   0, 0, 800, 400);
+                   0, 0, 800, 480);
   video_layer->add_widget(static_cast<Widget *>(video_widget));
   SdlButton *pause_button = new SdlButton(
       "pause_button", "pause.png", &win->array_, &win->window_, win->renderer_);
@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
   layer->add_widget(static_cast<Widget *>(prog_bar));
   win->add_layer(static_cast<Layer *>(layer));
   win->add_layer(static_cast<Layer *>(video_layer));
-  // video_widget->open("test");
+  video_widget->open("/home/mi/data/ddup_player/res/birds.mp4");
   win->show();
   delete play_button;
   delete pause_button;

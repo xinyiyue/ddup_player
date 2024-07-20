@@ -17,7 +17,7 @@ class SdlLayer : public Layer {
     for (auto widget : widget_list_) {
       catched = widget->event_handler(event);
       if (catched) {
-        LOGI("SdlLayer", "layer:%s ,widget:%s, cached event:%d", name_.c_str(),
+        LOGD("SdlLayer", "layer:%s ,widget:%s, cached event:%d", name_.c_str(),
              widget->name_.c_str(), e->type);
         break;
       }
@@ -27,7 +27,7 @@ class SdlLayer : public Layer {
 
   virtual int update() final {
     for (auto widget : widget_list_) {
-      LOGI("SdlLayer", "widget:%s, is_dirty:%d", widget->name_.c_str(),
+      LOGD("SdlLayer", "widget:%s, is_dirty:%d", widget->name_.c_str(),
            widget->is_dirty());
       if (widget->is_dirty()) widget->draw();
     }

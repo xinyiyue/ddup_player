@@ -65,13 +65,12 @@ int test_fifo() {
   return 0;
 }
 
-void error_listener(ddup_error_t err) {}
-
 int test_player() {
-  DDupPlayer *player = new DDupPlayer(error_listener);
+  EventListener listener("test_player");
+  DDupPlayer *player = new DDupPlayer(&listener);
   player->open();
   player->prepare((char *)"../res/birds.mp4");
-  player->play(1.0);
+  player->set_speed(1.0);
   sleep(5);
   player->seek(5000);
   sleep(5);

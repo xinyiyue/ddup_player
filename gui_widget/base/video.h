@@ -9,10 +9,9 @@ class Video : public Widget {
   virtual ~Video(){};
 
   virtual int open(const char *url) = 0;
-  virtual int start() = 0;
+  virtual int set_speed(float speed) = 0;
   virtual int stop() = 0;
   virtual int seek(long long seek_time) = 0;
-  virtual int pause_resume(bool pause) = 0;
   virtual int close() = 0;
 
   virtual int draw() { return 0; };
