@@ -7,7 +7,8 @@ extern "C" {
 }
 class FFmpegStream : public Stream {
  public:
-  FFmpegStream(stream_type_t type, AVStream *stream) : Stream(type) {
+  FFmpegStream(stream_type_t type, AVStream *stream, EventListener *listener)
+      : Stream(type, listener) {
     ff_stream_ = stream;
   };
   virtual ~FFmpegStream(){};

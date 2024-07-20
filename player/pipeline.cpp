@@ -7,7 +7,9 @@
 
 #define TAG "Pipeline"
 
-Pipeline::Pipeline(EventListener *listener) { listener_ = listener; }
+Pipeline::Pipeline(EventListener *listener) : EventListener("Pipeline") {
+  listener_ = listener;
+}
 
 Pipeline::~Pipeline() {}
 
@@ -23,7 +25,7 @@ int Pipeline::open() {
   return 0;
 }
 
-int Pipeline::prepare(char *url) {
+int Pipeline::prepare(const char *url) {
   int ret = demux_->prepare(url);
   if (ret < 0) {
     LOGE(TAG, "prepare failed:%s", url);
@@ -33,24 +35,13 @@ int Pipeline::prepare(char *url) {
   return ret;
 }
 
-int Pipeline::play(float speed) {
-  int ret = demux_->play(speed);
+int Pipeline::set_speed(float speed) {
+  int ret = demux_->set_speed(speed);
   if (ret < 0) {
     LOGE(TAG, "play %f failed:%d", speed, ret);
   } else {
     LOGI(TAG, "play %f success", speed);
   }
-  return ret;
-}
-
-int Pipeline::pause() {
-  int ret = demux_->pause();
-  if (ret < 0) {
-    LOGE(TAG, "pause failed:%d", ret);
-  } else {
-    LOGI(TAG, "%s", "pause success");
-  }
-
   return ret;
 }
 

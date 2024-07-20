@@ -5,7 +5,7 @@
 
 #define TAG "FfmpegDemux"
 
-int FFmpegDemux::prepare(char *url) {
+int FFmpegDemux::prepare(const char *url) {
   int ret = 0;
   fmt_ctx_ = avformat_alloc_context();
   ret = avformat_open_input(&fmt_ctx_, url, NULL, NULL);
@@ -19,6 +19,7 @@ int FFmpegDemux::prepare(char *url) {
     LOGE(TAG, "find stream info error:%d", ret);
     return ret;
   }
+  LOGE(TAG, "ffmpeg prepare ok, call demux prepare:%d", ret);
   Demux::prepare(url);
   return 0;
 }
@@ -34,6 +35,10 @@ int FFmpegDemux::stop() {
 }
 
 int FFmpegDemux::create_stream() {
+  if (!fmt_ctx_) {
+    LOGE(TAG, "%s", "create stream failed, fmt_ctx is null");
+    return -1;
+  }
   int ret = 0;
   ret = av_find_best_stream(fmt_ctx_, AVMEDIA_TYPE_VIDEO, -1, -1, NULL, 0);
   if (ret < 0) {
@@ -43,7 +48,8 @@ int FFmpegDemux::create_stream() {
   } else {
     video_stream_index_ = ret;
     AVStream *vstream = fmt_ctx_->streams[video_stream_index_];
-    ret = CreateStream(VIDEO_STREAM, (void *)vstream, &video_stream_);
+    ret = CreateStream(static_cast<EventListener *>(this), VIDEO_STREAM,
+                       (void *)vstream, &video_stream_);
     if (ret < 0) {
       LOGE(TAG, "create video stream failed:%d", ret);
       return ret;
@@ -58,7 +64,8 @@ int FFmpegDemux::create_stream() {
   } else {
     audio_stream_index_ = ret;
     AVStream *astream = fmt_ctx_->streams[audio_stream_index_];
-    ret = CreateStream(AUDIO_STREAM, (void *)astream, &audio_stream_);
+    ret = CreateStream(static_cast<EventListener *>(this), AUDIO_STREAM,
+                       (void *)astream, &audio_stream_);
     if (ret < 0) {
       LOGE(TAG, "create audio stream failed:%d", ret);
       return ret;

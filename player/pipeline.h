@@ -10,9 +10,8 @@ class Pipeline : public EventListener {
   Pipeline(EventListener *listener);
   ~Pipeline();
   virtual int open();
-  virtual int prepare(char *url);
-  virtual int play(float speed);
-  virtual int pause();
+  virtual int prepare(const char *url);
+  virtual int set_speed(float speed);
   virtual int seek(long long seek_time);
   virtual int stop();
   virtual int close();
@@ -22,8 +21,6 @@ class Pipeline : public EventListener {
 
  private:
   Demux *demux_;
-  Decoder *decoder_;
-  EventListener *listener_;
 };
 
 #endif

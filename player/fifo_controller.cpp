@@ -10,7 +10,7 @@ Fifo::Fifo(const char *name, int count, int size, fifo_type_t type,
   pthread_mutex_init(&mutex_, NULL);
   efd_write_ = eventfd(0, EFD_CLOEXEC | EFD_NONBLOCK);
   efd_read_ = eventfd(0, EFD_CLOEXEC | EFD_NONBLOCK);
-  LOGI(TAGF, "fifo type:%d,write fd:%d, read fd:%d", type_, efd_write_,
+  LOGD(TAGF, "fifo type:%d,write fd:%d, read fd:%d", type_, efd_write_,
        efd_read_);
   fifo_ = fifo_create(count, size);
 };
@@ -52,13 +52,13 @@ int Fifo::discard() {
     LOGD(TAGF, "%s discard,free input data:%p", name_.c_str(), data);
     free_hdl_->free_data(data);
   }
-  LOGI(TAGF, "%s discard data finish,wake up producer", name_.c_str());
+  LOGD(TAGF, "%s discard data finish,wake up producer", name_.c_str());
   return 0;
 }
 
 int Fifo::discard(void *data) {
   AutoLock lock(&mutex_);
-  LOGI(TAGF, "discard once, free input data:%p", data);
+  LOGD(TAGF, "discard once, free input data:%p", data);
   free_hdl_->free_data(data);
   return 0;
 }
@@ -75,7 +75,7 @@ BufferBase::BufferBase(const char *name) : name_(name) {
   if (epollfd_ < 0) {
     perror("create epoll error:");
   }
-  LOGI(TAGF, "create epoll fd:%d", epollfd_);
+  LOGD(TAGF, "create epoll fd:%d", epollfd_);
 }
 
 BufferBase::~BufferBase() {
@@ -107,7 +107,7 @@ bool BufferBase::bind(Fifo *fifo, bool flag) {
     LOGE(TAGF, "add epoll failed, reading fd:%d", fifo->efd_read_);
     return false;
   }
-  LOGI(TAGF, "add %s fd:%d to epoll fd:%d", flag ? "wrting" : "reading",
+  LOGD(TAGF, "add %s fd:%d to epoll fd:%d", flag ? "wrting" : "reading",
        ev.data.fd, epollfd_);
   return true;
 }
@@ -138,7 +138,7 @@ bool BufferBase::append(void *data, fifo_type_t type) {
     return false;
   }
   while (fifo->is_full() && !abort_flag_) {
-    LOGI(TAGF,
+    LOGD(TAGF,
          "%s is full, producer:%s wait consumer to consume data,pending "
          "buffer:%p",
          fifo->get_name(), name_.c_str(), *(void **)data);
@@ -146,11 +146,11 @@ bool BufferBase::append(void *data, fifo_type_t type) {
   }
 
   if (abort_flag_) {
-    LOGI(TAGF, "%s is full,producer:%s abort append, discard data:%p",
+    LOGD(TAGF, "%s is full,producer:%s abort append, discard data:%p",
          fifo->get_name(), name_.c_str(), *(void **)data);
     ret = fifo->discard(*(void **)data);
     if (!ret) {
-      LOGI(TAGF, "%s is full,producer:%s discard data:%p failed",
+      LOGD(TAGF, "%s is full,producer:%s discard data:%p failed",
            fifo->get_name(), name_.c_str(), *(void **)data);
     }
     abort_flag_ = 0;
@@ -177,12 +177,12 @@ bool BufferBase::consume(void *data, fifo_type_t type) {
     return false;
   }
   while (fifo->is_empty() && !abort_flag_) {
-    LOGI(TAGF, "%s is empty,consumer:%s wait producer to produce data",
+    LOGD(TAGF, "%s is empty,consumer:%s wait producer to produce data",
          fifo->get_name(), name_.c_str());
     wait();
   }
   if (abort_flag_) {
-    LOGI(TAGF, "%s is empty, and consumer:%s abort consume", fifo->get_name(),
+    LOGD(TAGF, "%s is empty, and consumer:%s abort consume", fifo->get_name(),
          name_.c_str());
     abort_flag_ = false;
     ret = false;
@@ -244,7 +244,7 @@ bool BufferBase::wakeup(Fifo *fifo, bool is_producer) {
 }
 
 bool BufferBase::wait() {
-  LOGI(TAGF, "%s wait event from eoll fd: %d", name_.c_str(), epollfd_);
+  LOGD(TAGF, "%s wait event from eoll fd: %d", name_.c_str(), epollfd_);
   int nfds = epoll_wait(epollfd_, events, MAX_EVENTS, -1);
   if (nfds == -1) {
     perror("epoll_wait");
@@ -253,7 +253,7 @@ bool BufferBase::wait() {
   for (int i = 0; i < nfds; i++) {
     char test[10] = {'0'};
     read(events[i].data.fd, test, 10);
-    LOGI(TAGF, "%s Received event: %s from fd:%d, epoll fd:%d wakeup",
+    LOGD(TAGF, "%s Received event: %s from fd:%d, epoll fd:%d wakeup",
          name_.c_str(), test, events[i].data.fd, epollfd_);
   }
   return true;

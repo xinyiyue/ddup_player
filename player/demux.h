@@ -37,9 +37,8 @@ class Demux : public EventListener, public BufferProducer, public FreeHandler {
   virtual void notify_error(int error_type);
 
   virtual int open();
-  virtual int prepare(char *url);
-  virtual int play(float speed);
-  virtual int pause();
+  virtual int prepare(const char *url);
+  virtual int set_speed(float speed);
   virtual int seek(long long seek_time);
   virtual int stop();
   virtual int close();
@@ -61,7 +60,6 @@ class Demux : public EventListener, public BufferProducer, public FreeHandler {
   pthread_cond_t cond_;
   pthread_mutex_t cmd_mutex_;
   bool input_thread_exit_;
-  EventListener *listener_;
 
  private:
   virtual int create_stream() = 0;

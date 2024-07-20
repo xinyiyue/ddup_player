@@ -17,6 +17,7 @@ set(SDL_IMPL_SOURCE
 ./gui_widget/sdl_impl/sdl_window.cpp
 ./gui_widget/sdl_impl/sdl_video.cpp
 ./gui_widget/sdl_impl/sdl_progress_bar.cpp
+./gui_widget/sdl_impl/sdl_texture_builder.cpp
 )
 
 set(PLAYER_SOURCE
@@ -32,6 +33,8 @@ set(PLAYER_SOURCE
 ./player/ffmpeg_impl/ffmpeg_stream.cpp
 ./player/ffmpeg_impl/ffmpeg_decoder.cpp
 ./player/ffmpeg_impl/ffmpeg_processer.cpp
+./player/sdl_impl/sdl_video_sink.cpp
+./player/sdl_impl/sdl_audio_sink.cpp
 )
 
 set(GMOCK_PLAYER_SOURCE
@@ -83,13 +86,14 @@ find_library(PTHREAD_LIBRARY    pthread    /usr/lib/x86_64-linux-gnu)
 find_library(AVFORMAT_LIBRARY   avformat   ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ffmpeg-7.0.1/lib)
 find_library(AVCODEC_LIBRARY    avcodec    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ffmpeg-7.0.1/lib)
 find_library(AVUTIL_LIBRARY     avutil     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ffmpeg-7.0.1/lib)
+find_library(SWSCALE_LIBRARY    swscale    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ffmpeg-7.0.1/lib)
 find_library(GTEST_LIBRARY      gtest      ${CMAKE_CURRENT_SOURCE_DIR}/third_party/GoogleTest/lib)
 find_library(GTEST_MAIN_LIBRARY gtest_main ${CMAKE_CURRENT_SOURCE_DIR}/third_party/GoogleTest/lib)
 find_library(GMOCK_LIBRARY      gmock      ${CMAKE_CURRENT_SOURCE_DIR}/third_party/GoogleTest/lib)
 find_library(GMOCK_MAIN_LIBRARY gmock_main ${CMAKE_CURRENT_SOURCE_DIR}/third_party/GoogleTest/lib)
 target_link_libraries(pcw ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY} ${SDL2_LIBRARY})
-target_link_libraries(test ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY} ${PTHREAD_LIBRARY} ${AVFORMAT_LIBRARY} ${AVCODEC_LIBRARY} ${AVUTIL_LIBRARY})
-target_link_libraries(ddup_app ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY} ${PTHREAD_LIBRARY} ${AVFORMAT_LIBRARY} ${AVCODEC_LIBRARY} ${AVUTIL_LIBRARY})
+target_link_libraries(test ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY} ${PTHREAD_LIBRARY} ${AVFORMAT_LIBRARY} ${AVCODEC_LIBRARY} ${AVUTIL_LIBRARY} ${SWSCALE_LIBRARY})
+target_link_libraries(ddup_app ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY} ${PTHREAD_LIBRARY} ${AVFORMAT_LIBRARY} ${AVCODEC_LIBRARY} ${AVUTIL_LIBRARY} ${SWSCALE_LIBRARY})
 target_link_libraries(gtest ${GTEST_LIBRARY} ${GTEST_MAIN_LIBRARY} ${GMOCK_LIBRARY} ${GMOCK_MAIN_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY} ${PTHREAD_LIBRARY} ${AVFORMAT_LIBRARY} ${AVCODEC_LIBRARY} ${AVUTIL_LIBRARY})
 install(TARGETS pcw DESTINATION result)
 install(TARGETS test DESTINATION result)

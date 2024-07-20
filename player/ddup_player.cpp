@@ -9,8 +9,8 @@ using namespace std;
 
 #define TAG "DDupPlayer"
 
-DDupPlayer::DDupPlayer(error_listener_func listener) {
-  error_listener_ = listener;
+DDupPlayer::DDupPlayer(EventListener *listener) : EventListener("DDupPlayer") {
+  listener_ = listener;
 }
 
 DDupPlayer::~DDupPlayer() {
@@ -30,18 +30,13 @@ int DDupPlayer::open() {
   return 0;
 }
 
-int DDupPlayer::prepare(char *url) {
+int DDupPlayer::prepare(const char *url) {
   pipeline_->prepare(url);
   return 0;
 }
 
-int DDupPlayer::play(float speed) {
-  pipeline_->play(speed);
-  return 0;
-}
-
-int DDupPlayer::pause() {
-  pipeline_->pause();
+int DDupPlayer::set_speed(float speed) {
+  pipeline_->set_speed(speed);
   return 0;
 }
 
@@ -84,5 +79,5 @@ void DDupPlayer::notify_event(int event_type, void *ret) {
 
 void DDupPlayer::notify_error(int error_type) {
   LOGI(TAG, "got error:%d", error_type);
-  error_listener_((ddup_error_t)error_type);
+  listener_->notify_error((ddup_error_t)error_type);
 }
