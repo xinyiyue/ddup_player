@@ -3,6 +3,7 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+
 #include "player/util.h"
 
 // 定义日志等级
@@ -32,21 +33,26 @@ static const char *get_level_string(LogLevel level) {
   return ret;
 }
 
-static void log(LogLevel level, const char *tag, const char *format, ...) {
+static void log(LogLevel level, const char *tag, const char *func, int line,
+                const char *format, ...) {
   if (level > level_) return;
   AutoLock lock(&log_mutex);
   const char *levelStr = get_level_string(level);
   va_list args;
   va_start(args, format);
-  fprintf(stdout, "[%s][%s]:", levelStr, tag);
+  fprintf(stdout, "[%s][%s][%s][%d]:", levelStr, tag, func, line);
   vfprintf(stdout, format, args);
   fprintf(stdout, "\n");
   va_end(args);
 }
 
-#define LOGE(TAG, FORMAT, ...) log(ERROR, TAG, FORMAT, __VA_ARGS__)
-#define LOGI(TAG, FORMAT, ...) log(INFO, TAG, FORMAT, __VA_ARGS__)
-#define LOGW(TAG, FORMAT, ...) log(WARNING, TAG, FORMAT, __VA_ARGS__)
-#define LOGD(TAG, FORMAT, ...) log(DEBUG, TAG, FORMAT, __VA_ARGS__)
+#define LOGE(TAG, FORMAT, ...) \
+  log(ERROR, TAG, __func__, __LINE__, FORMAT, __VA_ARGS__)
+#define LOGI(TAG, FORMAT, ...) \
+  log(INFO, TAG, __func__, __LINE__, FORMAT, __VA_ARGS__)
+#define LOGW(TAG, FORMAT, ...) \
+  log(WARNING, TAG, __func__, __LINE__, FORMAT, __VA_ARGS__)
+#define LOGD(TAG, FORMAT, ...) \
+  log(DEBUG, TAG, __func__, __LINE__, FORMAT, __VA_ARGS__)
 
 #endif
