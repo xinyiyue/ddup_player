@@ -12,7 +12,7 @@
             "program": "${workspaceRoot}/build/ddup_app",
             "args": [],
             "stopAtEntry": true,
-            "cwd": "${workspaceRoot}/build/",
+            "cwd": "${workspaceRoot}/build/result",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",

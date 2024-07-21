@@ -7,6 +7,7 @@
 extern "C" {
 #include "libavcodec/avcodec.h"
 #include "libavutil/imgutils.h"
+#include "libswresample/swresample.h"
 #include "libswscale/swscale.h"
 }
 
@@ -20,6 +21,7 @@ class FFmpegAudioProcesser : public Processer {
  private:
   virtual int config() final;
   AVCodecParameters *codec_param_;
+  SwrContext *swr_ctx = NULL;
 };
 
 class FFmpegVideoProcesser : public Processer {
