@@ -31,10 +31,12 @@ int FFmpegAudioProcesser::process(void *data, void **out) {
 }
 
 int FFmpegAudioProcesser::free_data(void *data) {
-  AVFrame *frame = (AVFrame *)data;
-  LOGD(TAGA, "audio processer free frame:%p", frame);
-  av_frame_unref(frame);
-  av_frame_free(&frame);
+  render_buffer_s *buff = (render_buffer_s *)data;
+  LOGD(TAGA, "audio processer free render buff:%p", buff);
+  if (buff->data) {
+    free(buff->data);
+  }
+  free(buff);
   return 0;
 }
 
@@ -200,9 +202,12 @@ int FFmpegVideoProcesser::process(void *data, void **out) {
 }
 
 int FFmpegVideoProcesser::free_data(void *data) {
-  AVFrame *frame = (AVFrame *)data;
-  LOGD(TAGV, "video processer free frame:%p", frame);
-  av_frame_unref(frame);
-  av_frame_free(&frame);
+  render_buffer_s *buff = (render_buffer_s *)data;
+  LOGD(TAGA, "video processer free render buff:%p", buff);
+  if (buff->data) {
+    free(buff->data);
+  }
+  free(buff);
+
   return 0;
 }

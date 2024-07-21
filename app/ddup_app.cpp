@@ -61,6 +61,7 @@ int main(int argc, char *argv[]) {
   win->add_layer(static_cast<Layer *>(video_layer));
   video_widget->open("/home/mi/data/ddup_player/res/birds.mp4");
   win->show();
+  delete video_widget;
   delete play_button;
   delete pause_button;
   delete prog_bar;

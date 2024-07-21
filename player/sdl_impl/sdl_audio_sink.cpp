@@ -21,8 +21,10 @@ int SdlAudioSink::init() {
 }
 
 int SdlAudioSink::uninit() {
+  LOGI(TAG, "%s", "uninit");
   exit_ = true;
   consume_abort(AUDIO_FIFO);
+  if (render_thread_id_.joinable()) render_thread_id_.join();
   return 0;
 }
 

@@ -1,5 +1,6 @@
-
 #include "player/processer.h"
+
+#include <cassert>
 
 #include "log/ddup_log.h"
 #include "player/buffer.h"
@@ -16,7 +17,10 @@ Processer::Processer(processer_type_t type, EventListener *listener)
 }
 
 Processer::~Processer() {
-  if (raw_fifo_) delete raw_fifo_;
+  if (raw_fifo_) {
+    assert(raw_fifo_->is_empty());
+    delete raw_fifo_;
+  }
   if (sink_) delete sink_;
 }
 
@@ -61,6 +65,7 @@ int Processer::process_data(void *data) {
 
 int Processer::uninit() {
   flush();
+  LOGI(TAG, "call %s sink unint", type_ == AUDIO_PROCESSER ? "audio" : "video");
   sink_->uninit();
   return 0;
 }
