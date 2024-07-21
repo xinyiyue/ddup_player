@@ -14,6 +14,7 @@ using namespace std;
 struct play_pause_bar {
   SdlButton *pause_button;
   SdlButton *play_button;
+  SdlVideo *video;
 };
 
 void handle_bar_event(void *userdata, void *event) {
@@ -22,11 +23,13 @@ void handle_bar_event(void *userdata, void *event) {
   cout << "bar_event handler,state::" << a->state
        << ", seek_time:" << a->seek_time << endl;
   if (a->state == PLAYBACK_PAUSE) {
+    ppb->video->set_speed(0.0);
     ppb->pause_button->set_show(true, 0);
     ppb->play_button->set_show(false, 0);
   } else if (a->state == PLAYBACK_PLAY) {
+    ppb->video->set_speed(1.0);
     ppb->pause_button->set_show(false, 0);
-    ppb->play_button->set_show(true, 3000);
+    ppb->play_button->set_show(true, 1500);
   }
 }
 
@@ -52,8 +55,8 @@ int main(int argc, char *argv[]) {
   struct play_pause_bar ppb;
   ppb.pause_button = pause_button;
   ppb.play_button = play_button;
+  ppb.video = video_widget;
   prog_bar->set_action_callback(handle_bar_event, &ppb);
-  prog_bar->set_duration(1000);
   layer->add_widget(static_cast<Widget *>(pause_button));
   layer->add_widget(static_cast<Widget *>(play_button));
   layer->add_widget(static_cast<Widget *>(prog_bar));
