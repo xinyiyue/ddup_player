@@ -65,6 +65,10 @@ SdlTextureBuilder::~SdlTextureBuilder() {
   if (mutex_) {
     SDL_DestroyMutex(mutex_);
   }
+  if (texture_) {
+    LOGI(TAG, "%s", "destory texture in ~SdlTextureBuilder");
+    SDL_DestroyTexture(texture_);
+  }
 }
 
 int SdlTextureBuilder::get_supported_format(video_format_s *format) {

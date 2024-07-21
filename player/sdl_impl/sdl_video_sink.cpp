@@ -1,6 +1,8 @@
-#include <functional>
-#include "log/ddup_log.h"
 #include "player/sdl_impl/sdl_video_sink.h"
+
+#include <functional>
+
+#include "log/ddup_log.h"
 
 #define TAG "SdlVideoSink"
 
@@ -30,8 +32,10 @@ int SdlVideoSink::init() {
 }
 
 int SdlVideoSink::uninit() {
+  LOGI(TAG, "%s", "uninit");
   exit_ = true;
   consume_abort(VIDEO_FIFO);
+  if (render_thread_id_.joinable()) render_thread_id_.join();
   return 0;
 }
 

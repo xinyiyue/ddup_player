@@ -11,7 +11,11 @@ Pipeline::Pipeline(EventListener *listener) : EventListener("Pipeline") {
   listener_ = listener;
 }
 
-Pipeline::~Pipeline() {}
+Pipeline::~Pipeline() {
+  if (demux_) {
+    delete demux_;
+  }
+}
 
 int Pipeline::open() {
   int ret = CreateDemux(this, &demux_);

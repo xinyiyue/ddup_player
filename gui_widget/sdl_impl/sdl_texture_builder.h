@@ -2,8 +2,8 @@
 #define __SDL_TEXTURE_BUILDER_H__
 
 #include "gui_widget/base/texture_builder.h"
-#include "third_party/kiss_sdl/kiss_sdl.h"
 #include "player/buffer.h"
+#include "third_party/kiss_sdl/kiss_sdl.h"
 
 class SdlTextureBuilder : public TextureBuilder {
  public:

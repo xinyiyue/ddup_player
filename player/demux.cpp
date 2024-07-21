@@ -1,5 +1,6 @@
 #include "player/demux.h"
 
+#include <cassert>
 #include <functional>
 
 #include "log/ddup_log.h"
@@ -29,6 +30,14 @@ Demux::~Demux() {
   if (video_stream_) {
     delete video_stream_;
     video_stream_ = nullptr;
+  }
+  if (audio_fifo_) {
+    assert(audio_fifo_->is_empty());
+    delete audio_fifo_;
+  }
+  if (video_fifo_) {
+    assert(video_fifo_->is_empty());
+    delete video_fifo_;
   }
   pthread_cond_destroy(&cond_);
   pthread_mutex_destroy(&mutex_);

@@ -35,11 +35,15 @@ int SdlVideo::open(const char *url) {
 
 int SdlVideo::set_speed(float speed) { return player_->set_speed(speed); }
 
-int SdlVideo::stop() { return player_->stop(); }
+int SdlVideo::stop() {
+  LOGI(TAG, "%s", "sdl video stop");
+  return player_->stop();
+}
 
 int SdlVideo::seek(long long seek_time) { return player_->seek(seek_time); }
 
 int SdlVideo::close() {
+  LOGI(TAG, "%s", "sdl video close");
   player_->close();
   exit_ = true;
   return 0;
@@ -59,6 +63,10 @@ int SdlVideo::event_handler(void *event) {
     LOGD(TAG, "%s",
          "catch event video update event, will update video picture");
     return 1;
+  } else if (e->type == SDL_QUIT) {
+    LOGI(TAG, "%s", "catch SDL QUIT event, will stop and close");
+    stop();
+    close();
   }
   return 0;
 }

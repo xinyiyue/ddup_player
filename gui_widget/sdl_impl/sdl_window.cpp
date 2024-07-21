@@ -43,13 +43,14 @@ int SdlWindow::show() {
   SDL_Event event;
   while (!exit_) {
     while (SDL_WaitEvent(&event)) {
+      if (event_handler(&event)) {
+        update();
+      }
+
       if (event.type == SDL_QUIT) {
         LOGI(TAG, "%s", "get quit event");
         exit_ = true;
         break;
-      }
-      if (event_handler(&event)) {
-        update();
       }
     }
   }

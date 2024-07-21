@@ -55,6 +55,8 @@ int FFmpegDecoder::decode(void *data, out_cb cb, void *arg) {
     LOGE(TAG, "Error submitting a packet for decoding (%d)", ret);
     return ret;
   }
+  av_packet_unref(pkt);
+  av_packet_free(&pkt);
 
   while (frame_remain) {
     AVFrame *frame = NULL;
