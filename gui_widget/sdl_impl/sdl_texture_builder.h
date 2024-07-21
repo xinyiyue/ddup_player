@@ -7,8 +7,8 @@
 
 class SdlTextureBuilder : public TextureBuilder {
  public:
-  SdlTextureBuilder(const char *name, SDL_Renderer *renderer, int x, int y,
-                    int w, int h);
+  SdlTextureBuilder(const char *name, SDL_mutex *renderer_mutex,
+                    SDL_Renderer *renderer, int x, int y, int w, int h);
   ~SdlTextureBuilder();
 
   SDL_PixelFormatEnum map_to_sdl_pixel_format(pixel_format_t format);
@@ -29,6 +29,7 @@ class SdlTextureBuilder : public TextureBuilder {
 
  private:
   SDL_Renderer *renderer_;
+  SDL_mutex *renderer_mutex_;
 };
 
 #endif

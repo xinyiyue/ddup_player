@@ -43,8 +43,8 @@ int main(int argc, char *argv[]) {
   video_layer->set_zorder(1);
   video_layer->set_show(true);
   SdlVideo *video_widget =
-      new SdlVideo("video_widge", &win->array_, &win->window_, win->renderer_,
-                   0, 0, 800, 480);
+      new SdlVideo("video_widge", &win->array_, &win->window_,
+                   win->renderer_mutex_, win->renderer_, 0, 0, 800, 480);
   video_layer->add_widget(static_cast<Widget *>(video_widget));
   SdlButton *pause_button = new SdlButton(
       "pause_button", "pause.png", &win->array_, &win->window_, win->renderer_);
