@@ -68,11 +68,18 @@ void DDupPlayer::notify_event(int event_type, void *ret) {
     case DDUP_EVENT_CLOSED:
       LOGI(TAG, "got playstate event:%d, ret:%d", event, *(int *)ret);
       break;
-    case DDUP_EVENT_CURRENT_TIME:
+    case DDUP_EVENT_POSITION:
       current_time_ = *(long long *)ret;
-      LOGI(TAG, "got current time:%lld", current_time_);
+      LOGD(TAG, "got current time:%lld", current_time_);
+      listener_->notify_event(event_type, ret);
+      break;
+    case DDUP_EVENT_DURATION:
+      duration_ = *(long long *)ret;
+      LOGI(TAG, "got duration:%lld", duration_);
+      listener_->notify_event(event_type, ret);
       break;
     default:
+      listener_->notify_event(event_type, ret);
       break;
   };
 }

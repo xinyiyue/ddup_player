@@ -57,6 +57,7 @@ void *SdlVideoSink::video_render_thread(void *arg) {
       continue;
     }
     sink->texture_builder_->build_texture(buff);
+    listener_->notify_event(DDUP_EVENT_POSITION, (void *)&buff->pts);
     free(buff->data);
     free(buff);
     SDL_Delay(50);  // 50ms

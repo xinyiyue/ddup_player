@@ -16,9 +16,6 @@ class Pipeline : public EventListener {
   virtual int stop();
   virtual int close();
 
-  virtual void notify_event(int event_type) final;
-  virtual void notify_error(int error_type) final;
-
  private:
   Demux *demux_;
 };

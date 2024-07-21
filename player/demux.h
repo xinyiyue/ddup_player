@@ -61,6 +61,9 @@ class Demux : public EventListener, public BufferProducer, public FreeHandler {
   pthread_mutex_t cmd_mutex_;
   bool input_thread_exit_;
 
+ protected:
+  long long duration_;
+
  private:
   virtual int create_stream() = 0;
   void *input_thread(void *arg);

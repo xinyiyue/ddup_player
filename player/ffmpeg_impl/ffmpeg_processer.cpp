@@ -25,6 +25,10 @@ int FFmpegAudioProcesser::process(void *data, void **out) {
       (render_buffer_s *)malloc(sizeof(render_buffer_s));
   dst_buff->data = (char *)malloc(10);
   *out = dst_buff;
+  AVRational base_ms = {1, 1000};
+  dst_buff->pts = av_rescale_q(frame->pts, AV_TIME_BASE_Q, base_ms);
+  LOGD(TAGA, "convert audio frame time_base:%d, %d, pts:%lld to ms:%lld",
+       frame->time_base.num, frame->time_base.den, frame->pts, dst_buff->pts);
   av_frame_unref(frame);
   av_frame_free(&frame);
   return 0;
@@ -163,7 +167,10 @@ int FFmpegVideoProcesser::process(void *data, void **out) {
     dst_buff->width = dst_fmt_.width;
     dst_buff->height = dst_fmt_.height;
     dst_buff->frame_rate = codec_param_->framerate.num;
-    dst_buff->pts = frame->pts * av_q2d(frame->time_base) * 1000;
+    AVRational base_ms = {1, 80000};
+    dst_buff->pts = av_rescale_q(frame->pts, AV_TIME_BASE_Q, base_ms);
+    LOGD(TAGV, "convert frame time_base:%d, %d, pts:%lld to ms:%lld",
+         frame->time_base.num, frame->time_base.den, frame->pts, dst_buff->pts);
     if (DUMP_VIDEO_BUFFER == 1) {
       if (dump_file_index < 20) {
         std::string file_name = "/home/mi/data/ddup_player/res/dump_video_" +

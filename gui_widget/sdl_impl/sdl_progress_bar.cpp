@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include "gui_widget/sdl_impl/sdl_user_event.h"
 #include "log/ddup_log.h"
 
 #define TAG "SdlProgBar"
@@ -24,17 +25,19 @@ SdlProgBar::SdlProgBar(const char *name, kiss_window *win,
   rect_.h = bar_.rect.h;
   kiss_label_new(&time_label_, win, (char *)"0:0:0", win->rect.x,
                  win->rect.y + win->rect.h - 18);
-  kiss_label_new(&dur_label_, win, (char *)"0:0:0", win->rect.w - 50,
+  kiss_label_new(&dur_label_, win, (char *)"0:0:0", win->rect.w - 55,
                  win->rect.h - 18);
+  duration_ = 0;
 }
 
 bool SdlProgBar::is_dirty() { return dirty_; }
 
 void SdlProgBar::set_duration(long long duration) {
+  LOGI(TAG, "set duration:%lld", duration);
   duration_ = duration;
-  int hour = duration_ / 3600;
-  int min = (duration_ % 3600) / 60;
-  int sec = (duration_ % 3600) % 60;
+  int hour = (duration_ / 1000) / 3600;
+  int min = ((duration_ / 1000) % 3600) / 60;
+  int sec = ((duration_ / 1000) % 3600) % 60;
   char buf[10];
   snprintf(buf, 10, "%d:%d:%d", hour, min, sec);
   kiss_string_copy(dur_label_.text, KISS_MAX_LABEL, buf, NULL);
@@ -45,13 +48,13 @@ void SdlProgBar::set_duration(long long duration) {
 
 void SdlProgBar::set_current_time(long long current) {
   char buf[10];
-  if (current <= 0) {
+  if (current <= 0 || current == current_time_) {
     return;
   }
   current_time_ = current;
-  int hour = current_time_ / 3600;
-  int min = (current_time_ % 3600) / 60;
-  int sec = (current_time_ % 3600) % 60;
+  int hour = (current_time_ / 1000) / 3600;
+  int min = ((current_time_ / 1000) % 3600) / 60;
+  int sec = ((current_time_ / 1000) % 3600) % 60;
   snprintf(buf, 10, "%d:%d:%d", hour, min, sec);
   kiss_string_copy(time_label_.text, KISS_MAX_LABEL, buf, NULL);
   bar_.fraction = current_time_ / (float)duration_ + 0.01;
@@ -88,6 +91,14 @@ int SdlProgBar::event_handler(void *event) {
       a.seek_time = seek_time_;
       action_cb_(user_data_, &a);
     }
+    return 1;
+  } else if (e->type == SDL_USER_EVENT_DURATION_UPDATE) {
+    long long duration = *(long long *)e->user.data1;
+    set_duration(duration);
+    return 1;
+  } else if (e->type == SDL_USER_EVENT_POSITION_UPDATE) {
+    long long position = *(long long *)e->user.data1;
+    set_current_time(position);
     return 1;
   }
   return 0;

@@ -81,7 +81,3 @@ int Pipeline::close() {
 
   return ret;
 }
-
-void Pipeline::notify_event(int event_type) {}
-
-void Pipeline::notify_error(int error_type) {}

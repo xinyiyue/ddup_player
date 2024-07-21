@@ -14,22 +14,6 @@ typedef enum DDupState {
   DDUP_STATE_CLOSE
 } ddup_state_t;
 
-typedef enum DDupErrorType {
-  DDUP_NETWORK_ERROR,
-  DDUP_DECODE_ERROR,
-  DDUP_PLAYBACK_ERROR,
-} ddup_error_t;
-
-typedef enum DDupEventType {
-  DDUP_EVENT_OPENED,
-  DDUP_EVENT_PLAYED,
-  DDUP_EVENT_PAUSED,
-  DDUP_EVENT_SEEKED,
-  DDUP_EVENT_STOPPED,
-  DDUP_EVENT_CLOSED,
-  DDUP_EVENT_CURRENT_TIME,
-} ddup_event_t;
-
 class DDupPlayer : public EventListener {
  public:
   DDupPlayer(EventListener *listener);
@@ -41,7 +25,6 @@ class DDupPlayer : public EventListener {
   int stop();
   int close();
   long long get_current_time();
-
   virtual void notify_event(int event_type, void *ret) final;
   virtual void notify_error(int error_type) final;
 
@@ -49,6 +32,7 @@ class DDupPlayer : public EventListener {
   Pipeline *pipeline_;
   ddup_state_t state_;
   long long current_time_;
+  long long duration_;
 };
 
 #endif

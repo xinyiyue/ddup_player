@@ -71,6 +71,36 @@ int SdlVideo::event_handler(void *event) {
   return 0;
 }
 
+void SdlVideo::notify_event(int event_type, void *ret) {
+  ddup_event_t dd_event = (ddup_event_t)event_type;
+  SDL_Event event;
+  switch (dd_event) {
+    case DDUP_EVENT_POSITION:
+      event.type = SDL_USER_EVENT_POSITION_UPDATE;
+      event.user.data1 = ret;
+      event.user.data2 = NULL;
+      SDL_PushEvent(&event);
+      LOGD(TAG, "notify SDL_USER_EVENT_POSITION_UPDATE:%lld",
+           *(long long *)ret);
+      break;
+    case DDUP_EVENT_DURATION:
+      event.type = SDL_USER_EVENT_DURATION_UPDATE;
+      event.user.data1 = ret;
+      event.user.data2 = NULL;
+      SDL_PushEvent(&event);
+      LOGD(TAG, "notify SDL_USER_EVENT_DURATION_UPDATE:%lld",
+           *(long long *)ret);
+      break;
+    default:
+      if (listener_) listener_->notify_event(event_type, ret);
+      break;
+  };
+}
+
+void SdlVideo::notify_error(int error_type) {
+  if (listener_) listener_->notify_error(error_type);
+}
+
 int SdlVideo::set_event_resp_area(int x, int y, int w, int h) { return 0; }
 
 void *SdlVideo::get_window() { return window_; }

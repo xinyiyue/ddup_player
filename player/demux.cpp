@@ -44,7 +44,9 @@ Demux::~Demux() {
   pthread_mutex_destroy(&cmd_mutex_);
 }
 
-void Demux::notify_event(int event_type, void *ret) {}
+void Demux::notify_event(int event_type, void *ret) {
+  listener_->notify_event(event_type, ret);
+}
 
 void Demux::notify_error(int error_type) {
   listener_->notify_error(error_type);
@@ -122,6 +124,7 @@ int Demux::open() {
 
 int Demux::prepare(const char *url) {
   set_state(DEMUX_STATE_PREPARE);
+  notify_event(DDUP_EVENT_DURATION, (void *)&duration_);
   url_ = url;
   int ret = create_stream();
   if (ret < 0) {

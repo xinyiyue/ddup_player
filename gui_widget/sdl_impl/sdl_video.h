@@ -27,6 +27,9 @@ class SdlVideo : public Video, public EventListener, public SdlTextureBuilder {
   virtual void *get_window() final;
   virtual void *get_renderer() final;
 
+  virtual void notify_event(int event_type, void *ret) final;
+  virtual void notify_error(int error_type) final;
+
  private:
   SDL_Renderer *renderer_;
   kiss_window *window_;
