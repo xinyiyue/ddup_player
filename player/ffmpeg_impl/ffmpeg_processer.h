@@ -5,9 +5,10 @@
 #include "player/processer.h"
 
 extern "C" {
-#include "third_party/ffmpeg-7.0.1/include/libavcodec/avcodec.h"
-#include "third_party/ffmpeg-7.0.1/include/libavutil/imgutils.h"
-#include "third_party/ffmpeg-7.0.1/include/libswscale/swscale.h"
+#include "libavcodec/avcodec.h"
+#include "libavutil/imgutils.h"
+#include "libswresample/swresample.h"
+#include "libswscale/swscale.h"
 }
 
 class FFmpegAudioProcesser : public Processer {
@@ -20,6 +21,7 @@ class FFmpegAudioProcesser : public Processer {
  private:
   virtual int config() final;
   AVCodecParameters *codec_param_;
+  SwrContext *swr_ctx = NULL;
 };
 
 class FFmpegVideoProcesser : public Processer {

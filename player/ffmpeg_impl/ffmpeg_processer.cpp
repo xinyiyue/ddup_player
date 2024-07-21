@@ -17,13 +17,67 @@ FFmpegAudioProcesser::FFmpegAudioProcesser(processer_type_t type,
   codec_param_ = (AVCodecParameters *)codec_param;
 }
 
-int FFmpegAudioProcesser::config() { return 0; }
+int FFmpegAudioProcesser::config() {
+  sink_->get_supported_format(&adst_fmt_);
+
+  if (asrc_fmt_.channel_number != adst_fmt_.channel_number ||
+      asrc_fmt_.sample_rate != adst_fmt_.sample_rate ||
+      asrc_fmt_.sample_format != adst_fmt_.sample_format) {
+    AVChannelLayout out_ch_layout;
+    av_channel_layout_copy(&out_ch_layout, &codec_param_->ch_layout);
+
+    swr_free(&swr_ctx);
+
+    int ret = swr_alloc_set_opts2(
+        &swr_ctx, &out_ch_layout, AV_SAMPLE_FMT_S16, adst_fmt_.sample_rate,
+        &codec_param_->ch_layout, (enum AVSampleFormat)codec_param_->format,
+        codec_param_->sample_rate, 0, NULL);
+
+    if (ret < 0 || swr_init(swr_ctx) < 0) {
+      swr_free(&swr_ctx);
+      return -1;
+    }
+  }
+
+  sink_->set_negotiated_format(&adst_fmt_);
+  return 0;
+}
 
 int FFmpegAudioProcesser::process(void *data, void **out) {
+  int out_size = 0;
   AVFrame *frame = (AVFrame *)data;
   render_buffer_s *dst_buff =
       (render_buffer_s *)malloc(sizeof(render_buffer_s));
-  dst_buff->data = (char *)malloc(10);
+  memset(dst_buff, 0, sizeof(render_buffer_s));
+
+  if (swr_ctx) {
+    const uint8_t **in = (const uint8_t **)frame->extended_data;
+    uint8_t **out = (uint8_t **)&dst_buff->data;
+    int out_count = frame->nb_samples;
+    out_size = av_samples_get_buffer_size(NULL, frame->ch_layout.nb_channels,
+                                          out_count, AV_SAMPLE_FMT_S16, 0);
+
+    dst_buff->data = (char *)malloc(out_size * sizeof(uint8_t));
+    if (dst_buff->data == NULL) {
+      goto out;
+    }
+
+    int ret = swr_convert(swr_ctx, out, out_count, in, frame->nb_samples);
+    if (ret < 0) {
+      swr_free(&swr_ctx);
+      goto out;
+    }
+    dst_buff->len = out_size;
+  } else {
+    out_size = frame->linesize[0];
+    dst_buff->data = (char *)malloc(dst_buff->len * sizeof(uint8_t));
+    if (dst_buff->data != NULL) {
+      memcpy(dst_buff->data, frame->data[0], dst_buff->len);
+      dst_buff->len = out_size;
+    }
+  }
+
+out:
   *out = dst_buff;
   AVRational base_ms = {1, 1000};
   dst_buff->pts = av_rescale_q(frame->pts, AV_TIME_BASE_Q, base_ms);

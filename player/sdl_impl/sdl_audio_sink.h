@@ -14,11 +14,16 @@ class SdlAudioSink : public Sink {
   virtual ~SdlAudioSink();
   virtual int init() override;
   virtual int uninit() override;
+  virtual int get_supported_format(audio_format_s *format) override;
+  virtual int set_negotiated_format(audio_format_s *format) override;
 
  private:
   void *audio_render_thread(void *arg);
   bool exit_;
   std::thread render_thread_id_;
+  SDL_AudioDeviceID audio_dev = 0;
+  audio_format_s aformat;
+  bool is_start = false;
 };
 
 #endif

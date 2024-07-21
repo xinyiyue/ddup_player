@@ -26,6 +26,9 @@ class Processer : public BufferProducer,
  protected:
   video_format_s src_fmt_;
   video_format_s dst_fmt_;
+  audio_format_s asrc_fmt_;
+  audio_format_s adst_fmt_;
+
   Sink *sink_;
 
  private:

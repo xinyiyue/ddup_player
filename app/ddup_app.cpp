@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
   layer->add_widget(static_cast<Widget *>(prog_bar));
   win->add_layer(static_cast<Layer *>(layer));
   win->add_layer(static_cast<Layer *>(video_layer));
-  video_widget->open("/home/mi/data/ddup_player/res/birds.mp4");
+  video_widget->open("../../res/The_Shawshank_Redemption.mp4");
   win->show();
   delete video_widget;
   delete play_button;

@@ -15,6 +15,8 @@ class Sink : public BufferConsumer {
   virtual int uninit() { return 0; };
   virtual int get_supported_format(video_format_s *format) { return 0; };
   virtual int set_negotiated_format(video_format_s *format) { return 0; };
+  virtual int get_supported_format(audio_format_s *format) { return 0; };
+  virtual int set_negotiated_format(audio_format_s *format) { return 0; };
 
  private:
   sink_type_t type_;

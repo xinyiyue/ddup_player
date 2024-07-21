@@ -6,7 +6,7 @@
 #include "player/decoder.h"
 
 extern "C" {
-#include "third_party/ffmpeg-7.0.1/include/libavcodec/avcodec.h"
+#include "libavcodec/avcodec.h"
 }
 
 class FFmpegDecoder : public Decoder {
