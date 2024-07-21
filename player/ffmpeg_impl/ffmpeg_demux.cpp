@@ -51,6 +51,8 @@ int FFmpegDemux::create_stream() {
   } else {
     video_stream_index_ = ret;
     AVStream *vstream = fmt_ctx_->streams[video_stream_index_];
+    vstream->start_time =
+        av_rescale_q(fmt_ctx_->start_time, AV_TIME_BASE_Q, vstream->time_base);
     ret = CreateStream(static_cast<EventListener *>(this), VIDEO_STREAM,
                        (void *)vstream, &video_stream_);
     if (ret < 0) {
@@ -110,6 +112,11 @@ demux_event_t FFmpegDemux::read_input_data(av_data_s *data) {
     else
       return DEMUX_ERROR;
   }
+
+  pkt->pts = av_rescale_q(pkt->pts + pkt->duration,
+                          fmt_ctx_->streams[pkt->stream_index]->time_base,
+                          av_make_q(1, 1000));
+  pkt->pts -= fmt_ctx_->streams[pkt->stream_index]->start_time;
   data->data = (void *)pkt;
   if (pkt->stream_index == video_stream_index_) {
     data->type_ = VIDEO_STREAM;
