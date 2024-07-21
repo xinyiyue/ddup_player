@@ -11,10 +11,12 @@
 using namespace std;
 
 SdlVideo::SdlVideo(const char *name, kiss_array *arr, kiss_window *win,
-                   SDL_Renderer *renderer, int x, int y, int w, int h)
+                   SDL_mutex *renderer_mutex, SDL_Renderer *renderer, int x,
+                   int y, int w, int h)
     : Video(name),
       EventListener("SdlVideo"),
-      SdlTextureBuilder("SdlVideoTextureBuilder", renderer, x, y, w, h) {
+      SdlTextureBuilder("SdlVideoTextureBuilder", renderer_mutex, renderer, x,
+                        y, w, h) {
   renderer_ = renderer;
   window_ = win;
   exit_ = false;

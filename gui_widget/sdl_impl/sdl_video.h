@@ -11,7 +11,8 @@
 class SdlVideo : public Video, public EventListener, public SdlTextureBuilder {
  public:
   SdlVideo(const char *name, kiss_array *arr, kiss_window *win,
-           SDL_Renderer *renderer, int x, int y, int w, int h);
+           SDL_mutex *renderer_mutex, SDL_Renderer *renderer, int x, int y,
+           int w, int h);
   virtual ~SdlVideo();
 
   virtual int open(const char *url) final;

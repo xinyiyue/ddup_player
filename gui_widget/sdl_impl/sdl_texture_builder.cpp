@@ -50,8 +50,10 @@ SDL_PixelFormatEnum SdlTextureBuilder::map_to_sdl_pixel_format(
   return pixel;
 }
 
-SdlTextureBuilder::SdlTextureBuilder(const char *name, SDL_Renderer *renderer,
-                                     int x, int y, int w, int h)
+SdlTextureBuilder::SdlTextureBuilder(const char *name,
+                                     SDL_mutex *renderer_mutex,
+                                     SDL_Renderer *renderer, int x, int y,
+                                     int w, int h)
     : TextureBuilder(name) {
   renderer_ = renderer;
   mutex_ = SDL_CreateMutex();
@@ -59,6 +61,7 @@ SdlTextureBuilder::SdlTextureBuilder(const char *name, SDL_Renderer *renderer,
   win_width_ = w;
   win_height_ = h;
   texture_ = nullptr;
+  renderer_mutex_ = renderer_mutex;
 }
 
 SdlTextureBuilder::~SdlTextureBuilder() {
@@ -86,7 +89,7 @@ int SdlTextureBuilder::set_negotiated_format(video_format_s *format) {
 }
 
 int SdlTextureBuilder::build_texture(render_buffer_s *buff) {
-  AutoLock lock(mutex_);
+  // AutoLock lock(mutex_);
   SDL_PixelFormatEnum pixel = map_to_sdl_pixel_format(buff->pixel);
   if (!texture_ || pixel != pixel_format_) {
     if (!texture_) {
@@ -108,6 +111,7 @@ int SdlTextureBuilder::build_texture(render_buffer_s *buff) {
     pixel_format_ = pixel;
     kiss_makerect(&src_rect_, 0, 0, width_, height_);
   }
+  AutoLock lock(renderer_mutex_);
   SDL_UpdateTexture(texture_, NULL, buff->data, buff->width * 4);
   SDL_Event event;
   event.type = SDL_USER_EVENT_VIDEO_UPDATE;
@@ -118,7 +122,7 @@ int SdlTextureBuilder::build_texture(render_buffer_s *buff) {
 }
 
 int SdlTextureBuilder::render_texture() {
-  AutoLock lock(mutex_);
+  // AutoLock lock(mutex_);
   SDL_RenderCopy(renderer_, texture_, &src_rect_, &dst_rect_);
   return 0;
 }

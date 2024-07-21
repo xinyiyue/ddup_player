@@ -11,9 +11,10 @@ using namespace std;
 
 SdlWindow::SdlWindow(const char *name, int w, int h) : Window(name, w, h) {
   exit_ = false;
+  renderer_mutex_ = SDL_CreateMutex();
 }
 
-SdlWindow::~SdlWindow() {}
+SdlWindow::~SdlWindow() { SDL_DestroyMutex(renderer_mutex_); }
 
 int SdlWindow::create() {
   renderer_ = kiss_init((char *)name_.c_str(), &array_, width_, height_);
@@ -61,6 +62,7 @@ int SdlWindow::show() {
 }
 
 int SdlWindow::update() {
+  AutoLock lock(renderer_mutex_);
   SDL_RenderClear(renderer_);
   kiss_window_draw(&window_, renderer_);
   for (auto layer : layer_list_) {

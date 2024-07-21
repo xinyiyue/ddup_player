@@ -58,9 +58,10 @@ void *SdlVideoSink::video_render_thread(void *arg) {
     }
     sink->texture_builder_->build_texture(buff);
     listener_->notify_event(DDUP_EVENT_POSITION, (void *)&buff->pts);
+    int sleep_time = 1000 / buff->frame_rate;
     free(buff->data);
     free(buff);
-    SDL_Delay(50);  // 50ms
+    SDL_Delay(sleep_time);  // 50ms
   }
   LOGI(TAG, "%s", "video render thread exit!!!!");
   return nullptr;

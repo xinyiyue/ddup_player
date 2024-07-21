@@ -17,6 +17,7 @@ class SdlWindow : public Window {
   SDL_Renderer *renderer_;
   kiss_window window_;
   kiss_array array_;
+  SDL_mutex *renderer_mutex_;
 
  private:
   bool exit_;
