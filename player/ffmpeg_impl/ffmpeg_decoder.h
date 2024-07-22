@@ -6,15 +6,17 @@
 #include "player/decoder.h"
 
 extern "C" {
+#include "libavformat/avformat.h"
 #include "libavcodec/avcodec.h"
 }
 
 class FFmpegDecoder : public Decoder {
  public:
   // codec_param is AVCodecParameters struct type.
-  FFmpegDecoder(void *codec_param, EventListener *listener)
+  FFmpegDecoder(void *ff_stream, EventListener *listener)
       : Decoder(listener) {
-    codec_param_ = (AVCodecParameters *)codec_param;
+    stream_ = (AVStream *)ff_stream;
+    codec_param_ = stream_->codecpar;
   };
 
   virtual ~FFmpegDecoder() = default;
@@ -26,6 +28,7 @@ class FFmpegDecoder : public Decoder {
  private:
   AVCodecContext *dec_ctx_;
   AVCodecParameters *codec_param_;
+  AVStream *stream_;
 };
 
 #endif

@@ -33,9 +33,9 @@ int CreateStream(EventListener *listener, stream_type_t type, void *stream_info,
   return 0;
 }
 
-int CreateDecoder(EventListener *listener, void *codec_param,
+int CreateDecoder(EventListener *listener, void *stream_info,
                   Decoder **decoder) {
-  *decoder = new FFmpegDecoder(codec_param, listener);
+  *decoder = new FFmpegDecoder(stream_info, listener);
   if (*decoder == nullptr) {
     return -1;
   }

@@ -78,20 +78,22 @@ void SdlVideo::notify_event(int event_type, void *ret) {
   SDL_Event event;
   switch (dd_event) {
     case DDUP_EVENT_POSITION:
+      position_ = *(long long *)ret;
       event.type = SDL_USER_EVENT_POSITION_UPDATE;
-      event.user.data1 = ret;
+      event.user.data1 = &position_;
       event.user.data2 = NULL;
       SDL_PushEvent(&event);
       LOGD(TAG, "notify SDL_USER_EVENT_POSITION_UPDATE:%lld",
-           *(long long *)ret);
+           position_);
       break;
     case DDUP_EVENT_DURATION:
+      duration_ = *(long long *)ret;
       event.type = SDL_USER_EVENT_DURATION_UPDATE;
-      event.user.data1 = ret;
+      event.user.data1 = (void *)&duration_;
       event.user.data2 = NULL;
       SDL_PushEvent(&event);
       LOGD(TAG, "notify SDL_USER_EVENT_DURATION_UPDATE:%lld",
-           *(long long *)ret);
+           duration_);
       break;
     default:
       if (listener_) listener_->notify_event(event_type, ret);

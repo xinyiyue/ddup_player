@@ -30,6 +30,8 @@ void handle_bar_event(void *userdata, void *event) {
     ppb->video->set_speed(1.0);
     ppb->pause_button->set_show(false, 0);
     ppb->play_button->set_show(true, 1500);
+  } else if (a->state == PLAYBACK_SEEK) {
+    ppb->video->seek(a->seek_time);
   }
 }
 
@@ -63,6 +65,7 @@ int main(int argc, char *argv[]) {
   win->add_layer(static_cast<Layer *>(layer));
   win->add_layer(static_cast<Layer *>(video_layer));
   video_widget->open("../../res/The_Shawshank_Redemption.mp4");
+  video_widget->set_speed(1.0);
   win->show();
   delete video_widget;
   delete play_button;
