@@ -3,7 +3,7 @@
 #include "player/component.h"
 
 int FFmpegStream::create_decoder() {
-  CreateDecoder(static_cast<EventListener *>(this), ff_stream_->codecpar,
+  CreateDecoder(static_cast<EventListener *>(this), ff_stream_,
                 &decoder_);
   return 0;
 };

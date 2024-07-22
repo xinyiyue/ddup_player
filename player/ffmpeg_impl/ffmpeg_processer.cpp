@@ -80,7 +80,7 @@ int FFmpegAudioProcesser::process(void *data, void **out) {
 out:
   *out = dst_buff;
   AVRational base_ms = {1, 1000};
-  dst_buff->pts = av_rescale_q(frame->pts, AV_TIME_BASE_Q, base_ms);
+  dst_buff->pts = av_q2d(frame->time_base) *frame->pts * 1000;
   LOGD(TAGA, "convert audio frame time_base:%d, %d, pts:%lld to ms:%lld",
        frame->time_base.num, frame->time_base.den, frame->pts, dst_buff->pts);
   av_frame_unref(frame);

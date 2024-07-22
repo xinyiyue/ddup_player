@@ -36,6 +36,8 @@ class SdlVideo : public Video, public EventListener, public SdlTextureBuilder {
   kiss_window *window_;
   DDupPlayer *player_;
   bool exit_;
+  long long position_;
+  long long duration_;
 };
 
 #endif

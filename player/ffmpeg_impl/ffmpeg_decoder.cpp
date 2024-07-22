@@ -33,7 +33,6 @@ int FFmpegDecoder::open() {
          av_get_media_type_string(codec_param_->codec_type));
     return ret;
   }
-
   ret = avcodec_open2(dec_ctx_, dec, NULL);
   if (ret < 0) {
     LOGE(TAG, "Failed to open %s codec",
@@ -79,6 +78,7 @@ int FFmpegDecoder::decode(void *data, out_cb cb, void *arg) {
       // process raw data
       LOGD(TAG, "decoder %s  decode out %s frame:%p", dec_ctx_->codec->name,
            frame->width ? "video" : "audio", frame);
+      frame->time_base = stream_->time_base;
       cb(frame, arg);
     }
   }
