@@ -73,6 +73,7 @@ int SdlProgBar::event_handler(void *event) {
   SDL_Event *e = (SDL_Event *)event;
   if (e->type == SDL_MOUSEBUTTONDOWN) {
     // check if mouse down point is outside of progress bar, then play or pause
+    PLAYBACK_STATE_E pre_state = state_;
     if (!kiss_pointinrect(e->button.x, e->button.y, &rect_)) {
       if (state_ == PLAYBACK_PLAY) {
         state_ = PLAYBACK_PAUSE;
@@ -90,6 +91,9 @@ int SdlProgBar::event_handler(void *event) {
       a.state = state_;
       a.seek_time = seek_time_;
       action_cb_(user_data_, &a);
+    }
+    if (state_ == PLAYBACK_SEEK) {
+      state_ = pre_state;
     }
     return 1;
   } else if (e->type == SDL_USER_EVENT_DURATION_UPDATE) {
