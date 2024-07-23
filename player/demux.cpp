@@ -108,7 +108,8 @@ void Demux::set_ready() {
 }
 
 void Demux::set_state(demux_state_t state) {
-  LOGI(TAG, "set state from:%d to :%d.", state_, state);
+  LOGI(TAG, "set state from:%s to:%s.", get_state_string(state_),
+       get_state_string(state));
   state_ = state;
 }
 
@@ -159,6 +160,7 @@ int Demux::prepare(const char *url) {
 }
 
 int Demux::set_speed(float speed) {
+  LOGI(TAG, "set speed:%f", speed);
   int ret = 0;
   if (speed == 0.0) {
     set_state(DEMUX_STATE_PAUSE);
@@ -179,9 +181,9 @@ int Demux::check_discard_data() {
     if (video_stream_) video_stream_->discard_buffer(VIDEO_FIFO);
 
     if (state_ == DEMUX_STATE_PLAY_SEEK) {
-      state_ = DEMUX_STATE_PLAY;
+      set_state(DEMUX_STATE_PLAY);
     } else if (state_ = DEMUX_STATE_PAUSE_SEEK) {
-      state_ = DEMUX_STATE_PAUSE;
+      set_state(DEMUX_STATE_PAUSE);
     }
   }
 
@@ -244,4 +246,41 @@ int Demux::close() {
   }
   LOGI(TAG, "%s", "input thread exit successfully");
   return 0;
+}
+
+const char *Demux::get_state_string(demux_state_t state) {
+  const char *name;
+  switch (state) {
+    case DEMUX_STATE_OPEN:
+      name = "OPEN";
+      break;
+    case DEMUX_STATE_PREPARE:
+      name = "PREPARE";
+      break;
+    case DEMUX_STATE_PLAY:
+      name = "PLAY";
+      break;
+    case DEMUX_STATE_PAUSE:
+      name = "PAUSE";
+      break;
+    case DEMUX_STATE_PLAY_SEEK:
+      name = "PLAY_SEEK";
+      break;
+    case DEMUX_STATE_PAUSE_SEEK:
+      name = "PAUSE_SEEK";
+      break;
+    case DEMUX_STATE_STOP:
+      name = "STOP";
+      break;
+    case DEMUX_STATE_CLOSE:
+      name = "CLOSE";
+      break;
+    case DEMUX_STATE_EOS:
+      name = "EOS";
+      break;
+    default:
+      name = "UNKNOWN";
+      break;
+  }
+  return name;
 }

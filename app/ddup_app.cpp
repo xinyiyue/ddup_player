@@ -8,9 +8,10 @@
 #include "gui_widget/sdl_impl/sdl_progress_bar.h"
 #include "gui_widget/sdl_impl/sdl_video.h"
 #include "gui_widget/sdl_impl/sdl_window.h"
+#include "log/ddup_log.h"
 
 using namespace std;
-
+#define TAG "PlayerApp"
 struct play_pause_bar {
   SdlButton *pause_button;
   SdlButton *play_button;
@@ -20,23 +21,25 @@ struct play_pause_bar {
 void handle_bar_event(void *userdata, void *event) {
   action *a = (action *)event;
   struct play_pause_bar *ppb = (struct play_pause_bar *)userdata;
-  cout << "bar_event handler,state::" << a->state
-       << ", seek_time:" << a->seek_time << endl;
   if (a->state == PLAYBACK_PAUSE) {
+    LOGI(TAG, "bar_event handler,state：%d,pause", a->state);
     ppb->video->set_speed(0.0);
     ppb->pause_button->set_show(true, 0);
     ppb->play_button->set_show(false, 0);
   } else if (a->state == PLAYBACK_PLAY) {
+    LOGI(TAG, "bar_event handler,state：%d,play", a->state);
     ppb->video->set_speed(1.0);
     ppb->pause_button->set_show(false, 0);
     ppb->play_button->set_show(true, 1500);
   } else if (a->state == PLAYBACK_SEEK) {
+    LOGI(TAG, "bar_event handler,state：%d,seek, seek_time:%lld", a->state,
+         a->seek_time);
     ppb->video->seek(a->seek_time);
   }
 }
 
 int main(int argc, char *argv[]) {
-  SdlWindow *win = new SdlWindow("win_test", 800, 480);
+  SdlWindow *win = new SdlWindow("DDup Player", 800, 480);
   win->create();
   SdlLayer *layer = new SdlLayer("button_layer");
   layer->set_zorder(2);
