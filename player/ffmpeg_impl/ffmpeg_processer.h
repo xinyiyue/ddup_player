@@ -5,10 +5,10 @@
 #include "player/processer.h"
 
 extern "C" {
-#include "libavcodec/avcodec.h"
-#include "libavutil/imgutils.h"
-#include "libswresample/swresample.h"
-#include "libswscale/swscale.h"
+#include "third_party/ffmpeg-7.0.1/include/libavcodec/avcodec.h"
+#include "third_party/ffmpeg-7.0.1/include/libavutil/imgutils.h"
+#include "third_party/ffmpeg-7.0.1/include/libswresample/swresample.h"
+#include "third_party/ffmpeg-7.0.1/include/libswscale/swscale.h"
 }
 
 class FFmpegAudioProcesser : public Processer {
