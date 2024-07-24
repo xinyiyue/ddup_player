@@ -9,7 +9,7 @@
 #include "player/stream.h"
 
 extern "C" {
-#include "libavformat/avformat.h"
+#include "third_party/ffmpeg-7.0.1/include/libavformat/avformat.h"
 }
 
 class FFmpegDemux : public Demux {
