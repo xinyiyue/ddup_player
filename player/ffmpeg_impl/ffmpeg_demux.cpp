@@ -77,13 +77,11 @@ int FFmpegDemux::create_stream() {
   return 0;
 }
 
-int FFmpegDemux::seek(long long seek_time) {
-  AutoLock lock(&cmd_mutex_);
+int FFmpegDemux::seek_impl(long long seek_time) {
   if (!fmt_ctx_) {
     LOGE(TAG, "seek:%d ms failed, fmt_ctx is null", seek_time);
     return -1;
   }
-  Demux::seek(seek_time);
   int flag = AVSEEK_FLAG_BACKWARD;
   int ret = avformat_seek_file(fmt_ctx_, -1, INT64_MIN, seek_time * 1000,
                                INT64_MAX, flag);
@@ -94,10 +92,9 @@ int FFmpegDemux::seek(long long seek_time) {
   return ret;
 }
 
-demux_event_t FFmpegDemux::read_input_data(av_data_s *data) {
-  AutoLock lock(&cmd_mutex_);
+demux_event_t FFmpegDemux::read_input_impl(av_data_s *data) {
   if (!fmt_ctx_) {
-    LOGE(TAG, "%s", "demux ctx is null");
+    LOGE(TAG, "%s", "demux ctx is null, return");
     return DEMUX_ERROR;
   }
   int ret;

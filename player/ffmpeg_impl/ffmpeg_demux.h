@@ -19,8 +19,8 @@ class FFmpegDemux : public Demux {
   virtual int prepare(const char *url) final;
   virtual int create_stream() final;
   virtual int stop() final;
-  virtual int seek(long long seek_time) final;
-  virtual demux_event_t read_input_data(av_data_s *data) final;
+  virtual int seek_impl(long long seek_time) final;
+  virtual demux_event_t read_input_impl(av_data_s *data) final;
   virtual int free_data(void *data) final;
 
  private:
