@@ -42,6 +42,7 @@ SDL_Color kiss_black = {0, 0, 0, 255};
 SDL_Color kiss_green = {0, 150, 0, 255};
 SDL_Color kiss_blue = {0, 0, 255, 255};
 SDL_Color kiss_lightblue = {200, 225, 255, 255};
+SDL_Color kiss_gray = {64, 64, 64, 100};
 
 unsigned int kiss_getticks(void)
 {

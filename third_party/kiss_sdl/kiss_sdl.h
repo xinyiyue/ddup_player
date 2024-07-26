@@ -257,7 +257,7 @@ typedef struct kiss_combobox {
 } kiss_combobox;
 
 extern SDL_Color kiss_white, kiss_black, kiss_green, kiss_blue,
-		kiss_lightblue;
+		kiss_lightblue, kiss_gray;
 extern kiss_font kiss_textfont, kiss_buttonfont;
 extern kiss_image kiss_normal, kiss_prelight, kiss_active, kiss_bar,
 	kiss_up, kiss_down, kiss_left, kiss_right, kiss_vslider,

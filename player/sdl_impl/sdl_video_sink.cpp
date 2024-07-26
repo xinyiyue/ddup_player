@@ -57,7 +57,6 @@ void *SdlVideoSink::video_render_thread(void *arg) {
       continue;
     }
     sink->texture_builder_->build_texture(buff);
-    listener_->notify_event(DDUP_EVENT_POSITION, (void *)&(buff->pts));
     int sleep_time = 1000 / buff->frame_rate;
     free(buff->data);
     free(buff);

@@ -106,7 +106,6 @@ void Demux::set_ready() {
   pthread_mutex_unlock(&mutex_);
 }
 
-
 void Demux::set_state(demux_state_t state) {
   LOGI(TAG, "set state from:%s to:%s.", get_state_string(state_),
        get_state_string(state));
@@ -180,7 +179,7 @@ int Demux::read_data_abort() {
 
 int Demux::read_input(av_data_s *data) {
   AutoLock lock(&cmd_mutex_);
-  return  read_input_impl(data);
+  return read_input_impl(data);
 }
 
 int Demux::seek(long long seek_time) {
