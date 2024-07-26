@@ -46,7 +46,8 @@ int Stream::init() {
 }
 
 int Stream::uninit() {
-  LOGE(TAG, "%s stream uninit", stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
+  LOGE(TAG, "%s stream uninit",
+       stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
   dec_thread_exit_ = true;
   // exit wait first
   pthread_mutex_lock(&mutex_);
@@ -65,10 +66,8 @@ int Stream::uninit() {
   return 0;
 }
 
-
 int Stream::stream_on() {
-  LOGE(TAG, "%s stream on",
-       stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
+  LOGE(TAG, "%s stream on", stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
   stream_on_ = true;
   pthread_mutex_lock(&mutex_);
   pthread_cond_signal(&cond_);
@@ -77,8 +76,7 @@ int Stream::stream_on() {
 }
 
 int Stream::stream_off() {
-  LOGE(TAG, "%s stream off",
-       stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
+  LOGE(TAG, "%s stream off", stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
   stream_on_ = false;
   return 0;
 }
@@ -86,20 +84,19 @@ int Stream::stream_off() {
 int Stream::check_wait() {
   if (!stream_on_) {
     LOGE(TAG, "%s wait stream on",
-       stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
+         stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
     pthread_mutex_lock(&mutex_);
     pthread_cond_wait(&cond_, &mutex_);
     pthread_mutex_unlock(&mutex_);
     LOGE(TAG, "%s wait stream on finish",
-       stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
+         stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
   }
   return 0;
 }
 
 int Stream::flush() {
   fifo_type_t type = stream_type_ == AUDIO_STREAM ? AUDIO_FIFO : VIDEO_FIFO;
-  LOGE(TAG, "%s stream flush",
-       type == AUDIO_FIFO ? "AUDIO" : "VIDEO");
+  LOGE(TAG, "%s stream flush", type == AUDIO_FIFO ? "AUDIO" : "VIDEO");
   discard_buffer(type);
   consume_abort(type);
   processer_->append_abort(type);
@@ -107,8 +104,7 @@ int Stream::flush() {
   return 0;
 }
 
-
-int Stream::set_speed(float speed) { 
+int Stream::set_speed(float speed) {
   if (speed == 0.0) {
     stream_off();
   } else {

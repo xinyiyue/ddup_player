@@ -17,7 +17,7 @@ SdlProgBar::SdlProgBar(const char *name, kiss_window *win,
   dirty_ = true;
   state_ = PLAYBACK_PLAY;
   kiss_progressbar_new(&bar_, win, win->rect.x,
-                       win->rect.y + kiss_screen_height - 20,
+                       win->rect.y + kiss_screen_height - 18,
                        kiss_screen_width);
   rect_.x = bar_.rect.x;
   rect_.y = bar_.rect.y;

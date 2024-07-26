@@ -68,7 +68,7 @@ int kiss_label_new(kiss_label *label, kiss_window *wdw, char *text,
 {
 	if (!label || !text) return -1;
 	if (label->font.magic != KISS_MAGIC) label->font = kiss_textfont;
-	label->textcolor = kiss_black;
+	label->textcolor = kiss_white;
 	kiss_makerect(&label->rect, x, y, 0, 0);
 	kiss_string_copy(label->text, KISS_MAX_LABEL, text, NULL);
 	label->visible = 0;
@@ -514,7 +514,7 @@ int kiss_progressbar_new(kiss_progressbar *progressbar, kiss_window *wdw,
 	if (!progressbar || w < 2 * kiss_border + 1) return -1;
 	if (progressbar->bar.magic != KISS_MAGIC)
 		progressbar->bar = kiss_bar;
-	progressbar->bg = kiss_white;
+	progressbar->bg = kiss_gray;
 	kiss_makerect(&progressbar->rect, x, y, w,
 		progressbar->bar.h + 2 * kiss_border);
 	kiss_makerect(&progressbar->barrect, x + kiss_border,
@@ -556,7 +556,7 @@ int kiss_progressbar_draw(kiss_progressbar *progressbar,
 	if (!progressbar || !progressbar->visible || !renderer)
 		return 0;
 	kiss_fillrect(renderer, &progressbar->rect, progressbar->bg);
-	kiss_decorate(renderer, &progressbar->rect, kiss_lightblue, kiss_edge);
+	kiss_decorate(renderer, &progressbar->rect, kiss_gray, kiss_edge);
 	progressbar->barrect.w = (int) (progressbar->width *
 		progressbar->fraction + 0.05);
 	kiss_makerect(&clip, 0, 0, progressbar->barrect.w,

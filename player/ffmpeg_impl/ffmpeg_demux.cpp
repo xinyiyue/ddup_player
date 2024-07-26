@@ -19,8 +19,8 @@ int FFmpegDemux::prepare(const char *url) {
     LOGE(TAG, "find stream info error:%d", ret);
     return ret;
   }
-  AVRational base_ms = {1, 1000};
-  duration_ = av_rescale_q(fmt_ctx_->duration, AV_TIME_BASE_Q, base_ms);
+  AVRational time_base = {1, AV_TIME_BASE};
+  duration_ = av_q2d(time_base) * fmt_ctx_->duration * 1000;
   LOGI(TAG, "ffmpeg prepare ok, duration:%lld, call demux prepare:%d",
        duration_, ret);
   Demux::prepare(url);

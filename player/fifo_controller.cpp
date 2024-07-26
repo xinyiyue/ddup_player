@@ -145,11 +145,11 @@ bool BufferBase::append(void *data, fifo_type_t type) {
     wait();
     if (abort_flag_) {
       LOGE(TAGF, "%s is full,producer:%s abort append, discard data:%p",
-          fifo->get_name(), name_.c_str(), *(void **)data);
+           fifo->get_name(), name_.c_str(), *(void **)data);
       ret = fifo->discard(*(void **)data);
       if (!ret) {
         LOGD(TAGF, "%s is full,producer:%s discard data:%p failed",
-           fifo->get_name(), name_.c_str(), *(void **)data);
+             fifo->get_name(), name_.c_str(), *(void **)data);
       }
     }
   }

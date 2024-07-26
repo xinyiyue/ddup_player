@@ -79,6 +79,7 @@ void *SdlAudioSink::audio_render_thread(void *arg) {
       is_start = true;
     }
 
+    listener_->notify_event(DDUP_EVENT_POSITION, (void *)&(buff->pts));
     SDL_QueueAudio(audio_dev, buff->data, buff->len);
 
     free(buff->data);
