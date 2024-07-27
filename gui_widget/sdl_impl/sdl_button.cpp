@@ -11,19 +11,14 @@ using namespace std;
 
 #define TAG "SdlButton"
 
-unsigned int delay_hide_timer_handler(unsigned int interval, void *param) {
-  SdlButton *button = (SdlButton *)param;
-  SDL_RemoveTimer(button->hide_delay_timerid_);
-  button->hide_delay_timerid_ = 0;
-  LOGI(TAG, "delay handler, button name:%s,set show:%d", button->name_.c_str(),
-       false);
-  button->set_show(false, 0);
+void SdlButton::delay_hide_timer_handler() {
+  LOGI(TAG, "delay handler, button name:%s,set show:%d", name_.c_str(), false);
+  set_show(false, 0);
   SDL_Event event;
   event.type = SDL_USER_EVENT_REFRESH;
   event.user.data1 = NULL;
   event.user.data2 = NULL;
   SDL_PushEvent(&event);
-  return 0;
 }
 
 SdlButton::SdlButton(const char *name, const char *skin, kiss_array *arr,
@@ -32,7 +27,6 @@ SdlButton::SdlButton(const char *name, const char *skin, kiss_array *arr,
   renderer_ = renderer;
   window_ = win;
   dirty_ = false;
-  hide_delay_timerid_ = -1;
   hide_delay_time_ = 0;
   kiss_image_new(&image_, (char *)skin, arr, renderer);
   pos_x_ = window_->rect.w / 2 - image_.w / 2;
@@ -71,8 +65,8 @@ int SdlButton::draw() {
     if (hide_delay_time_ > 0) {
       LOGI(TAG, "button:%s draw, start timer, delay:%d", name_.c_str(),
            hide_delay_time_);
-      hide_delay_timerid_ =
-          SDL_AddTimer(hide_delay_time_, delay_hide_timer_handler, this);
+      timer_.run(hide_delay_time_,
+                 std::bind(&SdlButton::delay_hide_timer_handler, this));
       hide_delay_time_ = 0;
     }
   }

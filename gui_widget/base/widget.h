@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 
+#include "base_util/ddup_timer.h"
 #include "log/ddup_log.h"
 
 enum WIDGET_TYPE {
@@ -34,7 +35,7 @@ class Widget {
   virtual void *get_window() = 0;
   virtual void *get_renderer() = 0;
   virtual void set_show(bool show, int time_ms) {
-    LOGI("Widget", "widget name:%s, set show:%d, delay:%d", name_.c_str(), show,
+    LOGD("Widget", "widget name:%s, set show:%d, delay:%d", name_.c_str(), show,
          time_ms);
     if (show) {
       if (time_ms > 0) {
@@ -56,6 +57,7 @@ class Widget {
   bool dirty_;
   int hide_delay_time_;  // ms
   std::string name_;
+  DDupTimer timer_;
 };
 
 #endif
