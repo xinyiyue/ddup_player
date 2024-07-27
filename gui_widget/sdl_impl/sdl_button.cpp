@@ -33,6 +33,7 @@ SdlButton::SdlButton(const char *name, const char *skin, kiss_array *arr,
   window_ = win;
   dirty_ = false;
   hide_delay_timerid_ = -1;
+  hide_delay_time_ = 0;
   kiss_image_new(&image_, (char *)skin, arr, renderer);
   pos_x_ = window_->rect.w / 2 - image_.w / 2;
   pos_y_ = window_->rect.h / 2 - image_.h / 2;

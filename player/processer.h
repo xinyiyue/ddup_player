@@ -21,6 +21,7 @@ class Processer : public BufferProducer,
   virtual int process(void *data, void **out) = 0;
   virtual int uninit();
   virtual int set_speead(float speed);
+  void set_eos();
   int flush();
 
  protected:

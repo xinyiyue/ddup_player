@@ -82,14 +82,31 @@ int Stream::stream_off() {
 }
 
 int Stream::check_wait() {
-  if (!stream_on_) {
-    LOGE(TAG, "%s wait stream on",
-         stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
+  bool eos_wait =
+      eos_ &&
+      is_fifo_empty(stream_type_ == AUDIO_STREAM ? AUDIO_FIFO : VIDEO_FIFO);
+  if (eos_wait) {
+    processer_->set_eos();
+  }
+  if (!stream_on_ || eos_wait) {
+    if (eos_wait) {
+      LOGE(TAG, "%s eos, wait",
+           stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
+    } else {
+      LOGE(TAG, "%s wait stream on",
+           stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
+    }
     pthread_mutex_lock(&mutex_);
     pthread_cond_wait(&cond_, &mutex_);
     pthread_mutex_unlock(&mutex_);
-    LOGE(TAG, "%s wait stream on finish",
-         stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
+    if (eos_wait) {
+      LOGE(TAG, "%s eos, wait finish",
+           stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
+      eos_ = false;
+    } else {
+      LOGE(TAG, "%s wait stream on finish",
+           stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
+    }
   }
   return 0;
 }
@@ -113,7 +130,12 @@ int Stream::set_speed(float speed) {
   return 0;
 }
 
-void Stream::set_eos() { eos_ = true; }
+void Stream::set_eos() {
+  fifo_type_t type = stream_type_ == AUDIO_STREAM ? AUDIO_FIFO : VIDEO_FIFO;
+  LOGE(TAG, "%s got eos cmd", type == AUDIO_FIFO ? "AUDIO" : "VIDEO");
+  eos_ = true;
+  consume_abort(type);
+}
 
 int Stream::process_raw_data(void *data, void *handle) {
   Stream *stream = (Stream *)handle;

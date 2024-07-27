@@ -50,6 +50,11 @@ int SdlVideoSink::set_negotiated_format(video_format_s *format) {
 void *SdlVideoSink::video_render_thread(void *arg) {
   SdlVideoSink *sink = (SdlVideoSink *)arg;
   while (!exit_) {
+    if (eos_ && is_fifo_empty(VIDEO_FIFO)) {
+      listener_->notify_event(DDUP_EVENT_VIDEO_EOS, nullptr);
+      LOGI(TAG, "%s", "notify VIDEO_EOS");
+      eos_ = false;
+    }
     render_buffer_s *buff;
     bool ret = sink->consume_buffer(&buff, VIDEO_FIFO);
     if (!ret) {

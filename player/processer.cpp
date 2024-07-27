@@ -71,3 +71,8 @@ int Processer::uninit() {
 }
 
 int Processer::set_speead(float speed) { return 0; }
+
+void Processer::set_eos() {
+  LOGI(TAG, "call %s sink eos", type_ == AUDIO_PROCESSER ? "audio" : "video");
+  sink_->set_eos();
+}
