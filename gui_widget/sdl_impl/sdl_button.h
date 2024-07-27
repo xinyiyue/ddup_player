@@ -20,10 +20,9 @@ class SdlButton : public Button {
   virtual void set_show(bool show, int time_ms) final;
   virtual int event_handler(void *event) final;
   virtual int set_event_resp_area(int x, int y, int w, int h) final;
-
+  void delay_hide_timer_handler();
   SDL_Renderer *renderer_;
   kiss_window *window_;
-  SDL_TimerID hide_delay_timerid_;
 
  private:
   kiss_image image_;

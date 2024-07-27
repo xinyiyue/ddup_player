@@ -33,6 +33,7 @@ class SdlProgBar : public ProgBar {
 
   virtual void set_duration(long long duration) final;
   virtual void set_current_time(long long current) final;
+  void delay_hide_timer_handler();
 
  private:
   SDL_Rect rect_;

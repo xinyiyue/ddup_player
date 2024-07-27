@@ -9,6 +9,8 @@
 
 using namespace std;
 
+#define DELAY_HIDE_TIME 5000
+
 SdlProgBar::SdlProgBar(const char *name, kiss_window *win,
                        SDL_Renderer *renderer)
     : ProgBar(name) {
@@ -28,6 +30,7 @@ SdlProgBar::SdlProgBar(const char *name, kiss_window *win,
   kiss_label_new(&dur_label_, win, (char *)"0:0:0", win->rect.w - 55,
                  win->rect.h - 18);
   duration_ = 0;
+  set_show(true, DELAY_HIDE_TIME);
 }
 
 bool SdlProgBar::is_dirty() { return dirty_; }
@@ -60,10 +63,28 @@ void SdlProgBar::set_current_time(long long current) {
   bar_.fraction = current_time_ / (float)duration_ + 0.01;
 }
 
+void SdlProgBar::delay_hide_timer_handler() {
+  LOGI(TAG, "delay handler, button name:%s,set show:%d", name_.c_str(), false);
+  set_show(false, 0);
+  SDL_Event event;
+  event.type = SDL_USER_EVENT_REFRESH;
+  event.user.data1 = NULL;
+  event.user.data2 = NULL;
+  SDL_PushEvent(&event);
+}
+
 int SdlProgBar::draw() {
   kiss_progressbar_draw(&bar_, renderer_);
   kiss_label_draw(&time_label_, renderer_);
   kiss_label_draw(&dur_label_, renderer_);
+
+  if (hide_delay_time_ > 0) {
+    LOGD(TAG, "button:%s draw, start timer, delay:%d", name_.c_str(),
+         hide_delay_time_);
+    timer_.run(hide_delay_time_,
+               std::bind(&SdlProgBar::delay_hide_timer_handler, this));
+    hide_delay_time_ = 0;
+  }
   return 0;
 }
 
@@ -110,6 +131,16 @@ int SdlProgBar::event_handler(void *event) {
   } else if (e->type == SDL_USER_EVENT_POSITION_UPDATE) {
     long long position = *(long long *)e->user.data1;
     set_current_time(position);
+    if (duration_ == current_time_) {
+      set_show(true, DELAY_HIDE_TIME);
+      state_ = PLAYBACK_EOS;
+      if (action_cb_) {
+        action a;
+        a.state = state_;
+        a.seek_time = 0;
+        action_cb_(user_data_, &a);
+      }
+    }
     return 1;
   } else if (e->type == SDL_USER_EVENT_EOS_UPDATE) {
     state_ = PLAYBACK_EOS;
@@ -119,6 +150,15 @@ int SdlProgBar::event_handler(void *event) {
       a.seek_time = 0;
       action_cb_(user_data_, &a);
     }
+    return 1;
+  } else if (e->type == SDL_MOUSEMOTION) {
+    if (dirty_) return 0;
+    set_show(true, DELAY_HIDE_TIME);
+    SDL_Event event;
+    event.type = SDL_USER_EVENT_REFRESH;
+    event.user.data1 = NULL;
+    event.user.data2 = NULL;
+    SDL_PushEvent(&event);
     return 1;
   }
   return 0;
