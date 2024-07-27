@@ -15,6 +15,7 @@ using namespace std;
 struct play_pause_bar {
   SdlButton *pause_button;
   SdlButton *play_button;
+  SdlButton *reload_button;
   SdlVideo *video;
 };
 
@@ -28,9 +29,18 @@ void handle_bar_event(void *userdata, void *event) {
     ppb->play_button->set_show(false, 0);
   } else if (a->state == PLAYBACK_PLAY) {
     LOGI(TAG, "bar_event handler,state：%d,play", a->state);
+    if (a->seek_time == 0) {
+      ppb->video->seek(0);
+      ppb->reload_button->set_show(false, 0);
+      ppb->play_button->set_show(true, 1500);
+    } else {
+      ppb->pause_button->set_show(false, 0);
+      ppb->play_button->set_show(true, 1500);
+    }
     ppb->video->set_speed(1.0);
-    ppb->pause_button->set_show(false, 0);
-    ppb->play_button->set_show(true, 1500);
+  } else if (a->state == PLAYBACK_EOS) {
+    LOGI(TAG, "bar_event handler,state：%d,eos", a->state);
+    ppb->reload_button->set_show(true, 0);
   } else if (a->state == PLAYBACK_SEEK) {
     LOGI(TAG, "bar_event handler,state：%d,seek, seek_time:%lld", a->state,
          a->seek_time);
@@ -39,7 +49,7 @@ void handle_bar_event(void *userdata, void *event) {
 }
 
 int main(int argc, char *argv[]) {
-  SdlWindow *win = new SdlWindow("DDup Player", 800, 480);
+  SdlWindow *win = new SdlWindow("DDup Player", 1280, 720);
   win->create();
   SdlLayer *layer = new SdlLayer("button_layer");
   layer->set_zorder(2);
@@ -49,21 +59,26 @@ int main(int argc, char *argv[]) {
   video_layer->set_show(true);
   SdlVideo *video_widget =
       new SdlVideo("video_widge", &win->array_, &win->window_,
-                   win->renderer_mutex_, win->renderer_, 0, 0, 800, 480);
+                   win->renderer_mutex_, win->renderer_, 0, 0, 1280, 720);
   video_layer->add_widget(static_cast<Widget *>(video_widget));
   SdlButton *pause_button = new SdlButton(
       "pause_button", "pause.png", &win->array_, &win->window_, win->renderer_);
   SdlButton *play_button = new SdlButton(
       "play_button", "resume.png", &win->array_, &win->window_, win->renderer_);
+  SdlButton *reload_button =
+      new SdlButton("reload_button", "reload.png", &win->array_, &win->window_,
+                    win->renderer_);
   SdlProgBar *prog_bar =
       new SdlProgBar("prog_bar", &win->window_, win->renderer_);
   struct play_pause_bar ppb;
   ppb.pause_button = pause_button;
   ppb.play_button = play_button;
+  ppb.reload_button = reload_button;
   ppb.video = video_widget;
   prog_bar->set_action_callback(handle_bar_event, &ppb);
   layer->add_widget(static_cast<Widget *>(pause_button));
   layer->add_widget(static_cast<Widget *>(play_button));
+  layer->add_widget(static_cast<Widget *>(reload_button));
   layer->add_widget(static_cast<Widget *>(prog_bar));
   win->add_layer(static_cast<Layer *>(layer));
   win->add_layer(static_cast<Layer *>(video_layer));

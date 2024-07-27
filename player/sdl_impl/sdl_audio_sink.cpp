@@ -67,6 +67,11 @@ int SdlAudioSink::uninit() {
 void *SdlAudioSink::audio_render_thread(void *arg) {
   SdlAudioSink *sink = (SdlAudioSink *)arg;
   while (!exit_) {
+    if (eos_ && is_fifo_empty(AUDIO_FIFO)) {
+      listener_->notify_event(DDUP_EVENT_AUDIO_EOS, nullptr);
+      LOGI(TAG, "%s", "notify AUDIO_EOS");
+      eos_ = false;
+    }
     render_buffer_s *buff;
     bool ret = sink->consume_buffer(&buff, AUDIO_FIFO);
     if (!ret) {
@@ -78,7 +83,6 @@ void *SdlAudioSink::audio_render_thread(void *arg) {
       SDL_PauseAudioDevice(audio_dev, 0);
       is_start = true;
     }
-
     listener_->notify_event(DDUP_EVENT_POSITION, (void *)&(buff->pts));
     SDL_QueueAudio(audio_dev, buff->data, buff->len);
 

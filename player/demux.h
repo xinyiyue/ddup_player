@@ -64,6 +64,7 @@ class Demux : public EventListener, public BufferProducer, public FreeHandler {
 
  protected:
   long long duration_;
+  long long position_;
 
  private:
   virtual int create_stream() = 0;
@@ -72,6 +73,8 @@ class Demux : public EventListener, public BufferProducer, public FreeHandler {
   Fifo *audio_fifo_;
   Fifo *video_fifo_;
   demux_state_t state_;
+  bool audio_eos_;
+  bool video_eos_;
 };
 
 #endif

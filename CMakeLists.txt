@@ -76,6 +76,7 @@ set(RESOURCE
 ./third_party/kiss_sdl/picture2.png
 ./third_party/kiss_sdl/picture3.png
 ./third_party/kiss_sdl/resume.png
+./third_party/kiss_sdl/reload.png
 ./third_party/kiss_sdl/kiss_font.ttf
 )
 set(FFMPEG_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ffmpeg-7.0.1/lib)

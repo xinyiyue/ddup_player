@@ -16,6 +16,8 @@ Demux::Demux(EventListener *listener)
   listener_ = listener;
   listener_->print_name();
   url_ = "";
+  video_eos_ = false;
+  audio_eos_ = false;
   pthread_cond_init(&cond_, NULL);
   pthread_mutex_init(&mutex_, NULL);
   pthread_mutex_init(&cmd_mutex_, NULL);
@@ -45,7 +47,33 @@ Demux::~Demux() {
 }
 
 void Demux::notify_event(int event_type, void *ret) {
-  listener_->notify_event(event_type, ret);
+  if (event_type == DDUP_EVENT_AUDIO_EOS) {
+    LOGI(TAG, "%s", "recieve AUDIO_EOS");
+    audio_eos_ = true;
+  }
+  if (event_type == DDUP_EVENT_VIDEO_EOS) {
+    LOGI(TAG, "%s", "recieve VIDEO_EOS");
+    video_eos_ = true;
+  }
+
+  if (video_eos_ && audio_eos_) {
+    listener_->notify_event(DDUP_EVENT_EOS, nullptr);
+    LOGI(TAG, "%s", "notify DDUP_EVENT_EOS");
+  } else if (video_eos_ || audio_eos_) {
+    if (position_ < duration_ && audio_eos_) {
+      listener_->notify_event(DDUP_EVENT_POSITION, &duration_);
+    }
+    return;
+  } else {
+    if (event_type == DDUP_EVENT_POSITION) {
+      position_ = *(long long *)ret;
+      if (position_ > duration_) {
+        listener_->notify_event(event_type, &duration_);
+        return;
+      }
+    }
+    listener_->notify_event(event_type, ret);
+  }
 }
 
 void Demux::notify_error(int error_type) {
@@ -184,6 +212,8 @@ int Demux::read_input(av_data_s *data) {
 
 int Demux::seek(long long seek_time) {
   AutoLock lock(&cmd_mutex_);
+  video_eos_ = false;
+  audio_eos_ = false;
   read_data_abort();
   set_state(DEMUX_STATE_SEEK);
   LOGI(TAG, "seek:%lld, audio stream flush", seek_time);
