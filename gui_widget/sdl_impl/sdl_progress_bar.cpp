@@ -25,9 +25,9 @@ SdlProgBar::SdlProgBar(const char *name, kiss_window *win,
   rect_.y = bar_.rect.y;
   rect_.w = bar_.rect.w;
   rect_.h = bar_.rect.h;
-  kiss_label_new(&time_label_, win, (char *)"0:0:0", win->rect.x,
+  kiss_label_new(&time_label_, win, (char *)"0:0:0 -", win->rect.x,
                  win->rect.y + win->rect.h - 18);
-  kiss_label_new(&dur_label_, win, (char *)"0:0:0", win->rect.w - 55,
+  kiss_label_new(&dur_label_, win, (char *)"0:0:0 -", win->rect.w - 75,
                  win->rect.h - 18);
   duration_ = 0;
   set_show(true, DELAY_HIDE_TIME);
@@ -42,7 +42,7 @@ void SdlProgBar::set_duration(long long duration) {
   int min = ((duration_ / 1000) % 3600) / 60;
   int sec = ((duration_ / 1000) % 3600) % 60;
   char buf[10];
-  snprintf(buf, 10, "%d:%d:%d", hour, min, sec);
+  snprintf(buf, 10, "- %d:%d:%d", hour, min, sec);
   kiss_string_copy(dur_label_.text, KISS_MAX_LABEL, buf, NULL);
   bar_.step = (1 / (float)duration_);
   LOGI(TAG, "bar step:%f", bar_.step);
@@ -58,7 +58,7 @@ void SdlProgBar::set_current_time(long long current) {
   int hour = (current_time_ / 1000) / 3600;
   int min = ((current_time_ / 1000) % 3600) / 60;
   int sec = ((current_time_ / 1000) % 3600) % 60;
-  snprintf(buf, 10, "%d:%d:%d", hour, min, sec);
+  snprintf(buf, 10, "%d:%d:%d -", hour, min, sec);
   kiss_string_copy(time_label_.text, KISS_MAX_LABEL, buf, NULL);
   bar_.fraction = current_time_ / (float)duration_ + 0.01;
 }
@@ -108,7 +108,10 @@ int SdlProgBar::event_handler(void *event) {
         temp_time = seek_time_;
       }
     } else {
-      seek_time_ = (e->button.x / (float)window_->rect.w) * duration_;
+      int pos = e->button.x - 60;
+      if (pos < 0)
+        pos = 0;
+      seek_time_ = (pos / ((float)window_->rect.w - 150)) * duration_;
       set_current_time(seek_time_);
       state_ = PLAYBACK_SEEK;
       temp_time = seek_time_;

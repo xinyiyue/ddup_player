@@ -89,7 +89,6 @@ int SdlTextureBuilder::set_negotiated_format(video_format_s *format) {
 }
 
 int SdlTextureBuilder::build_texture(render_buffer_s *buff) {
-  // AutoLock lock(mutex_);
   SDL_PixelFormatEnum pixel = map_to_sdl_pixel_format(buff->pixel);
   if (!texture_ || pixel != pixel_format_) {
     if (!texture_) {
@@ -122,7 +121,6 @@ int SdlTextureBuilder::build_texture(render_buffer_s *buff) {
 }
 
 int SdlTextureBuilder::render_texture() {
-  // AutoLock lock(mutex_);
   SDL_RenderCopy(renderer_, texture_, &src_rect_, &dst_rect_);
   return 0;
 }
