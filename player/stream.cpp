@@ -39,8 +39,7 @@ int Stream::init() {
   decoder_->open();
   processer_->init();
   process_thread_ = std::thread(
-      std::bind(&Stream::process_thread, this, std::placeholders::_1),
-      (void *)this);
+      std::bind(&Stream::process_thread, this));
 
   return 0;
 }
@@ -146,33 +145,31 @@ int Stream::process_raw_data(void *data, void *handle) {
   return 0;
 }
 
-void *Stream::process_thread(void *arg) {
+void Stream::process_thread(void) {
   int ret = 0;
   void *data = NULL;
   void *out = NULL;
-  Stream *stream = (Stream *)arg;
-  while (!stream->dec_thread_exit_) {
-    stream->check_wait();
+  while (!dec_thread_exit_) {
+    check_wait();
     data = nullptr;
-    stream->consume_buffer(
-        &data, stream->stream_type_ == AUDIO_STREAM ? AUDIO_FIFO : VIDEO_FIFO);
+    consume_buffer(
+        &data, stream_type_ == AUDIO_STREAM ? AUDIO_FIFO : VIDEO_FIFO);
     if (!data) {
       LOGE(TAG, "%s processer consume data empty,continue",
-           stream->stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
+           stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
       continue;
     }
-    ret = stream->decoder_->decode(data, &Stream::process_raw_data, this);
+    ret = decoder_->decode(data, &Stream::process_raw_data, this);
     if (ret < 0 && ret != DECODE_ERROR_EOS && ret != DECODE_ERROR_EAGAIN) {
       LOGE(TAG, "Decode error %d,", ret);
     }
-    if (stream->need_flush_) {
+    if (need_flush_) {
       LOGE(TAG, "%s processer flush data",
-           stream->stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
-      stream->processer_->flush();
-      stream->need_flush_ = false;
+           stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
+      processer_->flush();
+      need_flush_ = false;
     }
   }
   LOGE(TAG, "%s process thread exit!!!",
-       stream->stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
-  return nullptr;
+       stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
 }

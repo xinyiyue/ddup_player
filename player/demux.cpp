@@ -80,41 +80,37 @@ void Demux::notify_error(int error_type) {
   listener_->notify_error(error_type);
 }
 
-void *Demux::input_thread(void *arg) {
+void Demux::input_thread(void) {
   LOGI(TAG, "%s", "input thread enter !!!");
-
-  Demux *demux = (Demux *)arg;
-
-  while (!demux->input_thread_exit_) {
+  while (!input_thread_exit_) {
     check_wait_ready();
     av_data_s data;
     LOGD(TAG, "%s", "input thread read data !!!");
-    int ret = demux->read_input(&data);
+    int ret = read_input(&data);
     if (ret > 0) {
       if (ret == DEMUX_EOS) {
-        if (demux->audio_stream_) demux->audio_stream_->set_eos();
-        if (demux->video_stream_) demux->video_stream_->set_eos();
+        if (audio_stream_) audio_stream_->set_eos();
+        if (video_stream_) video_stream_->set_eos();
         LOGE(TAG, "%s", "input thread read eos");
-        demux->set_state(DEMUX_STATE_EOS);
+        set_state(DEMUX_STATE_EOS);
       } else if (ret == DEMUX_EAGAN) {
         LOGE(TAG, "%s", "input thread eagain");
       } else {
         LOGE(TAG, "input thread read data error:%d", ret);
-        demux->notify_error((int)ret);
+        notify_error((int)ret);
       }
       continue;
     }
 
     if (data.type_ == VIDEO_STREAM) {
       LOGD(TAG, "input thread append video pkt:%p", data.data);
-      demux->append_buffer(&data.data, VIDEO_FIFO);
+      append_buffer(&data.data, VIDEO_FIFO);
     } else {
       LOGD(TAG, "input thread append audio pkt:%p", data.data);
-      demux->append_buffer(&data.data, AUDIO_FIFO);
+      append_buffer(&data.data, AUDIO_FIFO);
     }
   }
   LOGI(TAG, "%s", "input thread exit !!!");
-  return NULL;
 }
 
 void Demux::check_wait_ready() {
@@ -144,8 +140,7 @@ int Demux::open() {
   LOGI(TAG, "%s", "demux open, create input thread");
   set_state(DEMUX_STATE_OPEN);
   input_thread_ =
-      std::thread(std::bind(&Demux::input_thread, this, std::placeholders::_1),
-                  (void *)this);
+      std::thread(std::bind(&Demux::input_thread, this));
 
   return 0;
 }

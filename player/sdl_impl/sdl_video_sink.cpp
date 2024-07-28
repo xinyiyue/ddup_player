@@ -26,8 +26,7 @@ int SdlVideoSink::init() {
   texture_builder_ = dynamic_cast<TextureBuilder *>(top);
   LOGE(TAG, "get texture_builder_:%s success", texture_builder_->name_.c_str());
   render_thread_id_ = std::thread(std::bind(&SdlVideoSink::video_render_thread,
-                                            this, std::placeholders::_1),
-                                  (void *)this);
+                                            this));
   return 0;
 }
 
@@ -47,8 +46,7 @@ int SdlVideoSink::set_negotiated_format(video_format_s *format) {
   return texture_builder_->set_negotiated_format(format);
 }
 
-void *SdlVideoSink::video_render_thread(void *arg) {
-  SdlVideoSink *sink = (SdlVideoSink *)arg;
+void SdlVideoSink::video_render_thread(void) {
   while (!exit_) {
     if (eos_ && is_fifo_empty(VIDEO_FIFO)) {
       listener_->notify_event(DDUP_EVENT_VIDEO_EOS, nullptr);
@@ -56,17 +54,16 @@ void *SdlVideoSink::video_render_thread(void *arg) {
       eos_ = false;
     }
     render_buffer_s *buff;
-    bool ret = sink->consume_buffer(&buff, VIDEO_FIFO);
+    bool ret = consume_buffer(&buff, VIDEO_FIFO);
     if (!ret) {
       LOGE(TAG, "%s", "consume buffer error");
       continue;
     }
-    sink->texture_builder_->build_texture(buff);
-    int sleep_time = 1000 / buff->frame_rate;
+    texture_builder_->build_texture(buff);
+    int sleep_time = 1000 / buff->frame_rate - 2;
     free(buff->data);
     free(buff);
     SDL_Delay(sleep_time);  // 50ms
   }
   LOGI(TAG, "%s", "video render thread exit!!!!");
-  return nullptr;
 }

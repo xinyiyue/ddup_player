@@ -18,7 +18,7 @@ class SdlVideoSink : public Sink {
   virtual int set_negotiated_format(video_format_s *format) override;
 
  private:
-  void *video_render_thread(void *arg);
+  void video_render_thread(void);
   TextureBuilder *texture_builder_;
   bool exit_;
   std::thread render_thread_id_;

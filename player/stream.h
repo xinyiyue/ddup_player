@@ -36,7 +36,7 @@ class Stream : public BufferConsumer, public EventListener {
   Processer *processer_;
 
  private:
-  void *process_thread(void *arg);
+  void process_thread(void);
   int check_wait();
   int stream_on();
   int stream_off();

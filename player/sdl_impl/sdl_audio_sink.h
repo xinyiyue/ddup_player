@@ -18,7 +18,7 @@ class SdlAudioSink : public Sink {
   virtual int set_negotiated_format(audio_format_s *format) override;
 
  private:
-  void *audio_render_thread(void *arg);
+  void audio_render_thread(void);
   bool exit_;
   std::thread render_thread_id_;
   SDL_AudioDeviceID audio_dev = 0;
