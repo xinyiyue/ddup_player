@@ -517,9 +517,9 @@ int kiss_progressbar_new(kiss_progressbar *progressbar, kiss_window *wdw,
 	progressbar->bg = kiss_gray;
 	kiss_makerect(&progressbar->rect, x, y, w,
 		progressbar->bar.h + 2 * kiss_border);
-	kiss_makerect(&progressbar->barrect, x + kiss_border,
+	kiss_makerect(&progressbar->barrect, x + kiss_border + 60,
 		y + kiss_border, 0, progressbar->bar.h);
-	progressbar->width = w - 2 * kiss_border;
+	progressbar->width = w - 2 * kiss_border - 140;
 	progressbar->fraction = 0.;
 	progressbar->step = 0.01;
 	progressbar->lasttick = 0;
