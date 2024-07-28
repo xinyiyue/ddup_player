@@ -15,8 +15,7 @@ SdlAudioSink::~SdlAudioSink() {}
 
 int SdlAudioSink::init() {
   render_thread_id_ = std::thread(std::bind(&SdlAudioSink::audio_render_thread,
-                                            this, std::placeholders::_1),
-                                  (void *)this);
+                                            this));
 
   if (SDL_Init(SDL_INIT_AUDIO) < 0) {
     LOGE(TAG, "SDL_Init audio error: %s", SDL_GetError());
@@ -64,8 +63,7 @@ int SdlAudioSink::uninit() {
   return 0;
 }
 
-void *SdlAudioSink::audio_render_thread(void *arg) {
-  SdlAudioSink *sink = (SdlAudioSink *)arg;
+void SdlAudioSink::audio_render_thread(void) {
   while (!exit_) {
     if (eos_ && is_fifo_empty(AUDIO_FIFO)) {
       listener_->notify_event(DDUP_EVENT_AUDIO_EOS, nullptr);
@@ -73,7 +71,7 @@ void *SdlAudioSink::audio_render_thread(void *arg) {
       eos_ = false;
     }
     render_buffer_s *buff;
-    bool ret = sink->consume_buffer(&buff, AUDIO_FIFO);
+    bool ret = consume_buffer(&buff, AUDIO_FIFO);
     if (!ret) {
       LOGE(TAG, "%s", "consume buffer error");
       continue;
@@ -90,7 +88,6 @@ void *SdlAudioSink::audio_render_thread(void *arg) {
     free(buff);
   }
   LOGI(TAG, "%s", "audio render thread exit!!!!");
-  return nullptr;
 }
 
 int SdlAudioSink::get_supported_format(audio_format_s *format) {
