@@ -73,7 +73,7 @@ void SdlAudioSink::audio_render_thread(void) {
     render_buffer_s *buff;
     bool ret = consume_buffer(&buff, AUDIO_FIFO);
     if (!ret) {
-      LOGE(TAG, "%s", "consume buffer error");
+      LOGE(TAG, "%s", "consume buffer error or abort");
       continue;
     }
 

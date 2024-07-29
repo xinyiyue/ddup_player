@@ -114,9 +114,10 @@ int Stream::flush() {
   fifo_type_t type = stream_type_ == AUDIO_STREAM ? AUDIO_FIFO : VIDEO_FIFO;
   LOGE(TAG, "%s stream flush", type == AUDIO_FIFO ? "AUDIO" : "VIDEO");
   discard_buffer(type);
+  need_flush_ = true;
   consume_abort(type);
   processer_->append_abort(type);
-  need_flush_ = true;
+  usleep(1000); //FIXME: discard data of raw fifo first
   return 0;
 }
 
@@ -131,7 +132,7 @@ int Stream::set_speed(float speed) {
 
 void Stream::set_eos() {
   fifo_type_t type = stream_type_ == AUDIO_STREAM ? AUDIO_FIFO : VIDEO_FIFO;
-  LOGE(TAG, "%s got eos cmd", type == AUDIO_FIFO ? "AUDIO" : "VIDEO");
+  LOGI(TAG, "%s got eos cmd", type == AUDIO_FIFO ? "AUDIO" : "VIDEO");
   eos_ = true;
   consume_abort(type);
 }
@@ -152,23 +153,29 @@ void Stream::process_thread(void) {
   while (!dec_thread_exit_) {
     check_wait();
     data = nullptr;
-    consume_buffer(
+    bool status = consume_buffer(
         &data, stream_type_ == AUDIO_STREAM ? AUDIO_FIFO : VIDEO_FIFO);
-    if (!data) {
-      LOGE(TAG, "%s processer consume data empty,continue",
+    if (!status) {
+      LOGE(TAG, "%s processer consume data error or abort",
            stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
+      if (need_flush_) {
+        LOGE(TAG, "%s processer & decoder flush data",
+            stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
+        processer_->flush();
+        decoder_->flush();
+        need_flush_ = false;
+      }
       continue;
+    }
+    if (data == nullptr) {
+      LOGE(TAG, "%s processer consume null pkt",
+           stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
     }
     ret = decoder_->decode(data, &Stream::process_raw_data, this);
     if (ret < 0 && ret != DECODE_ERROR_EOS && ret != DECODE_ERROR_EAGAIN) {
       LOGE(TAG, "Decode error %d,", ret);
     }
-    if (need_flush_) {
-      LOGE(TAG, "%s processer flush data",
-           stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
-      processer_->flush();
-      need_flush_ = false;
-    }
+    
   }
   LOGE(TAG, "%s process thread exit!!!",
        stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");

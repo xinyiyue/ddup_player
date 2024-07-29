@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <functional>
+#include<unistd.h>
 
 #include "log/ddup_log.h"
 
@@ -12,6 +13,7 @@ Demux::Demux(EventListener *listener)
   LOGI(TAG, "%s", "construct Demux begin");
   video_stream_ = nullptr;
   audio_stream_ = nullptr;
+  null_packet_ = nullptr;
   input_thread_exit_ = false;
   listener_ = listener;
   listener_->print_name();
@@ -89,8 +91,16 @@ void Demux::input_thread(void) {
     int ret = read_input(&data);
     if (ret > 0) {
       if (ret == DEMUX_EOS) {
-        if (audio_stream_) audio_stream_->set_eos();
-        if (video_stream_) video_stream_->set_eos();
+        if (audio_stream_) {
+          LOGE(TAG, "%s", "input thread append audio null pkt after eos");
+          append_buffer(&null_packet_, AUDIO_FIFO);
+          audio_stream_->set_eos();
+        }
+        if (video_stream_) {
+          LOGE(TAG, "%s", "input thread append video null pkt after eos");
+          append_buffer(&null_packet_, VIDEO_FIFO);
+          video_stream_->set_eos();
+        }
         LOGE(TAG, "%s", "input thread read eos");
         set_state(DEMUX_STATE_EOS);
       } else if (ret == DEMUX_EAGAN) {
@@ -197,6 +207,7 @@ int Demux::set_speed(float speed) {
 int Demux::read_data_abort() {
   if (audio_stream_) append_abort(AUDIO_FIFO);
   if (video_stream_) append_abort(VIDEO_FIFO);
+  usleep(1000);//FIXME:wait read_input thread sleep
   return 0;
 }
 
@@ -209,8 +220,8 @@ int Demux::seek(long long seek_time) {
   AutoLock lock(&cmd_mutex_);
   video_eos_ = false;
   audio_eos_ = false;
-  read_data_abort();
   set_state(DEMUX_STATE_SEEK);
+  read_data_abort();
   LOGI(TAG, "seek:%lld, audio stream flush", seek_time);
   if (audio_stream_) audio_stream_->flush();
   LOGI(TAG, "seek:%lld, video stream flush", seek_time);
@@ -226,7 +237,6 @@ int Demux::stop() {
   LOGI(TAG, "%s", "enter demux stop");
   int ret = 0;
   read_data_abort();
-  set_state(DEMUX_STATE_STOP);
   if (audio_stream_) {
     audio_stream_->flush();
     ret = audio_stream_->uninit();
