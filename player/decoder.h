@@ -18,6 +18,7 @@ class Decoder : public EventListener {
   virtual ~Decoder(){};
   virtual int open() = 0;
   virtual int decode(void *data, out_cb cb, void *arg) = 0;
+  virtual int flush() = 0;
   virtual int close() = 0;
 };
 

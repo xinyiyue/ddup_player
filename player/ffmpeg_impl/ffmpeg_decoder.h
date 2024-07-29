@@ -22,6 +22,7 @@ class FFmpegDecoder : public Decoder {
 
   virtual int open() final;
   virtual int decode(void *data, out_cb cb, void *arg) final;
+  virtual int flush() final;
   virtual int close() final;
 
  private:

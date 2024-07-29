@@ -48,14 +48,19 @@ int FFmpegDecoder::decode(void *data, out_cb cb, void *arg) {
   bool frame_remain = true;
 
   AVPacket *pkt = (AVPacket *)data;
+  if (pkt == nullptr) {
+    LOGI(TAG, "decoder:%s will decode null pkt:%p", dec_ctx_->codec->name, pkt);
+  }
   LOGD(TAG, "decoder:%s will decode pkt:%p", dec_ctx_->codec->name, pkt);
   ret = avcodec_send_packet(dec_ctx_, pkt);
   if (ret < 0) {
     LOGE(TAG, "Error submitting a packet for decoding (%d)", ret);
     return ret;
   }
-  av_packet_unref(pkt);
-  av_packet_free(&pkt);
+  if(pkt != nullptr) {
+    av_packet_unref(pkt);
+    av_packet_free(&pkt);
+  }
 
   while (frame_remain) {
     AVFrame *frame = NULL;
@@ -83,11 +88,19 @@ int FFmpegDecoder::decode(void *data, out_cb cb, void *arg) {
     }
   }
   if (ret == AVERROR_EOF) {
+    LOGI(TAG, "decoder %s  recieve eof, flush buffers", dec_ctx_->codec->name);
+    avcodec_flush_buffers(dec_ctx_);
     ret = DECODE_ERROR_EOS;
   } else if (ret == AVERROR(EAGAIN)) {
     ret = DECODE_ERROR_EAGAIN;
   }
   return ret;
+}
+
+int FFmpegDecoder::flush() {
+  LOGI(TAG, "decoder %s  flush buffers", dec_ctx_->codec->name);
+  avcodec_flush_buffers(dec_ctx_);
+  return 0;
 }
 
 int FFmpegDecoder::close() {

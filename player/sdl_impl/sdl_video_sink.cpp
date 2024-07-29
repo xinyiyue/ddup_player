@@ -56,7 +56,7 @@ void SdlVideoSink::video_render_thread(void) {
     render_buffer_s *buff;
     bool ret = consume_buffer(&buff, VIDEO_FIFO);
     if (!ret) {
-      LOGE(TAG, "%s", "consume buffer error");
+      LOGE(TAG, "%s", "consume buffer error or abort");
       continue;
     }
     texture_builder_->build_texture(buff);

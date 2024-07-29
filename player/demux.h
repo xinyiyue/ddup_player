@@ -75,6 +75,7 @@ class Demux : public EventListener, public BufferProducer, public FreeHandler {
   demux_state_t state_;
   bool audio_eos_;
   bool video_eos_;
+  void *null_packet_;
 };
 
 #endif
