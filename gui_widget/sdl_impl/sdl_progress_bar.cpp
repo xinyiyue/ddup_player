@@ -116,7 +116,7 @@ int SdlProgBar::event_handler(void *event) {
       state_ = PLAYBACK_SEEK;
       temp_time = seek_time_;
     }
-    dirty_ = true;
+    set_show(true, DELAY_HIDE_TIME);
     if (action_cb_) {
       action a;
       a.state = state_;
