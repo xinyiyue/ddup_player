@@ -22,6 +22,7 @@ SdlVideo::SdlVideo(const char *name, kiss_array *arr, kiss_window *win,
   exit_ = false;
   listener_ = nullptr;
   dirty_ = true;
+  last_pos_ = 0;
   player_ = new DDupPlayer(static_cast<EventListener *>(this));
 }
 
@@ -62,6 +63,7 @@ int SdlVideo::get_type() { return 0; }
 int SdlVideo::event_handler(void *event) {
   SDL_Event *e = (SDL_Event *)event;
   if (e->type == SDL_USER_EVENT_VIDEO_UPDATE) {
+    dirty_ = true;
     LOGD(TAG, "%s",
          "catch event video update event, will update video picture");
     return 1;
@@ -78,12 +80,15 @@ void SdlVideo::notify_event(int event_type, void *ret) {
   SDL_Event event;
   switch (dd_event) {
     case DDUP_EVENT_POSITION:
-      position_ = *(long long *)ret;
-      event.type = SDL_USER_EVENT_POSITION_UPDATE;
-      event.user.data1 = &position_;
-      event.user.data2 = NULL;
-      SDL_PushEvent(&event);
-      LOGD(TAG, "notify SDL_USER_EVENT_POSITION_UPDATE:%lld", position_);
+      real_time_pos_ = *(long long *)ret;
+      if (real_time_pos_ - last_pos_ > 900) {
+        event.type = SDL_USER_EVENT_POSITION_UPDATE;
+        event.user.data1 = &real_time_pos_;
+        event.user.data2 = NULL;
+        SDL_PushEvent(&event);
+        last_pos_ = real_time_pos_;
+        LOGI(TAG, "notify SDL_USER_EVENT_POSITION_UPDATE:%lld", real_time_pos_);
+      }
       break;
     case DDUP_EVENT_DURATION:
       duration_ = *(long long *)ret;
