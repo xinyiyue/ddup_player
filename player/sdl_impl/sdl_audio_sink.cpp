@@ -9,13 +9,15 @@
 SdlAudioSink::SdlAudioSink(sink_type_t type, EventListener *listener)
     : Sink(type, listener) {
   exit_ = false;
+  last_buff_ = nullptr;
+  last_buff_offset_ = 0;
 }
 
 SdlAudioSink::~SdlAudioSink() {}
 
 int SdlAudioSink::init() {
-  render_thread_id_ =
-      std::thread(std::bind(&SdlAudioSink::audio_render_thread, this));
+  // render_thread_id_ =
+  //    std::thread(std::bind(&SdlAudioSink::audio_render_thread, this));
 
   if (SDL_Init(SDL_INIT_AUDIO) < 0) {
     LOGE(TAG, "SDL_Init audio error: %s", SDL_GetError());
@@ -30,7 +32,8 @@ int SdlAudioSink::init() {
   desired_spec.channels = 2;
   desired_spec.silence = 0;
   desired_spec.samples = 1024;
-  desired_spec.callback = NULL;
+  desired_spec.callback = &SdlAudioSink::audio_callback;
+  desired_spec.userdata = this;
 
   if ((audio_dev = SDL_OpenAudioDevice(NULL, 0, &desired_spec, &have_spec,
                                        SDL_AUDIO_ALLOW_ANY_CHANGE)) < 2) {
@@ -50,7 +53,7 @@ int SdlAudioSink::init() {
   aformat.channel_number = have_spec.channels;
   aformat.sample_rate = have_spec.freq;
   aformat.sample_format = have_spec.format;
-
+  SDL_PauseAudioDevice(audio_dev, 0);
   return 0;
 }
 
@@ -59,8 +62,93 @@ int SdlAudioSink::uninit() {
   exit_ = true;
   SDL_CloseAudio();
   consume_abort(AUDIO_FIFO);
-  if (render_thread_id_.joinable()) render_thread_id_.join();
+  // if (render_thread_id_.joinable()) render_thread_id_.join();
   return 0;
+}
+
+void SdlAudioSink::audio_callback(void *userdata, Uint8 *stream, int len) {
+  SdlAudioSink *sink = (SdlAudioSink *)userdata;
+  if (!sink) {
+    LOGE(TAG, "%s", "Audio sink is null");
+    return;
+  }
+  if (sink->eos_ && sink->is_fifo_empty(AUDIO_FIFO)) {
+    sink->listener_->notify_event(DDUP_EVENT_AUDIO_EOS, nullptr);
+    LOGI(TAG, "%s", "Notify AUDIO_EOS");
+    sink->eos_ = false;
+    return;
+  }
+
+  while (len > 0 && !sink->exit_) {
+    render_buffer_s *buff = sink->last_buff_;
+    if (buff) {
+      int to_copy = std::min(buff->len[0], len);
+      LOGD(TAG, "last buff len: %d, wanted:%d, last_buff: %p", buff->len[0],
+           to_copy, buff);
+      memcpy(stream, buff->data[0] + sink->last_buff_offset_, to_copy);
+      stream += to_copy;
+      len -= to_copy;
+      sink->last_buff_offset_ += to_copy;
+      buff->len[0] -= to_copy;
+      if (buff->len[0] == 0) {
+        for (int i = 0; i < 4; ++i) {
+          if (buff->data[i]) free(buff->data[i]);
+        }
+        free(buff);
+        sink->last_buff_ = nullptr;
+        sink->last_buff_offset_ = 0;
+        if (len == 0) {
+          LOGD(TAG, "after consume:%d last buff len: %d, last_buff: %p finish",
+               to_copy, 0, sink->last_buff_);
+          return;
+        }
+      } else {
+        LOGD(TAG, "after consume:%d last buff len: %d, last_buff: %p", to_copy,
+             buff->len[0], sink->last_buff_);
+        return;
+      }
+    }
+
+    if (len > 0) {
+      render_buffer_s *new_buff = nullptr;
+      bool ret = sink->consume_buffer(&new_buff, AUDIO_FIFO);
+      if (!ret) {
+        LOGE(TAG, "%s", "Consume buffer error or abort");
+        continue;
+      }
+      LOGD(TAG, "consume new buffer:%p len: %d, wanted:%d last_buff: %p",
+           new_buff, new_buff->len[0], len, sink->last_buff_);
+      sink->listener_->notify_event(DDUP_EVENT_POSITION,
+                                    (void *)&(new_buff->pts));
+
+      int to_copy = std::min(new_buff->len[0], len);
+      memcpy(stream, new_buff->data[0], to_copy);
+      stream += to_copy;
+      len -= to_copy;
+
+      if (to_copy < new_buff->len[0]) {
+        new_buff->len[0] -= to_copy;
+        sink->last_buff_ = new_buff;
+        sink->last_buff_offset_ += to_copy;
+        LOGD(TAG,
+             "after consume:%d buff:%p not finish, last buff len: %d, "
+             "last_buff: %p",
+             to_copy, new_buff, sink->last_buff_->len[0], sink->last_buff_);
+      } else {
+        LOGD(
+            TAG,
+            "after consume:%d buff:%p finish, last buff len: %d, last_buff: %p",
+            to_copy, new_buff, sink->last_buff_->len[0], sink->last_buff_);
+        for (int i = 0; i < 4; ++i) {
+          if (new_buff->data[i]) free(new_buff->data[i]);
+        }
+        free(new_buff);
+      }
+      if (len > 0) {
+        continue;
+      }
+    }
+  }
 }
 
 void SdlAudioSink::audio_render_thread(void) {

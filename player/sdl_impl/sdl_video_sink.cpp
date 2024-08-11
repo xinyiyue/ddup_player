@@ -60,7 +60,7 @@ void SdlVideoSink::video_render_thread(void) {
       continue;
     }
     texture_builder_->build_texture(buff);
-    int sleep_time = 1000 / buff->frame_rate - 2;
+    int sleep_time = 1000 / buff->frame_rate;
     for (int i = 0; i < 4; ++i) {
       if (buff->data[i]) free(buff->data[i]);
     }
