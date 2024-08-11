@@ -83,6 +83,7 @@ int main(int argc, char *argv[]) {
   win->add_layer(static_cast<Layer *>(layer));
   win->add_layer(static_cast<Layer *>(video_layer));
   video_widget->open("../../res/The_Shawshank_Redemption.mp4");
+  // video_widget->open("../../res/tianhou.mp4");
   video_widget->set_speed(1.0);
   win->show();
   delete video_widget;

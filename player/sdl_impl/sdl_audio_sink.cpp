@@ -14,8 +14,8 @@ SdlAudioSink::SdlAudioSink(sink_type_t type, EventListener *listener)
 SdlAudioSink::~SdlAudioSink() {}
 
 int SdlAudioSink::init() {
-  render_thread_id_ = std::thread(std::bind(&SdlAudioSink::audio_render_thread,
-                                            this));
+  render_thread_id_ =
+      std::thread(std::bind(&SdlAudioSink::audio_render_thread, this));
 
   if (SDL_Init(SDL_INIT_AUDIO) < 0) {
     LOGE(TAG, "SDL_Init audio error: %s", SDL_GetError());
@@ -82,9 +82,10 @@ void SdlAudioSink::audio_render_thread(void) {
       is_start = true;
     }
     listener_->notify_event(DDUP_EVENT_POSITION, (void *)&(buff->pts));
-    SDL_QueueAudio(audio_dev, buff->data, buff->len);
-
-    free(buff->data);
+    SDL_QueueAudio(audio_dev, buff->data[0], buff->len[0]);
+    for (int i = 0; i < 4; ++i) {
+      if (buff->data[i]) free(buff->data[i]);
+    }
     free(buff);
   }
   LOGI(TAG, "%s", "audio render thread exit!!!!");

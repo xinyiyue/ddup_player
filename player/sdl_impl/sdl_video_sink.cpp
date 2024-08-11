@@ -25,8 +25,8 @@ int SdlVideoSink::init() {
   }
   texture_builder_ = dynamic_cast<TextureBuilder *>(top);
   LOGE(TAG, "get texture_builder_:%s success", texture_builder_->name_.c_str());
-  render_thread_id_ = std::thread(std::bind(&SdlVideoSink::video_render_thread,
-                                            this));
+  render_thread_id_ =
+      std::thread(std::bind(&SdlVideoSink::video_render_thread, this));
   return 0;
 }
 
@@ -61,7 +61,9 @@ void SdlVideoSink::video_render_thread(void) {
     }
     texture_builder_->build_texture(buff);
     int sleep_time = 1000 / buff->frame_rate - 2;
-    free(buff->data);
+    for (int i = 0; i < 4; ++i) {
+      if (buff->data[i]) free(buff->data[i]);
+    }
     free(buff);
     SDL_Delay(sleep_time);  // 50ms
   }

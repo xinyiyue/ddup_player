@@ -52,13 +52,13 @@ int FFmpegAudioProcesser::process(void *data, void **out) {
 
   if (swr_ctx) {
     const uint8_t **in = (const uint8_t **)frame->extended_data;
-    uint8_t **out = (uint8_t **)&dst_buff->data;
+    uint8_t **out = (uint8_t **)&dst_buff->data[0];
     int out_count = frame->nb_samples;
     out_size = av_samples_get_buffer_size(NULL, frame->ch_layout.nb_channels,
                                           out_count, AV_SAMPLE_FMT_S16, 0);
 
-    dst_buff->data = (char *)malloc(out_size * sizeof(uint8_t));
-    if (dst_buff->data == NULL) {
+    dst_buff->data[0] = (char *)malloc(out_size * sizeof(uint8_t));
+    if (dst_buff->data[0] == NULL) {
       goto out;
     }
 
@@ -67,13 +67,13 @@ int FFmpegAudioProcesser::process(void *data, void **out) {
       swr_free(&swr_ctx);
       goto out;
     }
-    dst_buff->len = out_size;
+    dst_buff->len[0] = out_size;
   } else {
     out_size = frame->linesize[0];
-    dst_buff->data = (char *)malloc(dst_buff->len * sizeof(uint8_t));
+    dst_buff->data[0] = (char *)malloc(out_size * sizeof(uint8_t));
     if (dst_buff->data != NULL) {
-      memcpy(dst_buff->data, frame->data[0], dst_buff->len);
-      dst_buff->len = out_size;
+      memcpy(dst_buff->data, frame->data[0], out_size);
+      dst_buff->len[0] = out_size;
     }
   }
 
@@ -91,8 +91,8 @@ out:
 int FFmpegAudioProcesser::free_data(void *data) {
   render_buffer_s *buff = (render_buffer_s *)data;
   LOGD(TAGA, "audio processer free render buff:%p", buff);
-  if (buff->data) {
-    free(buff->data);
+  for (int i = 0; i < 4; ++i) {
+    if (buff->data[i]) free(buff->data[i]);
   }
   free(buff);
   return 0;
@@ -121,17 +121,20 @@ static int save_file(const char *name, char *in_buffer, int len) {
 pixel_format_t FFmpegVideoProcesser::ff_fmt_to_pixel_fmt(int ff_format) {
   pixel_format_t pixel;
   switch (ff_format) {
-    case AV_PIX_FMT_ARGB:
+    case AV_PIX_FMT_RGB32:
       pixel = PIXELFORMAT_ARGB8888;
       break;
-    case AV_PIX_FMT_RGBA:
+    case AV_PIX_FMT_BGR32_1:
       pixel = PIXELFORMAT_BGRA8888;
       break;
-    case AV_PIX_FMT_NV12:
-      pixel = PIXELFORMAT_NV12;
+    case AV_PIX_FMT_YUV420P:
+      pixel = PIXELFORMAT_IYUV;
       break;
-    case AV_PIX_FMT_NV21:
-      pixel = PIXELFORMAT_NV21;
+    case AV_PIX_FMT_YUYV422:
+      pixel = PIXELFORMAT_YUY2;
+      break;
+    case AV_PIX_FMT_UYVY422:
+      pixel = PIXELFORMAT_UYVY;
       break;
     default:
       pixel = PIXELFORMAT_UNKNOWN;
@@ -142,23 +145,27 @@ pixel_format_t FFmpegVideoProcesser::ff_fmt_to_pixel_fmt(int ff_format) {
   return pixel;
 }
 
-int FFmpegVideoProcesser::pixel_fmt_to_ff_format(pixel_format_t pixel) {
-  int ff_format;
+enum AVPixelFormat FFmpegVideoProcesser::pixel_fmt_to_ff_format(
+    pixel_format_t pixel) {
+  enum AVPixelFormat ff_format;
   switch (pixel) {
     case PIXELFORMAT_ARGB8888:
-      ff_format = AV_PIX_FMT_ARGB;
+      ff_format = AV_PIX_FMT_RGB32;
       break;
     case PIXELFORMAT_BGRA8888:
-      ff_format = AV_PIX_FMT_RGBA;
+      ff_format = AV_PIX_FMT_BGR32_1;
       break;
-    case PIXELFORMAT_NV12:
-      ff_format = AV_PIX_FMT_NV12;
+    case PIXELFORMAT_IYUV:
+      ff_format = AV_PIX_FMT_YUV420P;
       break;
-    case PIXELFORMAT_NV21:
-      ff_format = AV_PIX_FMT_NV21;
+    case PIXELFORMAT_YUY2:
+      ff_format = AV_PIX_FMT_YUYV422;
+      break;
+    case PIXELFORMAT_UYVY:
+      ff_format = AV_PIX_FMT_UYVY422;
       break;
     default:
-      ff_format = PIXELFORMAT_UNKNOWN;
+      ff_format = AV_PIX_FMT_NONE;
       break;
   }
   LOGD(TAGV, "map ddup fmt %d to ffmpeg format:%s", pixel,
@@ -179,9 +186,8 @@ FFmpegVideoProcesser::FFmpegVideoProcesser(processer_type_t type,
 
 int FFmpegVideoProcesser::config() {
   sink_->get_supported_format(&dst_fmt_);
-  if (src_fmt_.pixel[0] != dst_fmt_.pixel[0] ||
-      src_fmt_.width != dst_fmt_.width || src_fmt_.height != dst_fmt_.height) {
-    int dst_ff_format = pixel_fmt_to_ff_format(dst_fmt_.pixel[0]);
+  int dst_ff_format = pixel_fmt_to_ff_format(dst_fmt_.pixel[0]);
+  if (src_fmt_.pixel[0] != dst_fmt_.pixel[0]) {
     swsContext_ =
         sws_getContext(codec_param_->width, codec_param_->height,
                        (enum AVPixelFormat)codec_param_->format, dst_fmt_.width,
@@ -191,6 +197,10 @@ int FFmpegVideoProcesser::config() {
          av_get_pix_fmt_name((enum AVPixelFormat)codec_param_->format),
          av_get_pix_fmt_name((enum AVPixelFormat)dst_ff_format), swsContext_);
     sink_->set_negotiated_format(&dst_fmt_);
+  } else {
+    LOGI(TAGV, "do not convert video: src fmt %s, dst fmt:%s",
+         av_get_pix_fmt_name((enum AVPixelFormat)codec_param_->format),
+         av_get_pix_fmt_name((enum AVPixelFormat)dst_ff_format));
   }
   return 0;
 }
@@ -199,6 +209,7 @@ int FFmpegVideoProcesser::process(void *data, void **out) {
   AVFrame *frame = (AVFrame *)data;
   render_buffer_s *dst_buff =
       (render_buffer_s *)malloc(sizeof(render_buffer_s));
+  memset(dst_buff, 0, sizeof(render_buffer_s));
   if (swsContext_) {
     uint8_t *dst_data[AV_NUM_DATA_POINTERS] = {NULL};
     int dst_linesize[AV_NUM_DATA_POINTERS] = {0};
@@ -215,8 +226,8 @@ int FFmpegVideoProcesser::process(void *data, void **out) {
       LOGD(TAGV, "dst_linesize[%d]:%d", i, dst_linesize[i]);
       data_length += dst_linesize[i];
     }
-    dst_buff->data = (char *)dst_data[0];
-    dst_buff->len = data_length * 4;
+    dst_buff->data[0] = (char *)dst_data[0];
+    dst_buff->len[0] = data_length * 4;
     dst_buff->pixel = dst_fmt_.pixel[0];
     dst_buff->width = dst_fmt_.width;
     dst_buff->height = dst_fmt_.height;
@@ -229,35 +240,33 @@ int FFmpegVideoProcesser::process(void *data, void **out) {
       if (dump_file_index < 20) {
         std::string file_name = "/home/mi/data/ddup_player/res/dump_video_" +
                                 std::to_string(dump_file_index) + ".argb";
-        save_file(file_name.c_str(), dst_buff->data,
+        save_file(file_name.c_str(), dst_buff->data[0],
                   dst_buff->width * dst_buff->height * 4);
         dump_file_index++;
       }
     }
   } else {
-    LOGI(TAGV, "%s", "copy buffer.....");
-    uint8_t *dst_data[AV_NUM_DATA_POINTERS] = {NULL};
-    int dst_linesize[AV_NUM_DATA_POINTERS] = {0};
-    int dst_ff_format = pixel_fmt_to_ff_format(dst_fmt_.pixel[0]);
-    av_image_alloc(dst_data, dst_linesize, codec_param_->width,
-                   codec_param_->width,
-                   (enum AVPixelFormat)codec_param_->format, 1);
-    dst_buff->data = (char *)dst_data[0];
-    int data_length = 0;
-    for (int i = 0; i < AV_NUM_DATA_POINTERS; i++) {
-      data_length += dst_linesize[i];
+    enum AVPixelFormat dst_ff_format =
+        pixel_fmt_to_ff_format(dst_fmt_.pixel[0]);
+    LOGD(TAGV, "copy frame, format:%s", av_get_pix_fmt_name(dst_ff_format));
+
+    for (int i = 0; i < 3; i++) {
+      dst_buff->len[i] = frame->linesize[i];
+      dst_buff->data[i] =
+          (char *)av_malloc(dst_buff->len[i] * codec_param_->height);
+      memcpy(dst_buff->data[i], frame->data[i],
+             dst_buff->len[i] * codec_param_->height);
+      LOGD(TAGV, "alloc len[%d]:%d, data[%d]:%p, linesize[%d]:%d", i,
+           dst_buff->len[i], i, dst_buff->data[i], i, frame->linesize[i]);
     }
-    av_image_copy_to_buffer((uint8_t *)dst_data, data_length,
-                            (const uint8_t **)(frame->data), frame->linesize,
-                            (enum AVPixelFormat)codec_param_->format,
-                            codec_param_->width, codec_param_->width, 1);
-    dst_buff->len = data_length;
+    dst_buff->pixel = dst_fmt_.pixel[0];
     dst_buff->width = codec_param_->width;
     dst_buff->height = codec_param_->height;
     dst_buff->frame_rate = codec_param_->framerate.num;
   }
   av_frame_unref(frame);
   av_frame_free(&frame);
+  LOGD(TAGV, "%s", "process dst buffer ok");
   *out = dst_buff;
   return 0;
 }
@@ -265,8 +274,8 @@ int FFmpegVideoProcesser::process(void *data, void **out) {
 int FFmpegVideoProcesser::free_data(void *data) {
   render_buffer_s *buff = (render_buffer_s *)data;
   LOGD(TAGA, "video processer free render buff:%p", buff);
-  if (buff->data) {
-    free(buff->data);
+  for (int i = 0; i < 4; ++i) {
+    if (buff->data[i]) free(buff->data[i]);
   }
   free(buff);
 

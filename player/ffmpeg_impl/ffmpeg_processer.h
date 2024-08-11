@@ -31,7 +31,7 @@ class FFmpegVideoProcesser : public Processer {
   int free_data(void *data) final;
   virtual int process(void *data, void **out) final;
   pixel_format_t ff_fmt_to_pixel_fmt(int ff_format);
-  int pixel_fmt_to_ff_format(pixel_format_t pixel);
+  enum AVPixelFormat pixel_fmt_to_ff_format(pixel_format_t pixel);
 
  private:
   virtual int config() final;
