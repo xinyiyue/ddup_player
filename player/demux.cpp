@@ -1,8 +1,9 @@
 #include "player/demux.h"
 
+#include <unistd.h>
+
 #include <cassert>
 #include <functional>
-#include<unistd.h>
 
 #include "log/ddup_log.h"
 
@@ -149,8 +150,7 @@ void Demux::set_state(demux_state_t state) {
 int Demux::open() {
   LOGI(TAG, "%s", "demux open, create input thread");
   set_state(DEMUX_STATE_OPEN);
-  input_thread_ =
-      std::thread(std::bind(&Demux::input_thread, this));
+  input_thread_ = std::thread(std::bind(&Demux::input_thread, this));
 
   return 0;
 }
@@ -207,7 +207,7 @@ int Demux::set_speed(float speed) {
 int Demux::read_data_abort() {
   if (audio_stream_) append_abort(AUDIO_FIFO);
   if (video_stream_) append_abort(VIDEO_FIFO);
-  usleep(1000);//FIXME:wait read_input thread sleep
+  usleep(1000);  // FIXME:wait read_input thread sleep
   return 0;
 }
 

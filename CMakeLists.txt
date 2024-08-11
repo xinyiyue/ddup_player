@@ -38,14 +38,16 @@ set(PLAYER_SOURCE
 )
 
 set(GMOCK_PLAYER_SOURCE
-./player/gmock/gmock_test.cpp
+./player/gmock/gmock_main.cpp
 ./player/gmock/gmock_fifo.cpp
+./player/fifo_controller.cpp
+./player/gmock/gmock_sdl_audio.cpp
 )
 
 add_executable(pcw player_control_bar.cpp ${KISS_SDL_SOURCE})
 add_executable(test test.cpp ${SDL_IMPL_SOURCE} ${FIFO_SOURCE} ${KISS_SDL_SOURCE} ${PLAYER_SOURCE})
 add_executable(ddup_app ./app/ddup_app.cpp ${SDL_IMPL_SOURCE} ${FIFO_SOURCE} ${KISS_SDL_SOURCE} ${PLAYER_SOURCE})
-add_executable(gtest ./player/gmock/gmock_main.cpp ./player/gmock/gmock_fifo.cpp ./player/fifo_controller.cpp ${FIFO_SOURCE})
+add_executable(gtest ${GMOCK_PLAYER_SOURCE} ${FIFO_SOURCE})
 message("当前源代码目录：" ${CMAKE_CURRENT_SOURCE_DIR})
 message("当前二进制目录：" ${CMAKE_CURRENT_BINARY_DIR})
 include_directories(

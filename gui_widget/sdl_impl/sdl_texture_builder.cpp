@@ -29,17 +29,19 @@ SDL_PixelFormatEnum SdlTextureBuilder::map_to_sdl_pixel_format(
   SDL_PixelFormatEnum pixel;
   switch (format) {
     case PIXELFORMAT_ARGB8888:
-      // pixel = SDL_PIXELFORMAT_ARGB8888;
-      pixel = SDL_PIXELFORMAT_BGRA8888;
+      pixel = SDL_PIXELFORMAT_ARGB8888;
       break;
     case PIXELFORMAT_BGRA8888:
       pixel = SDL_PIXELFORMAT_BGRA8888;
       break;
-    case PIXELFORMAT_NV12:
-      pixel = SDL_PIXELFORMAT_NV12;
+    case PIXELFORMAT_IYUV:
+      pixel = SDL_PIXELFORMAT_IYUV;
       break;
-    case PIXELFORMAT_NV21:
-      pixel = SDL_PIXELFORMAT_NV21;
+    case PIXELFORMAT_YUY2:
+      pixel = SDL_PIXELFORMAT_YUY2;
+      break;
+    case PIXELFORMAT_UYVY:
+      pixel = SDL_PIXELFORMAT_UYVY;
       break;
     default:
       pixel = SDL_PIXELFORMAT_UNKNOWN;
@@ -77,7 +79,12 @@ SdlTextureBuilder::~SdlTextureBuilder() {
 int SdlTextureBuilder::get_supported_format(video_format_s *format) {
   format->width = win_width_;
   format->height = win_height_;
-  format->pixel[0] = PIXELFORMAT_ARGB8888;
+  format->pixel[0] = PIXELFORMAT_IYUV;
+  // format->pixel[0] = PIXELFORMAT_ARGB8888;
+  LOGI(TAG, "get supported format,w:%d, h:%d, pixel:%s", win_width_,
+       win_height_,
+       print_sdl_pixel_name(map_to_sdl_pixel_format(format->pixel[0])));
+
   return 0;
 }
 
@@ -111,7 +118,16 @@ int SdlTextureBuilder::build_texture(render_buffer_s *buff) {
     kiss_makerect(&src_rect_, 0, 0, width_, height_);
   }
   AutoLock lock(renderer_mutex_);
-  SDL_UpdateTexture(texture_, NULL, buff->data, buff->width * 4);
+  if (pixel_format_ == SDL_PIXELFORMAT_IYUV) {
+    LOGD(TAG, "SDL_UpdateYUVTexture pixel:%s", print_sdl_pixel_name(pixel));
+    SDL_UpdateYUVTexture(texture_, NULL, (const Uint8 *)buff->data[0],
+                         buff->len[0], (const Uint8 *)buff->data[1],
+                         buff->len[1], (const Uint8 *)buff->data[2],
+                         buff->len[2]);
+  } else {
+    LOGD(TAG, "xxx SDL_UpdateYUVTexture pixel:%s", print_sdl_pixel_name(pixel));
+    SDL_UpdateTexture(texture_, NULL, buff->data[0], width_ * 4);
+  }
   SDL_Event event;
   event.type = SDL_USER_EVENT_VIDEO_UPDATE;
   event.user.data1 = NULL;

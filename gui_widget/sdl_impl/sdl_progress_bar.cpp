@@ -109,8 +109,7 @@ int SdlProgBar::event_handler(void *event) {
       }
     } else {
       int pos = e->button.x - 60;
-      if (pos < 0)
-        pos = 0;
+      if (pos < 0) pos = 0;
       seek_time_ = (pos / ((float)window_->rect.w - 150)) * duration_;
       set_current_time(seek_time_);
       state_ = PLAYBACK_SEEK;

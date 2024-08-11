@@ -38,8 +38,7 @@ int Stream::init() {
   create_processer();
   decoder_->open();
   processer_->init();
-  process_thread_ = std::thread(
-      std::bind(&Stream::process_thread, this));
+  process_thread_ = std::thread(std::bind(&Stream::process_thread, this));
 
   return 0;
 }
@@ -117,7 +116,7 @@ int Stream::flush() {
   need_flush_ = true;
   consume_abort(type);
   processer_->append_abort(type);
-  usleep(1000); //FIXME: discard data of raw fifo first
+  usleep(1000);  // FIXME: discard data of raw fifo first
   return 0;
 }
 
@@ -160,7 +159,7 @@ void Stream::process_thread(void) {
            stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
       if (need_flush_) {
         LOGE(TAG, "%s processer & decoder flush data",
-            stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
+             stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
         processer_->flush();
         decoder_->flush();
         need_flush_ = false;
@@ -175,7 +174,6 @@ void Stream::process_thread(void) {
     if (ret < 0 && ret != DECODE_ERROR_EOS && ret != DECODE_ERROR_EAGAIN) {
       LOGE(TAG, "Decode error %d,", ret);
     }
-    
   }
   LOGE(TAG, "%s process thread exit!!!",
        stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");

@@ -6,14 +6,15 @@
 typedef enum PXIEL_FORMART {
   PIXELFORMAT_ARGB8888 = 0,
   PIXELFORMAT_BGRA8888 = 1,
-  PIXELFORMAT_NV12 = 2,
-  PIXELFORMAT_NV21 = 3,
+  PIXELFORMAT_IYUV = 2,
+  PIXELFORMAT_YUY2 = 3,
+  PIXELFORMAT_UYVY = 4,
   PIXELFORMAT_UNKNOWN = 10,
 } pixel_format_t;
 
 typedef struct RenderBuffer {
-  char *data;
-  int len;
+  char *data[4];
+  int len[4];
   int width;
   int height;
   pixel_format_t pixel;
