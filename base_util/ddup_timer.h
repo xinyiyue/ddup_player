@@ -18,11 +18,11 @@ public:
     running_ = true;
     std::thread timer_thread([this, interval, task]() {
       while(running_) {
-        LOGI(TTTAG, "timer wait%lld", interval);
+        LOGD(TTTAG, "timer wait%lld", interval);
         std::this_thread::sleep_for(std::chrono::milliseconds(interval));
-        LOGI(TTTAG, "%s", "timer start run task");
+        LOGD(TTTAG, "%s", "timer start run task");
         task();
-        LOGI(TTTAG, "%s", "timer run task finish");
+        LOGD(TTTAG, "%s", "timer run task finish");
         running_ = false;
       }
       LOGD(TTTAG, "%s", "timer thread exit");

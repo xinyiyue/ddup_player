@@ -108,9 +108,15 @@ demux_event_t FFmpegDemux::read_input_impl(av_data_s *data) {
       return DEMUX_ERROR;
   }
   data->data = (void *)pkt;
+
+  AVRational base_ms = {1, 1000};
+  long long pts =
+      av_q2d(fmt_ctx_->streams[pkt->stream_index]->time_base) * pkt->pts * 1000;
   if (pkt->stream_index == video_stream_index_) {
+    LOGD(TAG, "demux ctx read video ptk:%lld, addr:%p", pts, data->data);
     data->type_ = VIDEO_STREAM;
   } else {
+    LOGD(TAG, "demux ctx read audio ptk:%lld, addr:%p", pts, data->data);
     data->type_ = AUDIO_STREAM;
   }
   return DEMUX_OK;
