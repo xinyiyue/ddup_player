@@ -169,6 +169,12 @@ void Stream::process_thread(void) {
     if (data == nullptr) {
       LOGE(TAG, "%s processer consume null pkt",
            stream_type_ == AUDIO_STREAM ? "AUDIO" : "VIDEO");
+    } else {
+      if (stream_type_ == VIDEO_STREAM) {
+        LOGD(TAG, "processer consume video pkt:%p", data);
+      } else {
+        LOGD(TAG, "processer consume audio pkt:%p", data);
+      }
     }
     ret = decoder_->decode(data, &Stream::process_raw_data, this);
     if (ret < 0 && ret != DECODE_ERROR_EOS && ret != DECODE_ERROR_EAGAIN) {

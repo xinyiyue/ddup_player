@@ -46,12 +46,15 @@ int FFmpegDecoder::open() {
 int FFmpegDecoder::decode(void *data, out_cb cb, void *arg) {
   int ret = 0;
   bool frame_remain = true;
-
+  long long pts = -1;
   AVPacket *pkt = (AVPacket *)data;
   if (pkt == nullptr) {
     LOGI(TAG, "decoder:%s will decode null pkt:%p", dec_ctx_->codec->name, pkt);
+  } else {
+    AVRational base_ms = {1, 1000};
+    pts = av_q2d(stream_->time_base) * pkt->pts * 1000;
   }
-  LOGD(TAG, "decoder:%s will decode pkt:%p", dec_ctx_->codec->name, pkt);
+  LOGD(TAG, "decoder:%s send pkt pts:%lld", dec_ctx_->codec->name, pts);
   ret = avcodec_send_packet(dec_ctx_, pkt);
   if (ret < 0) {
     LOGE(TAG, "Error submitting a packet for decoding (%d)", ret);
@@ -76,13 +79,18 @@ int FFmpegDecoder::decode(void *data, out_cb cb, void *arg) {
       // frame available, but there were no errors during decoding
       if (ret == AVERROR_EOF || ret == AVERROR(EAGAIN)) {
         LOGD(TAG, "Ignnor error during decoding: %d", ret);
+      } else {
+        LOGE(TAG, "decoder:%s, Error during decoding: %d",
+             dec_ctx_->codec->name, ret);
       }
       frame_remain = false;
       av_frame_free(&frame);
     } else {
       // process raw data
-      LOGD(TAG, "decoder %s  decode out %s frame:%p", dec_ctx_->codec->name,
-           frame->width ? "video" : "audio", frame);
+      AVRational base_ms = {1, 1000};
+      long long pts = av_q2d(stream_->time_base) * frame->pts * 1000;
+      LOGD(TAG, "decoder %s  recieve %s frame pts:%lld", dec_ctx_->codec->name,
+           frame->width ? "video" : "audio", pts);
       frame->time_base = stream_->time_base;
       cb(frame, arg);
     }

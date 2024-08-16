@@ -99,6 +99,7 @@ void SdlVideo::notify_event(int event_type, void *ret) {
       LOGD(TAG, "notify SDL_USER_EVENT_DURATION_UPDATE:%lld", duration_);
       break;
     case DDUP_EVENT_EOS:
+      last_pos_ = 0;
       event.type = SDL_USER_EVENT_EOS_UPDATE;
       event.user.data1 = NULL;
       event.user.data2 = NULL;
