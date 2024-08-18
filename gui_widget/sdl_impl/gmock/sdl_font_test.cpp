@@ -1,4 +1,5 @@
 #include "gui_widget/sdl_impl/sdl_font.h"
+
 #include "third_party/GoogleTest/include/gmock/gmock.h"
 #include "third_party/GoogleTest/include/gtest/gtest.h"
 
@@ -22,21 +23,24 @@ class SdlFontTest : public ::testing::Test {
 };
 
 TEST_F(SdlFontTest, SdlFontRenderSrcRect) {
-  SdlFont font(renderer_, "kiss_font.ttf");
+  SdlFont* font = new SdlFont(renderer_, "ddup_font.ttf");
   SDL_Color r = {255, 0, 0, 0};
-  font.render_text("day day up player", 0, 0, r);
+  font->get_text_rect("day day up player");
+  font->render_text("day day up player", 0, 0, r);
   SDL_RenderPresent(renderer_);
   SDL_Delay(1000);
 
   SDL_Color g = {0, 255, 0, 0};
   SDL_Rect dst_rect = {0, 30, 600, 100};
-  font.render_text("day day up player", dst_rect, g);
+  font->render_text("day day up player", dst_rect, g);
   SDL_RenderPresent(renderer_);
-  SDL_Delay(3000);
+  SDL_Delay(1000);
+  delete font;
 
-  SdlFont font2(renderer_, "kiss_font.ttf", 30);
+  SdlFont font2(renderer_, "ddup_font.ttf", 30);
   SDL_Color b = {0, 0, 255, 0};
   font2.render_text("day day up player", 250, 0, b);
   SDL_RenderPresent(renderer_);
-  SDL_Delay(1000);
+
+  SDL_Delay(3000);
 }

@@ -6,7 +6,6 @@
 #include "gui_widget/sdl_impl/sdl_user_event.h"
 #include "log/ddup_log.h"
 #include "player/util.h"
-#include "third_party/kiss_sdl/kiss_sdl.h"
 
 #define TAG "SdlTextureBuilder"
 static const char *print_sdl_pixel_name(SDL_PixelFormatEnum pixel) {
@@ -59,7 +58,7 @@ SdlTextureBuilder::SdlTextureBuilder(const char *name,
     : TextureBuilder(name) {
   renderer_ = renderer;
   mutex_ = SDL_CreateMutex();
-  kiss_makerect(&dst_rect_, x, y, w, h);
+  dst_rect_ = {x, y, w, h};
   win_width_ = w;
   win_height_ = h;
   texture_ = nullptr;
@@ -115,7 +114,7 @@ int SdlTextureBuilder::build_texture(render_buffer_s *buff) {
     width_ = buff->width;
     height_ = buff->height;
     pixel_format_ = pixel;
-    kiss_makerect(&src_rect_, 0, 0, width_, height_);
+    src_rect_ = {0, 0, width_, height_};
   }
   AutoLock lock(renderer_mutex_);
   if (pixel_format_ == SDL_PIXELFORMAT_IYUV) {

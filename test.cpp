@@ -5,13 +5,13 @@
 
 #include "gui_widget/sdl_impl/sdl_button.h"
 #include "gui_widget/sdl_impl/sdl_layer.h"
-#include "gui_widget/sdl_impl/sdl_progress_bar.h"
+#include "gui_widget/sdl_impl/sdl_playback_panel.h"
 #include "gui_widget/sdl_impl/sdl_window.h"
 #include "player/ddup_player.h"
 #include "third_party/FIFO/FIFO.h"
 
 using namespace std;
-
+#if 0
 struct play_pause_bar {
   SdlButton *pause_button;
   SdlButton *play_button;
@@ -79,9 +79,10 @@ int test_player() {
   delete player;
   return 0;
 }
+#endif
 
 int main(int argc, char *argv[]) {
-  test_player();
+  //test_player();
   // test_fifo();
 #if 0
     SdlWindow *win = new SdlWindow((char *)"win_test", 800, 480);

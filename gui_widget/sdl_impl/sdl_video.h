@@ -6,13 +6,11 @@
 #include "player/ddup_player.h"
 #include "player/event_listener.h"
 #include "third_party/FIFO/FIFO.h"
-#include "third_party/kiss_sdl/kiss_sdl.h"
 
 class SdlVideo : public Video, public EventListener, public SdlTextureBuilder {
  public:
-  SdlVideo(const char *name, kiss_array *arr, kiss_window *win,
-           SDL_mutex *renderer_mutex, SDL_Renderer *renderer, int x, int y,
-           int w, int h);
+  SdlVideo(const char *name, SDL_mutex *renderer_mutex, SDL_Renderer *renderer,
+           int x, int y, int w, int h);
   virtual ~SdlVideo();
 
   virtual int open(const char *url) final;
@@ -33,7 +31,6 @@ class SdlVideo : public Video, public EventListener, public SdlTextureBuilder {
 
  private:
   SDL_Renderer *renderer_;
-  kiss_window *window_;
   DDupPlayer *player_;
   bool exit_;
   long long real_time_pos_;

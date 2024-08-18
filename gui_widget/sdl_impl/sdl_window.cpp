@@ -14,7 +14,10 @@ SdlWindow::SdlWindow(const char *name, int w, int h) : Window(name, w, h) {
   renderer_mutex_ = SDL_CreateMutex();
 }
 
-SdlWindow::~SdlWindow() { SDL_DestroyMutex(renderer_mutex_); }
+SdlWindow::~SdlWindow() {
+  SDL_DestroyMutex(renderer_mutex_);
+  kiss_clean(&array_);
+}
 
 int SdlWindow::create() {
   renderer_ = kiss_init((char *)name_.c_str(), &array_, width_, height_);
@@ -56,7 +59,6 @@ int SdlWindow::show() {
     }
   }
 
-  kiss_clean(&array_);
   LOGI(TAG, "window:%s eixt!!!", name_.c_str());
   return 0;
 }

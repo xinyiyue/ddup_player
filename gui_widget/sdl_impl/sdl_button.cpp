@@ -6,7 +6,7 @@
 #include "gui_widget/sdl_impl/sdl_user_event.h"
 #include "log/ddup_log.h"
 
-#define KISS_BUTTON_TYPE BUTTON_BASE_TYPE + 1
+#define BUTTON_TYPE BUTTON_BASE_TYPE + 1
 using namespace std;
 
 #define TAG "SdlButton"
@@ -21,28 +21,25 @@ void SdlButton::delay_hide_timer_handler() {
   SDL_PushEvent(&event);
 }
 
-SdlButton::SdlButton(const char *name, const char *skin, kiss_array *arr,
-                     kiss_window *win, SDL_Renderer *renderer)
+SdlButton::SdlButton(const char *name, const char *skin, SDL_Renderer *renderer)
     : Button(0, 0, 0, 0, skin, name) {
   renderer_ = renderer;
-  window_ = win;
   dirty_ = false;
   hide_delay_time_ = 0;
   image_ = new SdlImage(renderer_, skin);
   width_ = image_->get_width();
   height_ = image_->get_height();
-  pos_x_ = window_->rect.w / 2 - width_ / 2;
-  pos_y_ = window_->rect.h / 2 - height_ / 2;
+  pos_x_ = 0;
+  pos_y_ = 0;
   rect_ = {0, 0, width_, height_};
   resp_rect_ = {pos_x_, pos_y_, width_, height_};
 }
 
-SdlButton::SdlButton(const char *name, const char *skin, kiss_array *arr,
-                     kiss_window *win, SDL_Renderer *renderer, int x, int y,
-                     int w, int h)
+SdlButton::SdlButton(const char *name, const char *skin, SDL_Renderer *renderer,
+                     int x, int y, int w, int h)
     : Button(x, y, w, h, skin, name) {
   renderer_ = renderer;
-  window_ = win;
+  dirty_ = false;
   image_ = new SdlImage(renderer_, skin);
   pos_x_ = x;
   pos_y_ = y;
@@ -88,9 +85,9 @@ int SdlButton::event_handler(void *event) {
   SDL_Event *e = (SDL_Event *)event;
   if (action_cb_) {
     if (dirty_ && e->type == SDL_MOUSEBUTTONDOWN &&
-        kiss_pointinrect(e->button.x, e->button.y, &resp_rect_)) {
+        point_in_rect(e->button.x, e->button.y, &resp_rect_)) {
       action_cb_(user_data_, event);
-      LOGI(TAG, "%s", "kiss_button handle inner click");
+      LOGI(TAG, "%s", "button handle inner click");
       return 1;
     }
   }
@@ -104,8 +101,8 @@ int SdlButton::event_handler(void *event) {
 
 bool SdlButton::is_dirty() { return dirty_; }
 
-int SdlButton::get_type() { return KISS_BUTTON_TYPE; }
+int SdlButton::get_type() { return BUTTON_TYPE; }
 
-void *SdlButton::get_window() { return (void *)window_; }
+void *SdlButton::get_window() { return nullptr; }
 
 void *SdlButton::get_renderer() { return (void *)renderer_; }
