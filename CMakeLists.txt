@@ -16,7 +16,12 @@ set(SDL_IMPL_SOURCE
 ./gui_widget/sdl_impl/sdl_button.cpp
 ./gui_widget/sdl_impl/sdl_window.cpp
 ./gui_widget/sdl_impl/sdl_video.cpp
+./gui_widget/sdl_impl/sdl_playback_panel.cpp
 ./gui_widget/sdl_impl/sdl_progress_bar.cpp
+./gui_widget/sdl_impl/sdl_rect.cpp
+./gui_widget/sdl_impl/sdl_image.cpp
+./gui_widget/sdl_impl/sdl_font.cpp
+./gui_widget/sdl_impl/sdl_util.cpp
 ./gui_widget/sdl_impl/sdl_texture_builder.cpp
 )
 
@@ -35,8 +40,6 @@ set(PLAYER_SOURCE
 ./player/ffmpeg_impl/ffmpeg_processer.cpp
 ./player/sdl_impl/sdl_video_sink.cpp
 ./player/sdl_impl/sdl_audio_sink.cpp
-./gui_widget/sdl_impl/sdl_image.cpp
-./gui_widget/sdl_impl/sdl_font.cpp
 )
 
 set(GMOCK_PLAYER_SOURCE
@@ -47,11 +50,15 @@ set(GMOCK_PLAYER_SOURCE
 )
 
 set(GMOCK_GUI_SOURCE
-./gui_widget/sdl_impl/gmock/gmock_gui_main.cpp
-./gui_widget/sdl_impl/gmock/gmock_sdl_image.cpp
+./gui_widget/sdl_impl/gmock/sdl_gui_test_main.cpp
+./gui_widget/sdl_impl/gmock/sdl_image_test.cpp
 ./gui_widget/sdl_impl/sdl_image.cpp
-./gui_widget/sdl_impl/gmock/gmock_sdl_font.cpp
+./gui_widget/sdl_impl/gmock/sdl_font_test.cpp
 ./gui_widget/sdl_impl/sdl_font.cpp
+./gui_widget/sdl_impl/gmock/sdl_rect_test.cpp
+./gui_widget/sdl_impl/sdl_rect.cpp
+./gui_widget/sdl_impl/gmock/sdl_progress_bar_test.cpp
+./gui_widget/sdl_impl/sdl_progress_bar.cpp
 )
 add_executable(pcw player_control_bar.cpp ${KISS_SDL_SOURCE})
 add_executable(test test.cpp ${SDL_IMPL_SOURCE} ${FIFO_SOURCE} ${KISS_SDL_SOURCE} ${PLAYER_SOURCE})
@@ -83,13 +90,15 @@ set(RESOURCE
 ./third_party/kiss_sdl/kiss_up.png
 ./third_party/kiss_sdl/kiss_vslider.png
 ./third_party/kiss_sdl/kiss_wood.png
-./third_party/kiss_sdl/pause.png
 ./third_party/kiss_sdl/picture1.png
 ./third_party/kiss_sdl/picture2.png
 ./third_party/kiss_sdl/picture3.png
-./third_party/kiss_sdl/resume.png
-./third_party/kiss_sdl/reload.png
 ./third_party/kiss_sdl/kiss_font.ttf
+./res/pause.png
+./res/resume.png
+./res/reload.png
+./res/progress_bar.png
+./res/ddup_font.ttf
 )
 set(FFMPEG_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ffmpeg-7.0.1/lib)
 find_library(SDL2_LIBRARY       SDL2       /usr/lib/x86_64-linux-gnu)

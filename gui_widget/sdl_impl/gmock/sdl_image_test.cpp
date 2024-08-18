@@ -1,4 +1,5 @@
 #include "gui_widget/sdl_impl/sdl_image.h"
+
 #include "third_party/GoogleTest/include/gmock/gmock.h"
 #include "third_party/GoogleTest/include/gtest/gtest.h"
 

@@ -20,6 +20,19 @@ SdlFont::SdlFont(SDL_Renderer *renderer, const char *font_path, int font_size)
 
 SdlFont::~SdlFont() { TTF_CloseFont(font_); }
 
+SDL_Rect SdlFont::get_text_rect(const char *text) {
+  int w, h;
+  TTF_SizeUTF8(font_, text, &w, &h);
+  SDL_Rect rect = {0};
+  rect.x = 0;
+  rect.y = 0;
+  rect.w = w;
+  rect.h = h;
+  LOGI(TAG, "text:%s, rect(%d, %d, %d, %d)", text, rect.x, rect.y, rect.w,
+       rect.h);
+  return rect;
+}
+
 int SdlFont::render_text(const char *text, int x, int y,
                          const SDL_Color &color) {
   SDL_Surface *surface = TTF_RenderUTF8_Blended(font_, text, color);

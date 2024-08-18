@@ -5,7 +5,7 @@
 
 #include "gui_widget/sdl_impl/sdl_button.h"
 #include "gui_widget/sdl_impl/sdl_layer.h"
-#include "gui_widget/sdl_impl/sdl_progress_bar.h"
+#include "gui_widget/sdl_impl/sdl_playback_panel.h"
 #include "gui_widget/sdl_impl/sdl_video.h"
 #include "gui_widget/sdl_impl/sdl_window.h"
 #include "log/ddup_log.h"
@@ -23,12 +23,12 @@ void handle_bar_event(void *userdata, void *event) {
   action *a = (action *)event;
   struct play_pause_bar *ppb = (struct play_pause_bar *)userdata;
   if (a->state == PLAYBACK_PAUSE) {
-    LOGI(TAG, "bar_event handler,state：%d,pause", a->state);
+    LOGI(TAG, "bar_event handler,state:%d,pause", a->state);
     ppb->video->set_speed(0.0);
     ppb->pause_button->set_show(true, 0);
     ppb->play_button->set_show(false, 0);
   } else if (a->state == PLAYBACK_PLAY) {
-    LOGI(TAG, "bar_event handler,state：%d,play", a->state);
+    LOGI(TAG, "bar_event handler,state:%d,play", a->state);
     if (a->seek_time == 0) {
       ppb->video->seek(0);
       ppb->reload_button->set_show(false, 0);
@@ -39,10 +39,10 @@ void handle_bar_event(void *userdata, void *event) {
     }
     ppb->video->set_speed(1.0);
   } else if (a->state == PLAYBACK_EOS) {
-    LOGI(TAG, "bar_event handler,state：%d,eos", a->state);
+    LOGI(TAG, "bar_event handler,state:%d,eos", a->state);
     ppb->reload_button->set_show(true, 0);
   } else if (a->state == PLAYBACK_SEEK) {
-    LOGI(TAG, "bar_event handler,state：%d,seek, seek_time:%lld", a->state,
+    LOGI(TAG, "bar_event handler,state:%d,seek, seek_time:%lld", a->state,
          a->seek_time);
     ppb->video->seek(a->seek_time);
   }
@@ -58,18 +58,23 @@ int main(int argc, char *argv[]) {
   video_layer->set_zorder(1);
   video_layer->set_show(true);
   SdlVideo *video_widget =
-      new SdlVideo("video_widge", &win->array_, &win->window_,
-                   win->renderer_mutex_, win->renderer_, 0, 0, 1280, 720);
+      new SdlVideo("video_widge", win->renderer_mutex_, win->renderer_, 0, 0,
+                   win->width_, win->height_);
   video_layer->add_widget(static_cast<Widget *>(video_widget));
-  SdlButton *pause_button = new SdlButton(
-      "pause_button", "pause.png", &win->array_, &win->window_, win->renderer_);
-  SdlButton *play_button = new SdlButton(
-      "play_button", "resume.png", &win->array_, &win->window_, win->renderer_);
+  SdlButton *pause_button =
+      new SdlButton("pause_button", "pause.png", win->renderer_,
+                    win->width_ / 2 - 100, win->height_ / 2 - 100, 200, 200);
+  SdlButton *play_button =
+      new SdlButton("play_button", "resume.png", win->renderer_,
+                    win->width_ / 2 - 100, win->height_ / 2 - 100, 200, 200);
   SdlButton *reload_button =
-      new SdlButton("reload_button", "reload.png", &win->array_, &win->window_,
-                    win->renderer_);
-  SdlProgBar *prog_bar =
-      new SdlProgBar("prog_bar", &win->window_, win->renderer_);
+      new SdlButton("reload_button", "reload.png", win->renderer_,
+                    win->width_ / 2 - 100, win->height_ / 2 - 100, 200, 200);
+  SDL_Rect rect = win->window_.rect;
+  rect.y = rect.h - 20;
+  rect.h = 20;
+  SdlPlaybackPanel *prog_bar = new SdlPlaybackPanel(
+      "prog_bar", rect, "progress_bar.png", win->renderer_);
   struct play_pause_bar ppb;
   ppb.pause_button = pause_button;
   ppb.play_button = play_button;

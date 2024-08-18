@@ -3,15 +3,13 @@
 
 #include "gui_widget/base/button.h"
 #include "gui_widget/sdl_impl/sdl_image.h"
-#include "third_party/kiss_sdl/kiss_sdl.h"
+#include "gui_widget/sdl_impl/sdl_util.h"
 
 class SdlButton : public Button {
  public:
-  SdlButton(const char *name, const char *skin, kiss_array *arr,
-            kiss_window *win, SDL_Renderer *renderer, int x, int y, int w,
-            int h);
-  SdlButton(const char *name, const char *skin, kiss_array *arr,
-            kiss_window *win, SDL_Renderer *renderer);
+  SdlButton(const char *name, const char *skin, SDL_Renderer *renderer, int x,
+            int y, int w, int h);
+  SdlButton(const char *name, const char *skin, SDL_Renderer *renderer);
   virtual ~SdlButton() {
     if (image_) delete image_;
   };
@@ -25,7 +23,6 @@ class SdlButton : public Button {
   virtual int set_event_resp_area(int x, int y, int w, int h) final;
   void delay_hide_timer_handler();
   SDL_Renderer *renderer_;
-  kiss_window *window_;
 
  private:
   SdlImage *image_;

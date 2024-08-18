@@ -10,15 +10,13 @@
 
 using namespace std;
 
-SdlVideo::SdlVideo(const char *name, kiss_array *arr, kiss_window *win,
-                   SDL_mutex *renderer_mutex, SDL_Renderer *renderer, int x,
-                   int y, int w, int h)
+SdlVideo::SdlVideo(const char *name, SDL_mutex *renderer_mutex,
+                   SDL_Renderer *renderer, int x, int y, int w, int h)
     : Video(name),
       EventListener("SdlVideo"),
       SdlTextureBuilder("SdlVideoTextureBuilder", renderer_mutex, renderer, x,
                         y, w, h) {
   renderer_ = renderer;
-  window_ = win;
   exit_ = false;
   listener_ = nullptr;
   dirty_ = true;
@@ -119,6 +117,6 @@ void SdlVideo::notify_error(int error_type) {
 
 int SdlVideo::set_event_resp_area(int x, int y, int w, int h) { return 0; }
 
-void *SdlVideo::get_window() { return window_; }
+void *SdlVideo::get_window() { return nullptr; }
 
 void *SdlVideo::get_renderer() { return renderer_; }
