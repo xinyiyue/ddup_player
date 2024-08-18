@@ -28,13 +28,13 @@ SdlButton::SdlButton(const char *name, const char *skin, kiss_array *arr,
   window_ = win;
   dirty_ = false;
   hide_delay_time_ = 0;
-  kiss_image_new(&image_, (char *)skin, arr, renderer);
-  pos_x_ = window_->rect.w / 2 - image_.w / 2;
-  pos_y_ = window_->rect.h / 2 - image_.h / 2;
-  width_ = image_.w;
-  height_ = image_.h;
-  kiss_makerect(&rect_, 0, 0, image_.w, image_.h);
-  kiss_makerect(&resp_rect_, pos_x_, pos_y_, image_.w, image_.h);
+  image_ = new SdlImage(renderer_, skin);
+  width_ = image_->get_width();
+  height_ = image_->get_height();
+  pos_x_ = window_->rect.w / 2 - width_ / 2;
+  pos_y_ = window_->rect.h / 2 - height_ / 2;
+  rect_ = {0, 0, width_, height_};
+  resp_rect_ = {pos_x_, pos_y_, width_, height_};
 }
 
 SdlButton::SdlButton(const char *name, const char *skin, kiss_array *arr,
@@ -43,11 +43,11 @@ SdlButton::SdlButton(const char *name, const char *skin, kiss_array *arr,
     : Button(x, y, w, h, skin, name) {
   renderer_ = renderer;
   window_ = win;
-  kiss_image_new_scaled(&image_, (char *)skin, arr, w, h, renderer_);
+  image_ = new SdlImage(renderer_, skin);
   pos_x_ = x;
   pos_y_ = y;
-  kiss_makerect(&rect_, 0, 0, w, h);
-  kiss_makerect(&resp_rect_, pos_x_, pos_y_, image_.w, image_.h);
+  rect_ = {0, 0, w, h};
+  resp_rect_ = {pos_x_, pos_y_, image_->get_width(), image_->get_height()};
 }
 
 int SdlButton::set_event_resp_area(int x, int y, int w, int h) {
@@ -60,7 +60,7 @@ int SdlButton::set_event_resp_area(int x, int y, int w, int h) {
 
 int SdlButton::draw() {
   int ret = 0;
-  ret = kiss_renderimage(renderer_, image_, pos_x_, pos_y_, &rect_);
+  ret = image_->render_image(&rect_, pos_x_, pos_y_);
   if (!ret) {
     if (hide_delay_time_ > 0) {
       LOGI(TAG, "button:%s draw, start timer, delay:%d", name_.c_str(),

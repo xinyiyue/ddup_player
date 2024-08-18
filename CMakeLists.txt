@@ -35,6 +35,8 @@ set(PLAYER_SOURCE
 ./player/ffmpeg_impl/ffmpeg_processer.cpp
 ./player/sdl_impl/sdl_video_sink.cpp
 ./player/sdl_impl/sdl_audio_sink.cpp
+./gui_widget/sdl_impl/sdl_image.cpp
+./gui_widget/sdl_impl/sdl_font.cpp
 )
 
 set(GMOCK_PLAYER_SOURCE
@@ -44,10 +46,18 @@ set(GMOCK_PLAYER_SOURCE
 ./player/gmock/gmock_sdl_audio.cpp
 )
 
+set(GMOCK_GUI_SOURCE
+./gui_widget/sdl_impl/gmock/gmock_gui_main.cpp
+./gui_widget/sdl_impl/gmock/gmock_sdl_image.cpp
+./gui_widget/sdl_impl/sdl_image.cpp
+./gui_widget/sdl_impl/gmock/gmock_sdl_font.cpp
+./gui_widget/sdl_impl/sdl_font.cpp
+)
 add_executable(pcw player_control_bar.cpp ${KISS_SDL_SOURCE})
 add_executable(test test.cpp ${SDL_IMPL_SOURCE} ${FIFO_SOURCE} ${KISS_SDL_SOURCE} ${PLAYER_SOURCE})
 add_executable(ddup_app ./app/ddup_app.cpp ${SDL_IMPL_SOURCE} ${FIFO_SOURCE} ${KISS_SDL_SOURCE} ${PLAYER_SOURCE})
 add_executable(gtest ${GMOCK_PLAYER_SOURCE} ${FIFO_SOURCE})
+add_executable(gtest_gui ${GMOCK_GUI_SOURCE})
 message("当前源代码目录：" ${CMAKE_CURRENT_SOURCE_DIR})
 message("当前二进制目录：" ${CMAKE_CURRENT_BINARY_DIR})
 include_directories(
@@ -99,8 +109,10 @@ target_link_libraries(pcw ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY} ${SDL2_LIBRA
 target_link_libraries(test ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY} ${PTHREAD_LIBRARY} ${AVFORMAT_LIBRARY} ${AVCODEC_LIBRARY} ${AVUTIL_LIBRARY} ${SWSCALE_LIBRARY} ${SWRESAMPLE_LIBRARY})
 target_link_libraries(ddup_app ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY} ${PTHREAD_LIBRARY} ${AVFORMAT_LIBRARY} ${AVCODEC_LIBRARY} ${AVUTIL_LIBRARY} ${SWSCALE_LIBRARY} ${SWRESAMPLE_LIBRARY})
 target_link_libraries(gtest ${GTEST_LIBRARY} ${GTEST_MAIN_LIBRARY} ${GMOCK_LIBRARY} ${GMOCK_MAIN_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY} ${PTHREAD_LIBRARY} ${AVFORMAT_LIBRARY} ${AVCODEC_LIBRARY} ${AVUTIL_LIBRARY})
+target_link_libraries(gtest_gui ${GTEST_LIBRARY} ${GTEST_MAIN_LIBRARY} ${GMOCK_LIBRARY} ${GMOCK_MAIN_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY} ${PTHREAD_LIBRARY})
 install(TARGETS pcw DESTINATION result)
 install(TARGETS test DESTINATION result)
 install(TARGETS ddup_app DESTINATION result)
 install(TARGETS gtest DESTINATION result)
+install(TARGETS gtest_gui DESTINATION result)
 install(FILES ${RESOURCE} DESTINATION result)

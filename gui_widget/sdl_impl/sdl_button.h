@@ -2,6 +2,7 @@
 #define __SDL_BUTTON__
 
 #include "gui_widget/base/button.h"
+#include "gui_widget/sdl_impl/sdl_image.h"
 #include "third_party/kiss_sdl/kiss_sdl.h"
 
 class SdlButton : public Button {
@@ -11,7 +12,9 @@ class SdlButton : public Button {
             int h);
   SdlButton(const char *name, const char *skin, kiss_array *arr,
             kiss_window *win, SDL_Renderer *renderer);
-  virtual ~SdlButton(){};
+  virtual ~SdlButton() {
+    if (image_) delete image_;
+  };
   virtual int draw() final;
   virtual bool is_dirty() final;
   virtual int get_type() final;
@@ -25,7 +28,7 @@ class SdlButton : public Button {
   kiss_window *window_;
 
  private:
-  kiss_image image_;
+  SdlImage *image_;
   SDL_Rect rect_;
   SDL_Rect resp_rect_;
 };
