@@ -26,14 +26,14 @@ SdlWindow::~SdlWindow() {
 int SdlWindow::create() {
   SDL_Init(SDL_INIT_EVERYTHING);
   SDL_Rect srect;
-	SDL_GetDisplayBounds(0, &srect);
-	if (width_ > srect.w || height_ > srect.h) {
+  SDL_GetDisplayBounds(0, &srect);
+  if (width_ > srect.w || height_ > srect.h) {
     width_ = srect.w;
     height_ = srect.h;
     LOGI(TAG, "ajust window size to: %d, %d", width_, height_);
-	}
-	IMG_Init(IMG_INIT_PNG);
-	TTF_Init();
+  }
+  IMG_Init(IMG_INIT_PNG);
+  TTF_Init();
   SDL_CreateWindowAndRenderer(width_, height_, 0, &window_, &renderer_);
   LOGI(TAG, "create window and renderer, size:%d, %d", width_, height_);
   return 0;

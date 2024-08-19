@@ -5,9 +5,11 @@
 
 class SdlRect {
  public:
+  SdlRect(SDL_Renderer *renderer, const SDL_Rect &rect);
   SdlRect(SDL_Renderer *renderer, const SDL_Rect &rect, const SDL_Color &c,
           int edge, const SDL_Color &e);
   ~SdlRect();
+  void set_attri(SDL_Color *c, int edge, const SDL_Color *e);
   SDL_Rect &get_rect() { return rect_; };
   int render_rect();
   int render_edge();
