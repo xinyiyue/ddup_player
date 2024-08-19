@@ -4,6 +4,11 @@
 
 #define TAG "SdlRect"
 
+SdlRect::SdlRect(SDL_Renderer *renderer, const SDL_Rect &rect) {
+  renderer_ = renderer;
+  rect_ = rect;
+}
+
 SdlRect::SdlRect(SDL_Renderer *renderer, const SDL_Rect &rect,
                  const SDL_Color &c, int edge, const SDL_Color &e) {
   renderer_ = renderer;
@@ -14,6 +19,11 @@ SdlRect::SdlRect(SDL_Renderer *renderer, const SDL_Rect &rect,
 }
 
 SdlRect::~SdlRect() {}
+void SdlRect::set_attri(SDL_Color *c, int edge, const SDL_Color *e) {
+  color_ = *c;
+  edge_ = edge;
+  edge_color_ = *e;
+}
 
 int SdlRect::render_rect() {
   LOGD(TAG, "rect:%d,%d,%d,%d", rect_.x, rect_.y, rect_.w, rect_.h);

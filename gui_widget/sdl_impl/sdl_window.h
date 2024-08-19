@@ -1,12 +1,12 @@
 #ifndef __KISS_WINDOW__
 #define __KISS_WINDOW__
 
-#include <pthread.h>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
-#include "gui_widget/base/window.h"
+#include <SDL2/SDL_ttf.h>
+#include <pthread.h>
 
+#include "gui_widget/base/window.h"
 
 class SdlWindow : public Window {
  public:

@@ -1,13 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 project(sdl_player)
 
-set(KISS_SDL_SOURCE
-./third_party/kiss_sdl/kiss_widgets.c
-./third_party/kiss_sdl/kiss_draw.c
-./third_party/kiss_sdl/kiss_general.c
-./third_party/kiss_sdl/kiss_posix.c
-)
-
 set(FIFO_SOURCE
 ./third_party/FIFO/FIFO.c
 )
@@ -51,18 +44,20 @@ set(GMOCK_PLAYER_SOURCE
 
 set(GMOCK_GUI_SOURCE
 ./gui_widget/sdl_impl/gmock/sdl_gui_test_main.cpp
-./gui_widget/sdl_impl/gmock/sdl_image_test.cpp
-./gui_widget/sdl_impl/sdl_image.cpp
-./gui_widget/sdl_impl/gmock/sdl_font_test.cpp
+./gui_widget/sdl_impl/sdl_util.cpp
+#./gui_widget/sdl_impl/gmock/sdl_image_test.cpp
+#./gui_widget/sdl_impl/sdl_image.cpp
+#./gui_widget/sdl_impl/gmock/sdl_font_test.cpp
 ./gui_widget/sdl_impl/sdl_font.cpp
-./gui_widget/sdl_impl/gmock/sdl_rect_test.cpp
+#./gui_widget/sdl_impl/gmock/sdl_rect_test.cpp
 ./gui_widget/sdl_impl/sdl_rect.cpp
-./gui_widget/sdl_impl/gmock/sdl_progress_bar_test.cpp
-./gui_widget/sdl_impl/sdl_progress_bar.cpp
+#./gui_widget/sdl_impl/gmock/sdl_progress_bar_test.cpp
+#./gui_widget/sdl_impl/sdl_progress_bar.cpp
+./gui_widget/sdl_impl/gmock/sdl_label_test.cpp
+./gui_widget/sdl_impl/sdl_label.cpp
 )
-add_executable(pcw player_control_bar.cpp ${KISS_SDL_SOURCE})
-add_executable(test test.cpp ${SDL_IMPL_SOURCE} ${FIFO_SOURCE} ${KISS_SDL_SOURCE} ${PLAYER_SOURCE})
-add_executable(ddup_app ./app/ddup_app.cpp ${SDL_IMPL_SOURCE} ${FIFO_SOURCE} ${KISS_SDL_SOURCE} ${PLAYER_SOURCE})
+add_executable(test test.cpp ${SDL_IMPL_SOURCE} ${FIFO_SOURCE} ${PLAYER_SOURCE})
+add_executable(ddup_app ./app/ddup_app.cpp ${SDL_IMPL_SOURCE} ${FIFO_SOURCE} ${PLAYER_SOURCE})
 add_executable(gtest ${GMOCK_PLAYER_SOURCE} ${FIFO_SOURCE})
 add_executable(gtest_gui ${GMOCK_GUI_SOURCE})
 message("当前源代码目录：" ${CMAKE_CURRENT_SOURCE_DIR})
@@ -75,25 +70,6 @@ include_directories(
 )
 
 set(RESOURCE
-./third_party/kiss_sdl/kiss_active.png
-./third_party/kiss_sdl/kiss_bar_org.png
-./third_party/kiss_sdl/kiss_bar.png
-./third_party/kiss_sdl/kiss_combo.png
-./third_party/kiss_sdl/kiss_down.png
-./third_party/kiss_sdl/kiss_hslider.png
-./third_party/kiss_sdl/kiss_left.png
-./third_party/kiss_sdl/kiss_normal.png
-./third_party/kiss_sdl/kiss_prelight.png
-./third_party/kiss_sdl/kiss_right.png
-./third_party/kiss_sdl/kiss_selected.png
-./third_party/kiss_sdl/kiss_unselected.png
-./third_party/kiss_sdl/kiss_up.png
-./third_party/kiss_sdl/kiss_vslider.png
-./third_party/kiss_sdl/kiss_wood.png
-./third_party/kiss_sdl/picture1.png
-./third_party/kiss_sdl/picture2.png
-./third_party/kiss_sdl/picture3.png
-./third_party/kiss_sdl/kiss_font.ttf
 ./res/pause.png
 ./res/resume.png
 ./res/reload.png
@@ -114,12 +90,10 @@ find_library(GTEST_LIBRARY      gtest      ${CMAKE_CURRENT_SOURCE_DIR}/third_par
 find_library(GTEST_MAIN_LIBRARY gtest_main ${CMAKE_CURRENT_SOURCE_DIR}/third_party/GoogleTest/lib)
 find_library(GMOCK_LIBRARY      gmock      ${CMAKE_CURRENT_SOURCE_DIR}/third_party/GoogleTest/lib)
 find_library(GMOCK_MAIN_LIBRARY gmock_main ${CMAKE_CURRENT_SOURCE_DIR}/third_party/GoogleTest/lib)
-target_link_libraries(pcw ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY} ${SDL2_LIBRARY})
 target_link_libraries(test ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY} ${PTHREAD_LIBRARY} ${AVFORMAT_LIBRARY} ${AVCODEC_LIBRARY} ${AVUTIL_LIBRARY} ${SWSCALE_LIBRARY} ${SWRESAMPLE_LIBRARY})
 target_link_libraries(ddup_app ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY} ${PTHREAD_LIBRARY} ${AVFORMAT_LIBRARY} ${AVCODEC_LIBRARY} ${AVUTIL_LIBRARY} ${SWSCALE_LIBRARY} ${SWRESAMPLE_LIBRARY})
 target_link_libraries(gtest ${GTEST_LIBRARY} ${GTEST_MAIN_LIBRARY} ${GMOCK_LIBRARY} ${GMOCK_MAIN_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY} ${PTHREAD_LIBRARY} ${AVFORMAT_LIBRARY} ${AVCODEC_LIBRARY} ${AVUTIL_LIBRARY})
 target_link_libraries(gtest_gui ${GTEST_LIBRARY} ${GTEST_MAIN_LIBRARY} ${GMOCK_LIBRARY} ${GMOCK_MAIN_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY} ${PTHREAD_LIBRARY})
-install(TARGETS pcw DESTINATION result)
 install(TARGETS test DESTINATION result)
 install(TARGETS ddup_app DESTINATION result)
 install(TARGETS gtest DESTINATION result)
