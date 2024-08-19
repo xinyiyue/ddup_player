@@ -2,9 +2,11 @@
 #define __KISS_WINDOW__
 
 #include <pthread.h>
-
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 #include "gui_widget/base/window.h"
-#include "third_party/kiss_sdl/kiss_sdl.h"
+
 
 class SdlWindow : public Window {
  public:
@@ -15,11 +17,8 @@ class SdlWindow : public Window {
   virtual int show() final;
   virtual int event_handler(void *event) final;
   SDL_Renderer *renderer_;
-  kiss_window window_;
-  kiss_array array_;
+  SDL_Window *window_;
   SDL_mutex *renderer_mutex_;
-  int w_;
-  int h_;
 
  private:
   bool exit_;

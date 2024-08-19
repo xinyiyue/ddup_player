@@ -70,8 +70,10 @@ int main(int argc, char *argv[]) {
   SdlButton *reload_button =
       new SdlButton("reload_button", "reload.png", win->renderer_,
                     win->width_ / 2 - 100, win->height_ / 2 - 100, 200, 200);
-  SDL_Rect rect = win->window_.rect;
-  rect.y = rect.h - 20;
+  SDL_Rect rect;
+  rect.x = 0;
+  rect.y = win->height_ - 20;
+  rect.w = win->width_;
   rect.h = 20;
   SdlPlaybackPanel *prog_bar = new SdlPlaybackPanel(
       "prog_bar", rect, "progress_bar.png", win->renderer_);
