@@ -16,14 +16,26 @@ SdlWindow::SdlWindow(const char *name, int w, int h) : Window(name, w, h) {
 
 SdlWindow::~SdlWindow() {
   SDL_DestroyMutex(renderer_mutex_);
-  kiss_clean(&array_);
+  SDL_DestroyRenderer(renderer_);
+  SDL_DestroyWindow(window_);
+  IMG_Quit();
+  TTF_Quit();
+  SDL_Quit();
 }
 
 int SdlWindow::create() {
-  renderer_ = kiss_init((char *)name_.c_str(), &array_, width_, height_);
-  if (!renderer_) return 1;
-  kiss_window_new(&window_, NULL, 0, 0, 0, width_, height_);
-  window_.visible = 1;
+  SDL_Init(SDL_INIT_EVERYTHING);
+  SDL_Rect srect;
+	SDL_GetDisplayBounds(0, &srect);
+	if (width_ > srect.w || height_ > srect.h) {
+    width_ = srect.w;
+    height_ = srect.h;
+    LOGI(TAG, "ajust window size to: %d, %d", width_, height_);
+	}
+	IMG_Init(IMG_INIT_PNG);
+	TTF_Init();
+  SDL_CreateWindowAndRenderer(width_, height_, 0, &window_, &renderer_);
+  LOGI(TAG, "create window and renderer, size:%d, %d", width_, height_);
   return 0;
 }
 
@@ -66,7 +78,6 @@ int SdlWindow::show() {
 int SdlWindow::update() {
   AutoLock lock(renderer_mutex_);
   SDL_RenderClear(renderer_);
-  kiss_window_draw(&window_, renderer_);
   for (auto layer : layer_list_) {
     if (!layer->show_) {
       continue;
