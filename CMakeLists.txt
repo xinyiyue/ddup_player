@@ -46,15 +46,23 @@ set(GMOCK_GUI_SOURCE
 ./gui_widget/sdl_impl/gmock/sdl_gui_test_main.cpp
 ./gui_widget/sdl_impl/sdl_util.cpp
 #./gui_widget/sdl_impl/gmock/sdl_image_test.cpp
-#./gui_widget/sdl_impl/sdl_image.cpp
+./gui_widget/sdl_impl/sdl_image.cpp
 #./gui_widget/sdl_impl/gmock/sdl_font_test.cpp
 ./gui_widget/sdl_impl/sdl_font.cpp
 #./gui_widget/sdl_impl/gmock/sdl_rect_test.cpp
 ./gui_widget/sdl_impl/sdl_rect.cpp
 #./gui_widget/sdl_impl/gmock/sdl_progress_bar_test.cpp
-#./gui_widget/sdl_impl/sdl_progress_bar.cpp
-./gui_widget/sdl_impl/gmock/sdl_label_test.cpp
+./gui_widget/sdl_impl/sdl_progress_bar.cpp
+#./gui_widget/sdl_impl/gmock/sdl_label_test.cpp
 ./gui_widget/sdl_impl/sdl_label.cpp
+#./gui_widget/sdl_impl/gmock/sdl_vscroll_test.cpp
+./gui_widget/sdl_impl/sdl_vscroll_bar.cpp
+./gui_widget/sdl_impl/sdl_text_box.cpp
+#./gui_widget/sdl_impl/gmock/sdl_text_box_test.cpp
+./gui_widget/sdl_impl/sdl_combo_box.cpp
+#./gui_widget/sdl_impl/gmock/sdl_combo_box_test.cpp
+./gui_widget/sdl_impl/sdl_dirent_window.cpp
+./gui_widget/sdl_impl/gmock/sdl_dirent_window_test.cpp
 )
 add_executable(test test.cpp ${SDL_IMPL_SOURCE} ${FIFO_SOURCE} ${PLAYER_SOURCE})
 add_executable(ddup_app ./app/ddup_app.cpp ${SDL_IMPL_SOURCE} ${FIFO_SOURCE} ${PLAYER_SOURCE})
@@ -74,6 +82,19 @@ set(RESOURCE
 ./res/resume.png
 ./res/reload.png
 ./res/progress_bar.png
+./res/ddup_slider.png
+./res/ddup_up.png
+./res/ddup_down.png
+./res/ddup_player.png
+./res/audio.png
+./res/video.png
+./res/picture.png
+./res/unkown.png
+./res/dir.png
+./res/win_rect.png
+./res/win_up.png
+./res/win_down.png
+./res/win_red.png
 ./res/ddup_font.ttf
 )
 set(FFMPEG_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ffmpeg-7.0.1/lib)

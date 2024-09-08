@@ -26,8 +26,8 @@ void SdlRect::set_attri(SDL_Color *c, int edge, const SDL_Color *e) {
 }
 
 int SdlRect::render_rect() {
-  LOGD(TAG, "rect:%d,%d,%d,%d", rect_.x, rect_.y, rect_.w, rect_.h);
-  LOGD(TAG, "color:%d,%d,%d,%d", color_.r, color_.g, color_.b, color_.a);
+  LOGD(TAG, "rect:%d,%d,%d,%d, color:%d,%d,%d,%d", rect_.x, rect_.y, rect_.w,
+       rect_.h, color_.r, color_.g, color_.b, color_.a);
   SDL_SetRenderDrawColor(renderer_, color_.r, color_.g, color_.b, color_.a);
   SDL_RenderFillRect(renderer_, &rect_);
   return 0;

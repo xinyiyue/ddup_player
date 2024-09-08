@@ -8,6 +8,7 @@ class SdlFont {
   SdlFont(SDL_Renderer *renderer_, const char *font_path, int font_size = 15);
   ~SdlFont();
   SDL_Rect get_text_rect(const char *text);
+  const int get_font_height() { return height_; }
   int render_text(const char *text, int x, int y, const SDL_Color &color);
   int render_text(const char *text, const SDL_Rect &dst_rect,
                   const SDL_Color &color);
