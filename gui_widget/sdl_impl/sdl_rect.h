@@ -11,6 +11,13 @@ class SdlRect {
   ~SdlRect();
   void set_attri(SDL_Color *c, int edge, const SDL_Color *e);
   SDL_Rect &get_rect() { return rect_; };
+  SDL_Rect *get_rect_p() { return &rect_; };
+  void update_rect(int x, int y, int w, int h) {
+    rect_.x = x > 0 ? x : rect_.x;
+    rect_.y = y > 0 ? y : rect_.y;
+    rect_.w = w > 0 ? w : rect_.w;
+    rect_.h = h > 0 ? h : rect_.h;
+  };
   int render_rect();
   int render_edge();
 

@@ -15,6 +15,8 @@ SdlLabel::SdlLabel(SDL_Renderer* renderer, SdlFont* font, const char* text,
     rect_->set_attri(&bg_color_, edge_width_, &edge_color_);
   }
   font_color_ = rgba_white;
+  hl_bg_color_ = baby_blue;
+  is_selected_ = false;
 }
 
 SdlLabel::SdlLabel(SDL_Renderer* renderer, SdlFont* font, const char* text,
@@ -29,6 +31,7 @@ SdlLabel::SdlLabel(SDL_Renderer* renderer, SdlFont* font, const char* text,
     rect_->set_attri(&bg_color_, edge_width_, &edge_color_);
   }
   font_color_ = rgba_white;
+  is_selected_ = false;
 }
 
 SdlLabel::~SdlLabel() {
@@ -45,6 +48,24 @@ void SdlLabel::set_attri(SDL_Color* font_color, SDL_Color* bg_color,
   edge_width_ = edge_width;
   font_color_ = *font_color;
   rect_->set_attri(&bg_color_, edge_width_, &edge_color_);
+}
+
+int SdlLabel::event_handler(void* event) {
+  SDL_Event* e = (SDL_Event*)event;
+  if (e->type == SDL_MOUSEBUTTONDOWN) {
+    if (point_in_rect(e->button.x, e->button.y, &rect_->get_rect())) {
+      is_selected_ = true;
+    } else {
+      is_selected_ = false;
+    }
+  } else if (e->type == SDL_MOUSEMOTION) {
+    if (point_in_rect(e->motion.x, e->motion.y, &rect_->get_rect())) {
+      rect_->set_attri(&hl_bg_color_, edge_width_, &edge_color_);
+    } else {
+      rect_->set_attri(&bg_color_, edge_width_, &edge_color_);
+    }
+  }
+  return 0;
 }
 
 int SdlLabel::render_label() {

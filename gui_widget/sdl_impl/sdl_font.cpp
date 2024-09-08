@@ -45,7 +45,7 @@ int SdlFont::render_text(const char *text, int x, int y,
   text_rect.x = x;
   text_rect.y = y;
   SDL_QueryTexture(texture, NULL, NULL, &text_rect.w, &text_rect.h);
-  LOGI(TAG, "text:%s, rect(%d, %d, %d, %d)", text, text_rect.x, text_rect.y,
+  LOGD(TAG, "text:%s, rect(%d, %d, %d, %d)", text, text_rect.x, text_rect.y,
        text_rect.w, text_rect.h);
   SDL_RenderCopy(renderer_, texture, nullptr, &text_rect);
   SDL_FreeSurface(surface);
