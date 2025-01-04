@@ -170,7 +170,7 @@ int main(int argc, char *argv[]) {
   rect.x += 50;
   rect.y += 255;
   rect.w = 200;
-  rect.h = 80;
+  rect.h = 40;
 
   SdlLabelWidget *label_widget =
       new SdlLabelWidget(win->renderer_, font1, " Open Media file ", &rect);
@@ -181,14 +181,6 @@ int main(int argc, char *argv[]) {
   win->add_layer(static_cast<Layer *>(layer));
   win->show();
 
-#if 0
-  
-  win->show();
-  delete video_widget;
-  delete play_button;
-  delete pause_button;
-  delete prog_bar;
-#endif
   delete win;
   return 0;
 }

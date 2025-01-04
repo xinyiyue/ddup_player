@@ -29,6 +29,11 @@ class Widget {
     name_ = name;
     dirty_ = false;
   }
+
+  virtual ~Widget() {
+    LOGI("Widget", "widget name:%s destruct", name_.c_str());
+  }
+
   virtual bool is_dirty() { return dirty_; };
   virtual int draw() = 0;
   virtual int get_type() = 0;

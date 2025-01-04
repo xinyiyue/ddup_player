@@ -9,6 +9,14 @@
 class Layer {
  public:
   Layer(const char *name) { name_ = name; }
+  virtual ~Layer() {
+    for (std::list<Widget *>::iterator it = widget_list_.begin();
+         it != widget_list_.end(); ++it) {
+      delete (*it);
+    }
+    widget_list_.clear();
+  }
+
   int add_widget(Widget *widget) {
     std::list<Widget *>::iterator it = widget_list_.end();
     widget_list_.insert(it, widget);

@@ -54,13 +54,11 @@ void SdlVideoSink::video_render_thread(void) {
       eos_ = false;
     }
     render_buffer_s *buff;
-    LOGE(TAG, "%s", "start consume buffer");
     bool ret = consume_buffer(&buff, VIDEO_FIFO);
     if (!ret) {
       LOGE(TAG, "%s", "consume buffer error or abort");
       continue;
     }
-    LOGE(TAG, "%s", "end consume buffer, build texture");
     texture_builder_->build_texture(buff);
     int sleep_time = 1000 / buff->frame_rate;
     for (int i = 0; i < 4; ++i) {

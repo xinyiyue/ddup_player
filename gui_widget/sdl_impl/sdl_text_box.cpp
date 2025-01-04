@@ -19,6 +19,7 @@ SdlTextBox::SdlTextBox(SDL_Renderer *renderer, SDL_Rect &rect, SdlFont *font) {
   hightlight_rect_ = new SdlRect(renderer, line_rect);
   action_rect_ = {0, 0, 0, 0};
   selected_line_ = -1;
+  last_selected_line_ = -1;
   hightlight_line_ = -1;
   entered_dir_name_ = nullptr;
   played_file_name_ = nullptr;
@@ -51,6 +52,9 @@ void SdlTextBox::set_info(int text_hight, SDL_Color *text,
 }
 
 void SdlTextBox::set_dirent_info(std::vector<DirentInfo *> *vec) {
+  selected_line_ = -1;
+  hightlight_line_ = -1;
+  last_selected_line_ = -1;
   vec_info_ = vec;
   text_count_ = vec_info_->size();
   if (!audio_) audio_ = new SdlImage(renderer_, "audio.png");
@@ -75,7 +79,7 @@ int SdlTextBox::event_handler(void *event) {
     if (point_in_rect(e->button.x, e->button.y, &rect_->get_rect())) {
       selected_line_ = (e->button.y - rect_->get_rect().y) / text_height_;
       if (first_line_) selected_line_ += first_line_;
-      if (vec_info_) {
+      if (vec_info_ && last_selected_line_ == selected_line_) {
         action_rect_.y = rect_->get_rect().y +
                          text_height_ * (selected_line_ - first_line_) - 5;
         int file_type = (*vec_info_)[selected_line_]->file_type;
@@ -87,6 +91,7 @@ int SdlTextBox::event_handler(void *event) {
           played_file_name_ = (*vec_info_)[selected_line_]->file_name;
         }
       }
+      last_selected_line_ = selected_line_;
     }
   } else if (e->type == SDL_MOUSEMOTION) {
     if (point_in_rect(e->motion.x, e->motion.y, &rect_->get_rect())) {
@@ -141,7 +146,7 @@ int SdlTextBox::render_text_box() {
           rect_->get_rect().x, rect_->get_rect().y + text_height_ * i, -1, -1);
       hightlight_rect_->render_rect();
       hightlight_rect_->render_edge();
-      selected = true;
+      selected = false;
     } else {
       selected = false;
     }

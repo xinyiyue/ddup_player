@@ -18,7 +18,13 @@ SdlFont::SdlFont(SDL_Renderer *renderer, const char *font_path, int font_size)
        spacing_, line_height_, ascent_);
 }
 
-SdlFont::~SdlFont() { TTF_CloseFont(font_); }
+SdlFont::~SdlFont() {
+  if (font_) {
+    LOGI(TAG, "%s", "close font");
+    TTF_CloseFont(font_);
+  }
+  font_ = nullptr;
+}
 
 SDL_Rect SdlFont::get_text_rect(const char *text) {
   int w, h;
