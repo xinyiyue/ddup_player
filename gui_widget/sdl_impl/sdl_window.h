@@ -11,7 +11,7 @@
 class SdlWindow : public Window {
  public:
   SdlWindow(const char *name, int w, int h);
-  ~SdlWindow();
+  virtual ~SdlWindow();
   virtual int create() final;
   virtual int update() final;
   virtual int show() final;

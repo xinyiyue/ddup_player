@@ -31,6 +31,7 @@ SdlLabel::SdlLabel(SDL_Renderer* renderer, SdlFont* font, const char* text,
     rect_->set_attri(&bg_color_, edge_width_, &edge_color_);
   }
   font_color_ = rgba_white;
+  hl_bg_color_ = baby_blue;
   is_selected_ = false;
 }
 
@@ -73,15 +74,18 @@ int SdlLabel::render_label() {
   if (need_decorate_) {
     rect_->render_rect();
     rect_->render_edge();
+    SDL_Rect f_rect = font_->get_text_rect(text_.c_str());
     SDL_Rect temp = rect_->get_rect();
     temp.x += edge_width_;
-    temp.y += edge_width_;
+    temp.y += (temp.h - f_rect.h) / 2 + edge_width_;
     temp.w -= edge_width_ * 2;
     temp.h -= edge_width_ * 2;
-    font_->render_text(text_.c_str(), temp, font_color_);
+    font_->render_text(text_.c_str(), temp.x, temp.y, font_color_);
   } else {
+    SDL_Rect f_rect = font_->get_text_rect(text_.c_str());
     SDL_Rect temp = rect_->get_rect();
-    font_->render_text(text_.c_str(), temp, font_color_);
+    temp.y += (temp.h - f_rect.h) / 2;
+    font_->render_text(text_.c_str(), temp.x, temp.y, font_color_);
   }
   is_selected_ = false;
   return 0;

@@ -16,6 +16,14 @@ class Window {
     width_ = w;
     height_ = h;
   };
+
+  virtual ~Window() {
+    for (auto it : layer_list_) {
+      delete it;
+    }
+    layer_list_.clear();
+  };
+
   virtual int create() = 0;
   virtual int update() = 0;
   virtual int show() = 0;

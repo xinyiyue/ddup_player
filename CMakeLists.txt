@@ -55,7 +55,7 @@ set(GMOCK_GUI_SOURCE
 ./gui_widget/sdl_impl/sdl_util.cpp
 #./gui_widget/sdl_impl/gmock/sdl_image_test.cpp
 ./gui_widget/sdl_impl/sdl_image.cpp
-#./gui_widget/sdl_impl/gmock/sdl_font_test.cpp
+./gui_widget/sdl_impl/gmock/sdl_font_test.cpp
 ./gui_widget/sdl_impl/sdl_font.cpp
 #./gui_widget/sdl_impl/gmock/sdl_rect_test.cpp
 ./gui_widget/sdl_impl/sdl_rect.cpp

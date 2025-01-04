@@ -35,6 +35,7 @@ class SdlTextBox {
   int text_count_;
   SDL_Renderer *renderer_;
   int selected_line_;
+  int last_selected_line_;
   int hightlight_line_;
   int first_line_;
   SdlImage *audio_;
