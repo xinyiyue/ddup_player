@@ -21,11 +21,13 @@ class SdlTextBox {
   void get_line_info(int *display_line_cnt, int *text_line_cnt);
   int event_handler(void *event);
   int render_text_box();
+  int get_action_line_name(char **name);
 
  private:
   SdlRect *rect_;
   SdlRect *selected_rect_;
   SdlRect *hightlight_rect_;
+  SDL_Rect action_rect_;
   int text_height_;
   SDL_Color text_color_;
   SdlFont *font_;
@@ -40,6 +42,10 @@ class SdlTextBox {
   SdlImage *picture_;
   SdlImage *dir_;
   SdlImage *unkown_;
+  SdlImage *play_;
+  SdlImage *enter_;
+  char *entered_dir_name_;
+  char *played_file_name_;
   std::vector<DirentInfo *> *vec_info_;
 };
 

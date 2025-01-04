@@ -45,7 +45,7 @@ void SdlVScrollBar::update_slider_hight(double percent) {
 double SdlVScrollBar::get_slider_up_space() {
   double percent = 1.0 * (slider_rect_.y - rect_->get_rect().y - up_rect_.h) /
                    slider_rect_.h;
-  LOGI(TAG, "slider up_space: %f", percent);
+  LOGD(TAG, "slider up_space: %f", percent);
   return percent;
 }
 

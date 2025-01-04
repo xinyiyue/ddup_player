@@ -20,12 +20,14 @@ class Widget {
     action_cb_ = nullptr;
     user_data_ = nullptr;
     hide_delay_time_ = -1;
+    dirty_ = false;
   }
   Widget(const char *name) {
     action_cb_ = nullptr;
     user_data_ = nullptr;
     hide_delay_time_ = -1;
     name_ = name;
+    dirty_ = false;
   }
   virtual bool is_dirty() { return dirty_; };
   virtual int draw() = 0;
@@ -35,7 +37,7 @@ class Widget {
   virtual void *get_window() = 0;
   virtual void *get_renderer() = 0;
   virtual void set_show(bool show, int time_ms) {
-    LOGD("Widget", "widget name:%s, set show:%d, delay:%d", name_.c_str(), show,
+    LOGI("Widget", "widget name:%s, set show:%d, delay:%d", name_.c_str(), show,
          time_ms);
     if (show) {
       if (time_ms > 0) {

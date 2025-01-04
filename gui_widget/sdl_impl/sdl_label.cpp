@@ -52,6 +52,7 @@ void SdlLabel::set_attri(SDL_Color* font_color, SDL_Color* bg_color,
 
 int SdlLabel::event_handler(void* event) {
   SDL_Event* e = (SDL_Event*)event;
+  is_selected_ = false;
   if (e->type == SDL_MOUSEBUTTONDOWN) {
     if (point_in_rect(e->button.x, e->button.y, &rect_->get_rect())) {
       is_selected_ = true;
@@ -82,5 +83,6 @@ int SdlLabel::render_label() {
     SDL_Rect temp = rect_->get_rect();
     font_->render_text(text_.c_str(), temp, font_color_);
   }
+  is_selected_ = false;
   return 0;
 }

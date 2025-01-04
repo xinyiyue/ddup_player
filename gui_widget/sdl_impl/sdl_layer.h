@@ -27,9 +27,9 @@ class SdlLayer : public Layer {
 
   virtual int update() final {
     for (auto widget : widget_list_) {
-      LOGD("SdlLayer", "widget:%s, is_dirty:%d", widget->name_.c_str(),
-           widget->is_dirty());
-      if (widget->is_dirty()) widget->draw();
+      LOGD("SdlLayer", "widget:%s, is_dirty:%d, %p", widget->name_.c_str(),
+           widget->dirty_, &widget->dirty_);
+      if (widget->dirty_) widget->draw();
     }
     return 0;
   };

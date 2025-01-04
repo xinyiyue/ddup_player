@@ -4,6 +4,7 @@
 #include <iostream>
 #include <ostream>
 
+#include "gui_widget/sdl_impl/sdl_user_event.h"
 #include "log/ddup_log.h"
 
 #define TAG "SdlWindow"
@@ -59,6 +60,12 @@ int SdlWindow::show() {
   SDL_Event event;
   while (!exit_) {
     while (SDL_WaitEvent(&event)) {
+      if (event.type == SDL_USER_EVENT_IMAGE_HIDE)
+        LOGI(TAG, "get event:%d, SDL_USER_EVENT_IMAGE_HIDE",
+             SDL_USER_EVENT_IMAGE_HIDE);
+      if (event.type == SDL_USER_EVENT_LABEL_HIDE)
+        LOGI(TAG, "get event:%d, SDL_USER_EVENT_IMAGE_HIDE",
+             SDL_USER_EVENT_IMAGE_HIDE);
       if (event_handler(&event)) {
         update();
       }

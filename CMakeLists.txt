@@ -15,7 +15,15 @@ set(SDL_IMPL_SOURCE
 ./gui_widget/sdl_impl/sdl_image.cpp
 ./gui_widget/sdl_impl/sdl_font.cpp
 ./gui_widget/sdl_impl/sdl_util.cpp
+./gui_widget/sdl_impl/sdl_image_widget.cpp
+./gui_widget/sdl_impl/sdl_label.cpp
+./gui_widget/sdl_impl/sdl_label_widget.cpp
 ./gui_widget/sdl_impl/sdl_texture_builder.cpp
+./gui_widget/sdl_impl/sdl_vscroll_bar.cpp
+./gui_widget/sdl_impl/sdl_text_box.cpp
+./gui_widget/sdl_impl/sdl_combo_box.cpp
+./gui_widget/sdl_impl/sdl_dirent_window.cpp
+./gui_widget/sdl_impl/sdl_dirent_window_widget.cpp
 )
 
 set(PLAYER_SOURCE
@@ -95,6 +103,8 @@ set(RESOURCE
 ./res/win_up.png
 ./res/win_down.png
 ./res/win_red.png
+./res/enter.png
+./res/win_close.png
 ./res/ddup_font.ttf
 )
 set(FFMPEG_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ffmpeg-7.0.1/lib)

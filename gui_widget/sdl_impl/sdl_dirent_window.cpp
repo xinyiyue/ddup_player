@@ -16,7 +16,7 @@ SdlDirentWindow::SdlDirentWindow(SDL_Renderer *renderer, SDL_Rect &rect,
   int fh = font_->get_font_height();
   up_rect_ = {rect_.x, rect_.y, rect_.w, fh};
   down_rect_ = {rect_.x, rect_.y + rect_.h - (fh + 20), rect_.w, (fh + 20)};
-  close_rect_ = {rect_.x + rect_.w - fh, rect_.y, fh, fh};
+  close_rect_ = {rect_.x + rect_.w - fh, rect_.y, fh - 2, fh - 2};
   SDL_Rect title_rect = {rect_.x + 2, rect_.y + up_rect_.h, rect_.w - 6,
                          (fh + 20)};
   sdl_title_rect_ = new SdlRect(renderer, title_rect);
@@ -25,7 +25,8 @@ SdlDirentWindow::SdlDirentWindow(SDL_Renderer *renderer, SDL_Rect &rect,
   bg_image_ = new SdlImage(renderer, "win_rect.png");
   bg_upper_ = new SdlImage(renderer, "win_up.png");
   bg_down_ = new SdlImage(renderer, "win_down.png");
-  bg_close_ = new SdlImage(renderer, "win_red.png");
+  bg_close_hl_ = new SdlImage(renderer, "win_red.png");
+  bg_close_ = new SdlImage(renderer, "win_close.png");
   logo_ = new SdlImage(renderer, "ddup_player.png");
   SDL_Rect c_rect = {rect_.x + 2, rect_.y + up_rect_.h + title_rect.h,
                      rect_.w - 6,
@@ -134,7 +135,7 @@ int SdlDirentWindow::parse_dir(const char *path) {
 
   while ((entry = readdir(dir)) != nullptr) {
     std::string fullPath = cur_dir_ + "/" + entry->d_name;
-
+    memset(&statbuf, 0, sizeof(struct stat));
     if (stat(fullPath.c_str(), &statbuf) == -1 || !strcmp(entry->d_name, ".") ||
         !strcmp(entry->d_name, "..")) {
       LOGE(TAG, "Failed to get status of:%s", fullPath.c_str());
@@ -249,16 +250,20 @@ int SdlDirentWindow::render_dirent() {
   return 0;
 }
 int SdlDirentWindow::event_handler(void *event) {
+  bool catched = false;
   SDL_Event *e = (SDL_Event *)event;
   if (e->type == SDL_MOUSEBUTTONDOWN) {
     if (point_in_rect(e->button.x, e->button.y, &close_rect_)) {
       is_close_ = true;
+      catched = true;
     }
   } else if (e->type == SDL_MOUSEMOTION) {
     if (point_in_rect(e->motion.x, e->motion.y, &close_rect_)) {
       is_close_hl_ = true;
+      catched = true;
     } else {
       is_close_hl_ = false;
+      catched = false;
     }
   }
   bool changed = false;
@@ -287,11 +292,26 @@ int SdlDirentWindow::event_handler(void *event) {
       }
     }
   }
+  catched |= cbox_->event_handler(event);
+  char *action_line_name = nullptr;
+  int ret = cbox_->get_action_line_name(&action_line_name);
+  if (ret == 0 && action_line_name != nullptr) {
+    changed = true;
+    if (!cur_dir_.empty() && cur_dir_[cur_dir_.size() - 1] != '/') {
+      cur_dir_ += "/";
+    }
+    cur_dir_ += action_line_name;
+    cur_dir_ += "/";
+    LOGI(TAG, "enter --->new dir:%s, ", cur_dir_.c_str());
+  } else if (ret == 1 && action_line_name != nullptr) {
+    play_url_ = cur_dir_ + "/" + action_line_name;
+  }
+
   if (changed) {
     parse_dir(cur_dir_.c_str());
   }
-  cbox_->event_handler(event);
-  return 0;
+
+  return catched;
 }
 
 int SdlDirentWindow::render_dirent_window() {
@@ -303,6 +323,8 @@ int SdlDirentWindow::render_dirent_window() {
     sdl_title_rect_->render_edge();
     logo_->render_image(nullptr, &logo_rect_);
     if (is_close_hl_) {
+      bg_close_hl_->render_image(nullptr, &close_rect_);
+    } else {
       bg_close_->render_image(nullptr, &close_rect_);
     }
     render_dirent();

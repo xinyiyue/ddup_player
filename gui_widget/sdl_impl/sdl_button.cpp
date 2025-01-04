@@ -40,6 +40,7 @@ SdlButton::SdlButton(const char *name, const char *skin, SDL_Renderer *renderer,
     : Button(x, y, w, h, skin, name) {
   renderer_ = renderer;
   dirty_ = false;
+  hide_delay_time_ = 0;
   image_ = new SdlImage(renderer_, skin);
   pos_x_ = x;
   pos_y_ = y;
