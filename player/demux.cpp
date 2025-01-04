@@ -198,6 +198,7 @@ int Demux::set_speed(float speed) {
     set_state(DEMUX_STATE_PAUSE);
   } else {
     set_state(DEMUX_STATE_PLAY);
+    set_ready();
   }
   if (audio_stream_) audio_stream_->set_speed(speed);
   if (video_stream_) video_stream_->set_speed(speed);

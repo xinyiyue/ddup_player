@@ -4,8 +4,12 @@
 #include <iostream>
 
 #include "gui_widget/sdl_impl/sdl_button.h"
+#include "gui_widget/sdl_impl/sdl_dirent_window_widget.h"
+#include "gui_widget/sdl_impl/sdl_image_widget.h"
+#include "gui_widget/sdl_impl/sdl_label_widget.h"
 #include "gui_widget/sdl_impl/sdl_layer.h"
 #include "gui_widget/sdl_impl/sdl_playback_panel.h"
+#include "gui_widget/sdl_impl/sdl_user_event.h"
 #include "gui_widget/sdl_impl/sdl_video.h"
 #include "gui_widget/sdl_impl/sdl_window.h"
 #include "log/ddup_log.h"
@@ -19,16 +23,30 @@ struct play_pause_bar {
   SdlVideo *video;
 };
 
+struct dir_window_info {
+  SDL_Renderer *renderer;
+  SdlWindow *win;
+  SdlFont *font;
+  SdlLayer *layer;
+  SdlLabelWidget *label;
+  SdlImgWidget *image;
+  SdlDirWinWidget *dir_win;
+};
+
+struct play_pause_bar ppb;
+
 void handle_bar_event(void *userdata, void *event) {
   action *a = (action *)event;
   struct play_pause_bar *ppb = (struct play_pause_bar *)userdata;
   if (a->state == PLAYBACK_PAUSE) {
-    LOGI(TAG, "bar_event handler,state:%d,pause", a->state);
+    LOGI(TAG, "bar_event handler,state:%d,pause----------------------->",
+         a->state);
     ppb->video->set_speed(0.0);
     ppb->pause_button->set_show(true, 0);
     ppb->play_button->set_show(false, 0);
   } else if (a->state == PLAYBACK_PLAY) {
-    LOGI(TAG, "bar_event handler,state:%d,play", a->state);
+    LOGI(TAG, "bar_event handler,state:%d,play----------------------->",
+         a->state);
     if (a->seek_time == 0) {
       ppb->video->seek(0);
       ppb->reload_button->set_show(false, 0);
@@ -48,12 +66,9 @@ void handle_bar_event(void *userdata, void *event) {
   }
 }
 
-int main(int argc, char *argv[]) {
-  SdlWindow *win = new SdlWindow("DDup Player", 1280, 720);
-  win->create();
-  SdlLayer *layer = new SdlLayer("button_layer");
-  layer->set_zorder(2);
-  layer->set_show(true);
+int create_player(struct dir_window_info *winfo, char *url) {
+  SdlWindow *win = winfo->win;
+  SdlLayer *layer = winfo->layer;
   SdlLayer *video_layer = new SdlLayer("video_layer");
   video_layer->set_zorder(1);
   video_layer->set_show(true);
@@ -77,7 +92,6 @@ int main(int argc, char *argv[]) {
   rect.h = 20;
   SdlPlaybackPanel *prog_bar = new SdlPlaybackPanel(
       "prog_bar", rect, "progress_bar.png", win->renderer_);
-  struct play_pause_bar ppb;
   ppb.pause_button = pause_button;
   ppb.play_button = play_button;
   ppb.reload_button = reload_button;
@@ -87,16 +101,94 @@ int main(int argc, char *argv[]) {
   layer->add_widget(static_cast<Widget *>(play_button));
   layer->add_widget(static_cast<Widget *>(reload_button));
   layer->add_widget(static_cast<Widget *>(prog_bar));
-  win->add_layer(static_cast<Layer *>(layer));
   win->add_layer(static_cast<Layer *>(video_layer));
-  video_widget->open("../../res/The_Shawshank_Redemption.mp4");
+  video_widget->open(url);
   // video_widget->open("../../res/tianhou.mp4");
   video_widget->set_speed(1.0);
+  return 0;
+}
+
+void handle_play_event(void *userdata, void *event) {
+  struct dir_window_info *winfo = (struct dir_window_info *)userdata;
+  winfo->dir_win->set_show(false, 0);
+  std::string *url = (std::string *)event;
+  LOGI(TAG, "get new url %s ----------->", url->c_str());
+  create_player(winfo, (char *)url->c_str());
+}
+
+void handle_image_event(void *userdata, void *event) {
+  // struct dir_window_info *winfo = (struct dir_window_info *)userdata;
+  // winfo->image->set_show(false, 0);
+}
+
+void handle_dir_event(void *userdata, void *event) {
+  struct dir_window_info *winfo = (struct dir_window_info *)userdata;
+
+  int win_width = winfo->win->width_;
+  int win_height = winfo->win->height_;
+  SDL_Rect rect;
+  rect.w = 800;
+  rect.h = 600;
+  rect.x = (win_width - rect.w) / 2;
+  rect.y = (win_height - rect.h) / 2;
+  SdlDirWinWidget *dwin =
+      new SdlDirWinWidget(winfo->renderer, &rect, winfo->font);
+  winfo->dir_win = dwin;
+  dwin->set_action_callback(handle_play_event, winfo);
+  dwin->get()->parse_dir("/data/ddup_player/ddup_player");
+  LOGI(TAG, "new SdlDirWinWidget %p ----------->", dwin);
+  winfo->layer->add_widget(static_cast<Widget *>(dwin));
+  winfo->label->set_show(false, 0);
+  winfo->image->set_show(false, 0);
+}
+
+int main(int argc, char *argv[]) {
+  SdlWindow *win = new SdlWindow("DDup Player", 1280, 720);
+  win->create();
+  SdlLayer *layer = new SdlLayer("button_layer");
+  layer->set_zorder(2);
+  layer->set_show(true);
+
+  SDL_Rect rect;
+  rect.x = win->width_ / 2 - 150;
+  rect.y = win->height_ / 2 - 200;
+  rect.w = 300;
+  rect.h = 250;
+
+  struct dir_window_info winfo;
+
+  winfo.renderer = win->renderer_;
+  winfo.layer = layer;
+  winfo.win = win;
+
+  SdlImgWidget *img_widget =
+      new SdlImgWidget(win->renderer_, "ddup_player.png", &rect);
+  winfo.image = img_widget;
+  img_widget->set_action_callback(handle_image_event, &winfo);
+  SdlFont *font1 = new SdlFont(win->renderer_, "ddup_font.ttf", 20);
+  winfo.font = font1;
+  rect.x += 50;
+  rect.y += 255;
+  rect.w = 200;
+  rect.h = 80;
+
+  SdlLabelWidget *label_widget =
+      new SdlLabelWidget(win->renderer_, font1, " Open Media file ", &rect);
+  winfo.label = label_widget;
+  label_widget->set_action_callback(handle_dir_event, &winfo);
+  layer->add_widget(static_cast<Widget *>(label_widget));
+  layer->add_widget(static_cast<Widget *>(img_widget));
+  win->add_layer(static_cast<Layer *>(layer));
+  win->show();
+
+#if 0
+  
   win->show();
   delete video_widget;
   delete play_button;
   delete pause_button;
   delete prog_bar;
+#endif
   delete win;
   return 0;
 }

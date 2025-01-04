@@ -1,5 +1,5 @@
 #ifndef __SDL_DIRENT_WINDOW_H__
-
+#define __SDL_DIRENT_WINDOW_H__
 #include <SDL2/SDL.h>
 
 #include <string>
@@ -21,6 +21,7 @@ class SdlDirentWindow {
   int parse_dir(const char *dir);
   int event_handler(void *event);
   int render_dirent_window();
+  std::string get_play_url() { return play_url_; }
 
  private:
   int is_media_file(const char *filename);
@@ -46,10 +47,12 @@ class SdlDirentWindow {
   SdlImage *bg_image_;
   SdlImage *bg_upper_;
   SdlImage *bg_down_;
+  SdlImage *bg_close_hl_;
   SdlImage *bg_close_;
   SdlImage *logo_;
   bool is_close_;
   bool is_close_hl_;
+  std::string play_url_;
 };
 
 #endif

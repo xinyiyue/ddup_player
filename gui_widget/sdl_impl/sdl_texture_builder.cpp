@@ -118,13 +118,13 @@ int SdlTextureBuilder::build_texture(render_buffer_s *buff) {
   }
   AutoLock lock(renderer_mutex_);
   if (pixel_format_ == SDL_PIXELFORMAT_IYUV) {
-    LOGD(TAG, "SDL_UpdateYUVTexture pixel:%s", print_sdl_pixel_name(pixel));
+    LOGI(TAG, "SDL_UpdateYUVTexture pixel:%s", print_sdl_pixel_name(pixel));
     SDL_UpdateYUVTexture(texture_, NULL, (const Uint8 *)buff->data[0],
                          buff->len[0], (const Uint8 *)buff->data[1],
                          buff->len[1], (const Uint8 *)buff->data[2],
                          buff->len[2]);
   } else {
-    LOGD(TAG, "xxx SDL_UpdateYUVTexture pixel:%s", print_sdl_pixel_name(pixel));
+    LOGI(TAG, "xxx SDL_UpdateYUVTexture pixel:%s", print_sdl_pixel_name(pixel));
     SDL_UpdateTexture(texture_, NULL, buff->data[0], width_ * 4);
   }
   SDL_Event event;

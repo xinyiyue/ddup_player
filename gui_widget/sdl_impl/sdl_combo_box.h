@@ -18,6 +18,7 @@ class SdlComboBox {
   void set_text(const char **text_array, int count);
   int event_handler(void *event);
   int render_combo_box();
+  int get_action_line_name(char **name);
 
  private:
   SdlFont *font_;

@@ -62,7 +62,7 @@ int SdlVideo::event_handler(void *event) {
   SDL_Event *e = (SDL_Event *)event;
   if (e->type == SDL_USER_EVENT_VIDEO_UPDATE) {
     dirty_ = true;
-    LOGD(TAG, "%s",
+    LOGI(TAG, "%s",
          "catch event video update event, will update video picture");
     return 1;
   } else if (e->type == SDL_QUIT) {

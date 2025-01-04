@@ -80,7 +80,11 @@ int SdlComboBox::event_handler(void *event) {
     int first_line = display_cnt * up_percent;
     text_box_->update_first_line(first_line);
   }
-  return 0;
+  return 1;
+}
+
+int SdlComboBox::get_action_line_name(char **name) {
+  return text_box_->get_action_line_name(name);
 }
 
 int SdlComboBox::render_combo_box() {
