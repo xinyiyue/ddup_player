@@ -54,23 +54,26 @@ set(GMOCK_GUI_SOURCE
 ./gui_widget/sdl_impl/gmock/sdl_gui_test_main.cpp
 ./gui_widget/sdl_impl/sdl_util.cpp
 #./gui_widget/sdl_impl/gmock/sdl_image_test.cpp
-./gui_widget/sdl_impl/sdl_image.cpp
-./gui_widget/sdl_impl/gmock/sdl_font_test.cpp
-./gui_widget/sdl_impl/sdl_font.cpp
+#./gui_widget/sdl_impl/sdl_image.cpp
+#./gui_widget/sdl_impl/gmock/sdl_font_test.cpp
+#./gui_widget/sdl_impl/sdl_font.cpp
 #./gui_widget/sdl_impl/gmock/sdl_rect_test.cpp
-./gui_widget/sdl_impl/sdl_rect.cpp
+#./gui_widget/sdl_impl/sdl_rect.cpp
 #./gui_widget/sdl_impl/gmock/sdl_progress_bar_test.cpp
-./gui_widget/sdl_impl/sdl_progress_bar.cpp
+#./gui_widget/sdl_impl/sdl_progress_bar.cpp
 #./gui_widget/sdl_impl/gmock/sdl_label_test.cpp
-./gui_widget/sdl_impl/sdl_label.cpp
+#./gui_widget/sdl_impl/sdl_label.cpp
 #./gui_widget/sdl_impl/gmock/sdl_vscroll_test.cpp
-./gui_widget/sdl_impl/sdl_vscroll_bar.cpp
-./gui_widget/sdl_impl/sdl_text_box.cpp
+#./gui_widget/sdl_impl/sdl_vscroll_bar.cpp
+#./gui_widget/sdl_impl/sdl_text_box.cpp
 #./gui_widget/sdl_impl/gmock/sdl_text_box_test.cpp
-./gui_widget/sdl_impl/sdl_combo_box.cpp
+#./gui_widget/sdl_impl/sdl_combo_box.cpp
 #./gui_widget/sdl_impl/gmock/sdl_combo_box_test.cpp
-./gui_widget/sdl_impl/sdl_dirent_window.cpp
-./gui_widget/sdl_impl/gmock/sdl_dirent_window_test.cpp
+#./gui_widget/sdl_impl/sdl_dirent_window.cpp
+#./gui_widget/sdl_impl/gmock/sdl_dirent_window_test.cpp
+./gui_widget/sdl_impl/sdl_texture_builder.cpp
+./gui_widget/sdl_impl/sdl_gif.cpp
+./gui_widget/sdl_impl/gmock/sdl_gif_test.cpp
 )
 add_executable(test test.cpp ${SDL_IMPL_SOURCE} ${FIFO_SOURCE} ${PLAYER_SOURCE})
 add_executable(ddup_app ./app/ddup_app.cpp ${SDL_IMPL_SOURCE} ${FIFO_SOURCE} ${PLAYER_SOURCE})
@@ -106,6 +109,7 @@ set(RESOURCE
 ./res/enter.png
 ./res/win_close.png
 ./res/ddup_font.ttf
+./res/music.gif
 )
 set(FFMPEG_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ffmpeg-7.0.1/lib)
 find_library(SDL2_LIBRARY       SDL2       /usr/lib/x86_64-linux-gnu)
@@ -124,7 +128,7 @@ find_library(GMOCK_MAIN_LIBRARY gmock_main ${CMAKE_CURRENT_SOURCE_DIR}/third_par
 target_link_libraries(test ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY} ${PTHREAD_LIBRARY} ${AVFORMAT_LIBRARY} ${AVCODEC_LIBRARY} ${AVUTIL_LIBRARY} ${SWSCALE_LIBRARY} ${SWRESAMPLE_LIBRARY})
 target_link_libraries(ddup_app ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY} ${PTHREAD_LIBRARY} ${AVFORMAT_LIBRARY} ${AVCODEC_LIBRARY} ${AVUTIL_LIBRARY} ${SWSCALE_LIBRARY} ${SWRESAMPLE_LIBRARY})
 target_link_libraries(gtest ${GTEST_LIBRARY} ${GTEST_MAIN_LIBRARY} ${GMOCK_LIBRARY} ${GMOCK_MAIN_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY} ${PTHREAD_LIBRARY} ${AVFORMAT_LIBRARY} ${AVCODEC_LIBRARY} ${AVUTIL_LIBRARY})
-target_link_libraries(gtest_gui ${GTEST_LIBRARY} ${GTEST_MAIN_LIBRARY} ${GMOCK_LIBRARY} ${GMOCK_MAIN_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY} ${PTHREAD_LIBRARY})
+target_link_libraries(gtest_gui ${GTEST_LIBRARY} ${GTEST_MAIN_LIBRARY} ${GMOCK_LIBRARY} ${GMOCK_MAIN_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${SDL2_TTF_LIBRARY}  ${SDL2_LIBRARY} ${PTHREAD_LIBRARY} ${AVFORMAT_LIBRARY} ${AVCODEC_LIBRARY} ${AVUTIL_LIBRARY})
 install(TARGETS test DESTINATION result)
 install(TARGETS ddup_app DESTINATION result)
 install(TARGETS gtest DESTINATION result)
