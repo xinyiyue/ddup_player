@@ -17,11 +17,8 @@ class Window {
     height_ = h;
   };
 
-  virtual ~Window() {
-    for (auto it : layer_list_) {
-      delete it;
-    }
-    layer_list_.clear();
+  virtual ~Window(){
+
   };
 
   virtual int create() = 0;
