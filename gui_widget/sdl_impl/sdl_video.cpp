@@ -25,6 +25,8 @@ SdlVideo::SdlVideo(const char *name, SDL_mutex *renderer_mutex,
 }
 
 SdlVideo::~SdlVideo() {
+  player_->stop();
+  player_->close();
   if (player_) delete player_;
 }
 
@@ -65,10 +67,6 @@ int SdlVideo::event_handler(void *event) {
     LOGD(TAG, "%s",
          "catch event video update event, will update video picture");
     return 1;
-  } else if (e->type == SDL_QUIT) {
-    LOGI(TAG, "%s", "catch SDL QUIT event, will stop and close");
-    stop();
-    close();
   }
   return 0;
 }

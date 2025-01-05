@@ -29,6 +29,7 @@ class SdlGif : public Widget, public SdlTextureBuilder {
   int decode_gif();
   int render_gif();
   int convert_data();
+  int set_speed(float speed);
   enum AVPixelFormat pixel_fmt_to_ff_format(pixel_format_t pixel);
   int convert_data(AVFrame *frame, render_buffer_s **out_buff);
   void render_thread(void);
@@ -43,8 +44,7 @@ class SdlGif : public Widget, public SdlTextureBuilder {
   int frame_h_;
   int frame_w_;
   int frame_rate_;
-  bool decode_finished_;
-  SDL_mutex *renderer_mutex_;
+  float speed_;
 };
 
 #endif
