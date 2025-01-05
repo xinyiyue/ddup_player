@@ -24,6 +24,13 @@ class SdlLayer : public Layer {
     }
     return catched;
   };
+  virtual ~SdlLayer() {
+    for (std::list<Widget *>::iterator it = widget_list_.begin();
+         it != widget_list_.end(); ++it) {
+      delete (*it);
+    }
+    widget_list_.clear();
+  }
 
   virtual int update() final {
     for (auto widget : widget_list_) {

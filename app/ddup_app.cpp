@@ -1,5 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
+#include <limits.h>
+#include <unistd.h>
 
 #include <iostream>
 
@@ -135,7 +137,16 @@ void handle_dir_event(void *userdata, void *event) {
       new SdlDirWinWidget(winfo->renderer, &rect, winfo->font);
   winfo->dir_win = dwin;
   dwin->set_action_callback(handle_play_event, winfo);
-  dwin->get()->parse_dir("/data/ddup_player/ddup_player");
+  char cwd[1024];
+
+  // 调用getcwd函数获取当前工作目录
+  if (getcwd(cwd, sizeof(cwd)) != NULL) {
+    printf("当前路径是: %s\n", cwd);
+  } else {
+    perror("getcwd() 错误");
+    return;
+  }
+  dwin->get()->parse_dir(cwd);
   LOGI(TAG, "new SdlDirWinWidget %p ----------->", dwin);
   winfo->layer->add_widget(static_cast<Widget *>(dwin));
   winfo->label->set_show(false, 0);

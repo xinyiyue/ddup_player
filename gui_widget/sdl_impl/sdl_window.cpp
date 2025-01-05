@@ -17,6 +17,10 @@ SdlWindow::SdlWindow(const char *name, int w, int h) : Window(name, w, h) {
 
 SdlWindow::~SdlWindow() {
   LOGI(TAG, "SdlWindow:%s destructor", name_.c_str());
+  for (auto it : layer_list_) {
+    delete it;
+  }
+  layer_list_.clear();
   SDL_DestroyMutex(renderer_mutex_);
   SDL_DestroyRenderer(renderer_);
   SDL_DestroyWindow(window_);
