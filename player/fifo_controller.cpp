@@ -87,7 +87,7 @@ BufferBase::~BufferBase() {
 const char *BufferBase::get_fifo_name(fifo_type_t type) {
   Fifo *fifo = get_fifo(type);
   if (!fifo) {
-    LOGE(TAGF, "get fifo faied, type:%d, name:%s", type, fifo->get_name());
+    LOGE(TAGF, "get fifo faied, type:%d", type);
     return "unkown_fifo";
   }
   return fifo->get_name();

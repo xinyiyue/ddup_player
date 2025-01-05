@@ -14,7 +14,11 @@ extern "C" {
 
 class FFmpegDemux : public Demux {
  public:
-  FFmpegDemux(EventListener *listener) : Demux(listener){};
+  FFmpegDemux(EventListener *listener) : Demux(listener) {
+    fmt_ctx_ = nullptr;
+    audio_stream_index_ = -1;
+    video_stream_index_ = -1;
+  };
   virtual ~FFmpegDemux(){};
   virtual int prepare(const char *url) final;
   virtual int create_stream() final;

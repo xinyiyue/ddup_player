@@ -43,6 +43,8 @@ class SdlGif : public Widget, public SdlTextureBuilder {
   int frame_h_;
   int frame_w_;
   int frame_rate_;
+  bool decode_finished_;
+  SDL_mutex *renderer_mutex_;
 };
 
 #endif

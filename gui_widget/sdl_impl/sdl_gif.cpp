@@ -15,6 +15,8 @@ SdlGif::SdlGif(const char *name, const char *url, SDL_mutex *renderer_mutex,
   rect_ = {x, y, w, h};
   renderer_ = renderer;
   exit_ = false;
+  decode_finished_ = false;
+  renderer_mutex_ = SDL_CreateMutex();
 }
 
 SdlGif::~SdlGif() {
@@ -24,6 +26,7 @@ SdlGif::~SdlGif() {
     free(raw_buffer_[i]);
     raw_buffer_[i] = nullptr;
   }
+  SDL_DestroyMutex(renderer_mutex_);
 }
 
 int SdlGif::decode_gif() {
@@ -135,20 +138,23 @@ int SdlGif::decode_gif() {
 
         // 检查帧是否为YUV420P格式
         if (frame->format != AV_PIX_FMT_YUV420P) {
-          LOGD(TAG, "Frame is not in YUV420P format:%s, codec:%s",
+          LOGI(TAG, "Frame is not in YUV420P format:%s, codec:%s",
                av_get_pix_fmt_name((enum AVPixelFormat)frame->format),
                dec_ctx->codec_descriptor->name);
           // goto end;
         }
         render_buffer_s *buf = nullptr;
         int ret = convert_data(frame, &buf);
-        if (!ret && buf) raw_buffer_.push_back(buf);
+        if (!ret && buf) {
+          AutoLock lock(renderer_mutex_);
+          raw_buffer_.push_back(buf);
+        }
       }
     }
     av_packet_unref(pkt);
     av_frame_unref(frame);
   }
-
+  decode_finished_ = true;
 end:
   // 释放资源
   av_frame_free(&frame);
@@ -229,9 +235,21 @@ int SdlGif::convert_data(AVFrame *frame, render_buffer_s **out_buff) {
 
 void SdlGif::render_thread(void) {
   int index = 0;
-  int size = raw_buffer_.size();
-  LOGI(TAG, "gif picture count:%d", size);
+  int size = 0;
   while (!exit_) {
+    if (raw_buffer_.size() < 10) {
+      SDL_Delay(10);
+      continue;
+    } else {
+      if (decode_finished_) {
+        size = raw_buffer_.size();
+        decode_finished_ = false;
+      } else if (size == 0) {
+        size = 10;
+      }
+    }
+
+    // AutoLock lock(renderer_mutex_);
     render_buffer_s *buff = raw_buffer_[index];
     build_texture(buff);
     int sleep_time = 1000 / buff->frame_rate;
@@ -242,6 +260,7 @@ void SdlGif::render_thread(void) {
 }
 
 int SdlGif::render_gif() {
+  LOGI(TAG, "%s", "create render thread");
   render_thread_id_ = std::thread(std::bind(&SdlGif::render_thread, this));
   return 0;
 }

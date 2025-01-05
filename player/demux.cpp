@@ -168,6 +168,7 @@ int Demux::prepare(const char *url) {
   if (audio_stream_) {
     audio_fifo_ = new Fifo("ainput_fifo", DEFAULT_FIFO_SIZE, sizeof(void *),
                            AUDIO_FIFO, this);
+    LOGE(TAG, "BIND audio fifo:%s", audio_fifo_->get_name());
     bind_fifo(audio_fifo_);
     audio_stream_->bind_fifo(audio_fifo_);
     ret = audio_stream_->init();
