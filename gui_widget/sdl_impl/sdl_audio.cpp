@@ -19,11 +19,13 @@ SdlAudio::SdlAudio(const char *name, const char *gif, SDL_mutex *renderer_mutex,
   player_ = new DDupPlayer(static_cast<EventListener *>(this));
   gif_ = new SdlGif(name, gif, renderer_mutex, renderer_, x, y, w, h);
   LOGI(TAG, "%s", "start render gif");
-  gif_->render_gif();
   gif_->decode_gif();
+  gif_->render_gif();
 }
 
 SdlAudio::~SdlAudio() {
+  player_->stop();
+  player_->close();
   if (player_) delete player_;
   if (gif_) delete gif_;
 }
@@ -34,7 +36,10 @@ int SdlAudio::open(const char *url) {
   return 0;
 }
 
-int SdlAudio::set_speed(float speed) { return player_->set_speed(speed); }
+int SdlAudio::set_speed(float speed) {
+  gif_->set_speed(speed);
+  return player_->set_speed(speed);
+}
 
 int SdlAudio::stop() {
   LOGI(TAG, "%s", "sdl video stop");

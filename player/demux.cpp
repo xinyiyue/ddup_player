@@ -21,6 +21,8 @@ Demux::Demux(EventListener *listener)
   url_ = "";
   video_eos_ = false;
   audio_eos_ = false;
+  video_fifo_ = nullptr;
+  audio_fifo_ = nullptr;
   pthread_cond_init(&cond_, NULL);
   pthread_mutex_init(&mutex_, NULL);
   pthread_mutex_init(&cmd_mutex_, NULL);
