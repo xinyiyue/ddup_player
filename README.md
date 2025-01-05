@@ -22,9 +22,9 @@ cd ${your_path}/ddup_player/build/result
 ./ddup_app
 ```
 
-![open](logo_page.png "click text open directory")
-![select](start_page.png "click play button to play media file")
-![play](player1.png "playback controls")
+![open](./logo_page.png)
+![select](./start_page.png "click play button to play media file")
+![play](./player1.png "playback controls")
 
 
 
