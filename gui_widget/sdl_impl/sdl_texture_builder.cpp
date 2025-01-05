@@ -79,8 +79,9 @@ int SdlTextureBuilder::get_supported_format(video_format_s *format) {
   format->width = win_width_;
   format->height = win_height_;
   format->pixel[0] = PIXELFORMAT_IYUV;
-  // format->pixel[0] = PIXELFORMAT_ARGB8888;
-  LOGI(TAG, "get supported format,w:%d, h:%d, pixel:%s", win_width_,
+  format->pixel[1] = PIXELFORMAT_ARGB8888;
+  format->pixel[2] = PIXELFORMAT_BGRA8888;
+  LOGD(TAG, "get supported format,w:%d, h:%d, pixel:%s", win_width_,
        win_height_,
        print_sdl_pixel_name(map_to_sdl_pixel_format(format->pixel[0])));
 
@@ -124,7 +125,7 @@ int SdlTextureBuilder::build_texture(render_buffer_s *buff) {
                          buff->len[1], (const Uint8 *)buff->data[2],
                          buff->len[2]);
   } else {
-    LOGD(TAG, "SDL_UpdateYUVTexture pixel:%s", print_sdl_pixel_name(pixel));
+    LOGD(TAG, "SDL_UpdateTexture pixel:%s", print_sdl_pixel_name(pixel));
     SDL_UpdateTexture(texture_, NULL, buff->data[0], width_ * 4);
   }
   SDL_Event event;
