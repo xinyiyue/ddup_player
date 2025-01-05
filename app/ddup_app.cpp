@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+#include "base_util/media_type.h"
+#include "gui_widget/sdl_impl/sdl_audio.h"
 #include "gui_widget/sdl_impl/sdl_button.h"
 #include "gui_widget/sdl_impl/sdl_dirent_window_widget.h"
 #include "gui_widget/sdl_impl/sdl_image_widget.h"
@@ -23,6 +25,7 @@ struct play_pause_bar {
   SdlButton *play_button;
   SdlButton *reload_button;
   SdlVideo *video;
+  SdlAudio *audio;
 };
 
 struct dir_window_info {
@@ -43,41 +46,51 @@ void handle_bar_event(void *userdata, void *event) {
   if (a->state == PLAYBACK_PAUSE) {
     LOGI(TAG, "bar_event handler,state:%d,pause----------------------->",
          a->state);
-    ppb->video->set_speed(0.0);
+    if (ppb->video) {
+      ppb->video->set_speed(0.0);
+    } else if (ppb->audio) {
+      ppb->audio->set_speed(0.0);
+    }
     ppb->pause_button->set_show(true, 0);
     ppb->play_button->set_show(false, 0);
   } else if (a->state == PLAYBACK_PLAY) {
     LOGI(TAG, "bar_event handler,state:%d,play----------------------->",
          a->state);
     if (a->seek_time == 0) {
-      ppb->video->seek(0);
+      if (ppb->video) {
+        ppb->video->seek(0);
+      } else if (ppb->audio) {
+        ppb->audio->seek(0);
+      }
       ppb->reload_button->set_show(false, 0);
       ppb->play_button->set_show(true, 1500);
     } else {
       ppb->pause_button->set_show(false, 0);
       ppb->play_button->set_show(true, 1500);
     }
-    ppb->video->set_speed(1.0);
+    if (ppb->video) {
+      ppb->video->set_speed(1.0);
+    } else if (ppb->audio) {
+      ppb->audio->set_speed(1.0);
+    }
   } else if (a->state == PLAYBACK_EOS) {
     LOGI(TAG, "bar_event handler,state:%d,eos", a->state);
     ppb->reload_button->set_show(true, 0);
   } else if (a->state == PLAYBACK_SEEK) {
     LOGI(TAG, "bar_event handler,state:%d,seek, seek_time:%lld", a->state,
          a->seek_time);
-    ppb->video->seek(a->seek_time);
+    if (ppb->video) {
+      ppb->video->seek(a->seek_time);
+    } else if (ppb->audio) {
+      ppb->audio->seek(a->seek_time);
+    }
   }
 }
 
 int create_player(struct dir_window_info *winfo, char *url) {
   SdlWindow *win = winfo->win;
   SdlLayer *layer = winfo->layer;
-  SdlLayer *video_layer = new SdlLayer("video_layer");
-  video_layer->set_zorder(1);
-  video_layer->set_show(true);
-  SdlVideo *video_widget =
-      new SdlVideo("video_widge", win->renderer_mutex_, win->renderer_, 0, 0,
-                   win->width_, win->height_);
-  video_layer->add_widget(static_cast<Widget *>(video_widget));
+
   SdlButton *pause_button =
       new SdlButton("pause_button", "pause.png", win->renderer_,
                     win->width_ / 2 - 100, win->height_ / 2 - 100, 200, 200);
@@ -97,16 +110,41 @@ int create_player(struct dir_window_info *winfo, char *url) {
   ppb.pause_button = pause_button;
   ppb.play_button = play_button;
   ppb.reload_button = reload_button;
-  ppb.video = video_widget;
+
   prog_bar->set_action_callback(handle_bar_event, &ppb);
   layer->add_widget(static_cast<Widget *>(pause_button));
   layer->add_widget(static_cast<Widget *>(play_button));
   layer->add_widget(static_cast<Widget *>(reload_button));
   layer->add_widget(static_cast<Widget *>(prog_bar));
-  win->add_layer(static_cast<Layer *>(video_layer));
-  video_widget->open(url);
-  // video_widget->open("../../res/tianhou.mp4");
-  video_widget->set_speed(1.0);
+
+  int file_type = is_media_file(url);
+  if (file_type == 1) {
+    SdlLayer *video_layer = new SdlLayer("video_layer");
+    video_layer->set_zorder(1);
+    video_layer->set_show(true);
+    SdlVideo *video_widget =
+        new SdlVideo("video_widge", win->renderer_mutex_, win->renderer_, 0, 0,
+                     win->width_, win->height_);
+    video_layer->add_widget(static_cast<Widget *>(video_widget));
+    ppb.video = video_widget;
+    win->add_layer(static_cast<Layer *>(video_layer));
+
+    video_widget->open(url);
+    video_widget->set_speed(1.0);
+
+  } else if (file_type == 2) {
+    SdlLayer *audio_layer = new SdlLayer("audio_layer");
+    audio_layer->set_zorder(1);
+    audio_layer->set_show(true);
+    SdlAudio *audio_widget =
+        new SdlAudio("audio_widge", "music.gif", win->renderer_mutex_,
+                     win->renderer_, 0, 0, win->width_, win->height_);
+    ppb.audio = audio_widget;
+    audio_layer->add_widget(static_cast<Widget *>(audio_widget));
+    win->add_layer(static_cast<Layer *>(audio_layer));
+    audio_widget->open(url);
+    audio_widget->set_speed(1.0);
+  }
   return 0;
 }
 

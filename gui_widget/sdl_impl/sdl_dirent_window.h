@@ -7,6 +7,7 @@
 
 #include "./gui_widget/sdl_impl/sdl_combo_box.h"
 #include "./gui_widget/sdl_impl/sdl_label.h"
+#include "base_util/media_type.h"
 #include "gui_widget/sdl_impl/sdl_util.h"
 
 typedef struct DirInfo {
@@ -24,7 +25,6 @@ class SdlDirentWindow {
   std::string get_play_url() { return play_url_; }
 
  private:
-  int is_media_file(const char *filename);
   int render_dirent();
   int check_dir_show_list(std::vector<DirInfo *> dir_list, const char *sstr,
                           const char *fstr);

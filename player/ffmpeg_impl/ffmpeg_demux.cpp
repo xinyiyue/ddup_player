@@ -47,7 +47,6 @@ int FFmpegDemux::create_stream() {
   if (ret < 0) {
     LOGE(TAG, "Could not find %s stream",
          av_get_media_type_string(AVMEDIA_TYPE_VIDEO));
-    return ret;
   } else {
     video_stream_index_ = ret;
     AVStream *vstream = fmt_ctx_->streams[video_stream_index_];
@@ -55,7 +54,6 @@ int FFmpegDemux::create_stream() {
                        (void *)vstream, &video_stream_);
     if (ret < 0) {
       LOGE(TAG, "create video stream failed:%d", ret);
-      return ret;
     }
   }
 
@@ -63,7 +61,6 @@ int FFmpegDemux::create_stream() {
   if (ret < 0) {
     LOGE(TAG, "Could not find %s stream",
          av_get_media_type_string(AVMEDIA_TYPE_AUDIO));
-    return ret;
   } else {
     audio_stream_index_ = ret;
     AVStream *astream = fmt_ctx_->streams[audio_stream_index_];
@@ -71,8 +68,12 @@ int FFmpegDemux::create_stream() {
                        (void *)astream, &audio_stream_);
     if (ret < 0) {
       LOGE(TAG, "create audio stream failed:%d", ret);
-      return ret;
     }
+    LOGI(TAG, "%s", "create audio stream success");
+  }
+  if (video_stream_index_ == -1 && audio_stream_index_ == -1) {
+    LOGE(TAG, "%s", "no stream found");
+    return -1;
   }
   return 0;
 }

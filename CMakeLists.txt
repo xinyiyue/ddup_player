@@ -9,6 +9,8 @@ set(SDL_IMPL_SOURCE
 ./gui_widget/sdl_impl/sdl_button.cpp
 ./gui_widget/sdl_impl/sdl_window.cpp
 ./gui_widget/sdl_impl/sdl_video.cpp
+./gui_widget/sdl_impl/sdl_audio.cpp
+./gui_widget/sdl_impl/sdl_gif.cpp
 ./gui_widget/sdl_impl/sdl_playback_panel.cpp
 ./gui_widget/sdl_impl/sdl_progress_bar.cpp
 ./gui_widget/sdl_impl/sdl_rect.cpp
@@ -24,6 +26,7 @@ set(SDL_IMPL_SOURCE
 ./gui_widget/sdl_impl/sdl_combo_box.cpp
 ./gui_widget/sdl_impl/sdl_dirent_window.cpp
 ./gui_widget/sdl_impl/sdl_dirent_window_widget.cpp
+./base_util/media_type.cpp
 )
 
 set(PLAYER_SOURCE

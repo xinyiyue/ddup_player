@@ -34,7 +34,7 @@ SDL_Rect SdlFont::get_text_rect(const char *text) {
   rect.y = 0;
   rect.w = w;
   rect.h = h;
-  LOGI(TAG, "text:%s, rect(%d, %d, %d, %d)", text, rect.x, rect.y, rect.w,
+  LOGD(TAG, "text:%s, rect(%d, %d, %d, %d)", text, rect.x, rect.y, rect.w,
        rect.h);
   return rect;
 }
