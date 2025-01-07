@@ -122,6 +122,54 @@ void SdlTextBox::get_line_info(int *display_line_cnt, int *text_line_cnt) {
   *text_line_cnt = text_count_;
 }
 
+const char *SdlTextBox::get_next_url() {
+  if (selected_line_ > text_count_ - 1) {
+    return nullptr;
+  }
+  LOGI(TAG, "last selected line: %d", selected_line_);
+  int i = selected_line_ + 1;
+  while (i < text_count_) {
+    if ((*vec_info_)[i]->file_type == (*vec_info_)[selected_line_]->file_type) {
+      selected_line_ = i;
+      break;
+    } else {
+      i++;
+    }
+  }
+  LOGI(TAG, "new selected line: %d", selected_line_);
+  if (i == text_count_) {
+    return nullptr;
+  } else {
+    played_file_name_ = (*vec_info_)[selected_line_]->file_name;
+    return played_file_name_;
+  }
+
+  return nullptr;
+}
+
+const char *SdlTextBox::get_prev_url() {
+  if (selected_line_ <= 0) {
+    return nullptr;
+  }
+  LOGI(TAG, "last selected line: %d", selected_line_);
+  int i = selected_line_ - 1;
+  while (i >= 0) {
+    if ((*vec_info_)[i]->file_type == (*vec_info_)[selected_line_]->file_type) {
+      selected_line_ = i;
+      break;
+    } else {
+      i--;
+    }
+  }
+  LOGI(TAG, "new selected line: %d", selected_line_);
+  if (i < 0) {
+    return nullptr;
+  }
+
+  played_file_name_ = (*vec_info_)[selected_line_]->file_name;
+  return played_file_name_;
+}
+
 void SdlTextBox::update_first_line(int first_line) {
   LOGD(TAG, "update first: %d", first_line);
   first_line_ = first_line;

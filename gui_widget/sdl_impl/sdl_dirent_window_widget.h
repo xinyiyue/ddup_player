@@ -15,6 +15,8 @@ class SdlDirWinWidget : public Widget {
   virtual int event_handler(void *event) override;
   virtual int set_event_resp_area(int x, int y, int w, int h) { return 0; };
   SdlDirentWindow *get() { return dir_win_; }
+  const char *get_next_url();
+  const char *get_prev_url();
 
  private:
   SdlDirentWindow *dir_win_;

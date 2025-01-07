@@ -9,6 +9,8 @@
 
 #define TAG "SdlDirentWindow"
 
+using namespace std;
+
 SdlDirentWindow::SdlDirentWindow(SDL_Renderer *renderer, SDL_Rect &rect,
                                  SdlFont *font) {
   rect_ = rect;
@@ -297,4 +299,22 @@ int SdlDirentWindow::render_dirent_window() {
   }
 
   return 0;
+}
+
+const char *SdlDirentWindow::get_next_url() {
+  const char *action_line_name = cbox_->get_next_url();
+  if (action_line_name == nullptr) {
+    return nullptr;
+  }
+  play_url_ = cur_dir_ + "/" + action_line_name;
+  return play_url_.c_str();
+}
+
+const char *SdlDirentWindow::get_prev_url() {
+  const char *action_line_name = cbox_->get_prev_url();
+  if (action_line_name == nullptr) {
+    return nullptr;
+  }
+  play_url_ = cur_dir_ + "/" + action_line_name;
+  return play_url_.c_str();
 }

@@ -23,6 +23,8 @@ class SdlDirentWindow {
   int event_handler(void *event);
   int render_dirent_window();
   std::string get_play_url() { return play_url_; }
+  const char *get_next_url();
+  const char *get_prev_url();
 
  private:
   int render_dirent();

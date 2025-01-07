@@ -7,19 +7,28 @@
 #define TAG "SdlImage"
 SdlImage::SdlImage(SDL_Renderer *renderer, const char *filename)
     : width_(0), height_(0), renderer_(renderer) {
-  texture_ = IMG_LoadTexture(renderer_, filename);
-  if (texture_ == nullptr) {
-    LOGE(TAG, "Failed to create texture from image:%s", filename);
-  } else {
-    SDL_QueryTexture(texture_, nullptr, nullptr, &width_, &height_);
-    LOGE(TAG, "image:%s, w:%d, h:%d", filename, width_, height_);
-  }
+  update_file(filename);
 }
 
 SdlImage::~SdlImage() { SDL_DestroyTexture(texture_); }
 int SdlImage::get_width() { return width_; }
 
 int SdlImage::get_height() { return height_; }
+
+int SdlImage::update_file(const char *filename) {
+  if (texture_) {
+    SDL_DestroyTexture(texture_);
+  }
+  texture_ = IMG_LoadTexture(renderer_, filename);
+  if (texture_ == nullptr) {
+    LOGE(TAG, "Failed to create texture from image:%s", filename);
+    return -1;
+  } else {
+    SDL_QueryTexture(texture_, nullptr, nullptr, &width_, &height_);
+    LOGE(TAG, "image:%s, w:%d, h:%d", filename, width_, height_);
+  }
+  return 0;
+}
 
 int SdlImage::render_image(SDL_Rect *src, int dst_x, int dst_y) {
   SDL_Rect dst = {dst_x, dst_y, width_, height_};

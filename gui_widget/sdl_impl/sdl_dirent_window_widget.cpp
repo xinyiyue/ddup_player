@@ -21,7 +21,7 @@ int SdlDirWinWidget::event_handler(void *event) {
   dirty_ = false;
   SDL_Event *e = (SDL_Event *)event;
   if (e->type == SDL_USER_EVENT_REFRESH && is_played_ == false) {
-    LOGI(TAG, "%s", "catch event 100, force update dirent window");
+    LOGD(TAG, "%s", "catch event 100, force update dirent window");
     dirty_ = true;
     return 1;
   }
@@ -39,8 +39,13 @@ int SdlDirWinWidget::event_handler(void *event) {
   }
   LOGD(TAG, "SdlDirWinWidget:%p, catch event:%d, dirty:%d, is_played_:%d", this,
        cached, dirty_, is_played_);
+
   return cached;
 }
+
+const char *SdlDirWinWidget::get_next_url() { return dir_win_->get_next_url(); }
+
+const char *SdlDirWinWidget::get_prev_url() { return dir_win_->get_prev_url(); }
 
 int SdlDirWinWidget::draw() {
   dir_win_->render_dirent_window();

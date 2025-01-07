@@ -7,7 +7,10 @@
 
 class SdlImgWidget : public Widget {
  public:
-  SdlImgWidget(SDL_Renderer *renderer, const char *filename, SDL_Rect *dst);
+  SdlImgWidget(SDL_Renderer *renderer, const char *filename, SDL_Rect *dst,
+               bool full_screen = true);
+  SdlImgWidget(const char *name, SDL_Renderer *renderer, const char *filename,
+               SDL_Rect *dst, bool full_screen = true);
   ~SdlImgWidget();
   virtual int draw() override;
   virtual int get_type() { return BUTTON_BASE_TYPE; };
@@ -15,9 +18,11 @@ class SdlImgWidget : public Widget {
   virtual void *get_renderer() { return nullptr; };
   virtual int event_handler(void *event) override;
   virtual int set_event_resp_area(int x, int y, int w, int h) { return 0; };
+  int update_file(const char *filename);
 
  private:
   SdlImage *image_;
   SDL_Rect rect_;
+  bool full_screen_;
 };
 #endif

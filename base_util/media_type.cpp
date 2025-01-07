@@ -8,7 +8,7 @@ int is_media_file(const char *filename) {
 
   const char *v_extensions[] = {".mp4", ".avi", ".mov", ".mkv", NULL};
 
-  const char *p_extensions[] = {".png", ".jpg", ".webp", ".gif", NULL};
+  const char *p_extensions[] = {".png", ".jpg", ".bmp", NULL};
 
   const char *dot = strrchr(filename, '.');
   if (dot == NULL) {

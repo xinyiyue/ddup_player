@@ -22,6 +22,8 @@ class SdlTextBox {
   int event_handler(void *event);
   int render_text_box();
   int get_action_line_name(char **name);
+  const char *get_next_url();
+  const char *get_prev_url();
 
  private:
   SdlRect *rect_;

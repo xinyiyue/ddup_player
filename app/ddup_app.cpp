@@ -9,6 +9,7 @@
 #include "gui_widget/sdl_impl/sdl_audio.h"
 #include "gui_widget/sdl_impl/sdl_button.h"
 #include "gui_widget/sdl_impl/sdl_dirent_window_widget.h"
+#include "gui_widget/sdl_impl/sdl_image_view_panel.h"
 #include "gui_widget/sdl_impl/sdl_image_widget.h"
 #include "gui_widget/sdl_impl/sdl_label_widget.h"
 #include "gui_widget/sdl_impl/sdl_layer.h"
@@ -34,8 +35,9 @@ struct dir_window_info {
   SdlFont *font;
   SdlLayer *layer;
   SdlLabelWidget *label;
-  SdlImgWidget *image;
+  SdlImgWidget *logo;
   SdlDirWinWidget *dir_win;
+  SdlImgWidget *image;
 };
 
 struct play_pause_bar ppb;
@@ -148,12 +150,57 @@ int create_player(struct dir_window_info *winfo, char *url) {
   return 0;
 }
 
+void handle_img_next_event(void *userdata, void *event) {
+  struct dir_window_info *winfo = (struct dir_window_info *)userdata;
+  const char *url = winfo->dir_win->get_next_url();
+  LOGI(TAG, "get new url %s ----------->", url);
+  if (url) winfo->image->update_file(url);
+}
+
+void handle_img_prev_event(void *userdata, void *event) {
+  struct dir_window_info *winfo = (struct dir_window_info *)userdata;
+  const char *url = winfo->dir_win->get_prev_url();
+  LOGI(TAG, "get new url %s ----------->", url);
+  if (url) winfo->image->update_file(url);
+}
+
+int create_image_viewer(struct dir_window_info *winfo, char *url) {
+  SdlWindow *win = winfo->win;
+  SdlLayer *layer = winfo->layer;
+
+  SdlButton *prev_button =
+      new SdlButton("prev_button", "left.png", win->renderer_, 5,
+                    win->height_ / 2 - 50, 200, 200);
+  SdlButton *next_button =
+      new SdlButton("next_button", "right.png", win->renderer_,
+                    win->width_ - 50, win->height_ / 2 - 50, 200, 200);
+  prev_button->set_action_callback(handle_img_prev_event, winfo);
+  next_button->set_action_callback(handle_img_next_event, winfo);
+
+  SDL_Rect rect;
+  rect.x = 0;
+  rect.y = 0;
+  rect.w = win->width_;
+  rect.h = win->height_;
+  SdlImageViewPanel *panel = new SdlImageViewPanel("image_panel", rect);
+  panel->set_buttons(prev_button, next_button);
+  layer->add_widget(static_cast<Widget *>(panel));
+  SdlImgWidget *picture_img_widget =
+      new SdlImgWidget("image_viewer", win->renderer_, url, &rect, false);
+  winfo->image = picture_img_widget;
+  layer->add_widget(static_cast<Widget *>(picture_img_widget));
+  layer->add_widget(static_cast<Widget *>(prev_button));
+  layer->add_widget(static_cast<Widget *>(next_button));
+}
+
 void handle_play_event(void *userdata, void *event) {
   struct dir_window_info *winfo = (struct dir_window_info *)userdata;
   winfo->dir_win->set_show(false, 0);
   std::string *url = (std::string *)event;
   LOGI(TAG, "get new url %s ----------->", url->c_str());
-  create_player(winfo, (char *)url->c_str());
+  int type = is_media_file((char *)url->c_str());
+  if (type == 1 || type == 2) create_player(winfo, (char *)url->c_str());
+  if (type == 3) create_image_viewer(winfo, (char *)url->c_str());
 }
 
 void handle_image_event(void *userdata, void *event) {
@@ -188,7 +235,7 @@ void handle_dir_event(void *userdata, void *event) {
   LOGI(TAG, "new SdlDirWinWidget %p ----------->", dwin);
   winfo->layer->add_widget(static_cast<Widget *>(dwin));
   winfo->label->set_show(false, 0);
-  winfo->image->set_show(false, 0);
+  winfo->logo->set_show(false, 0);
 }
 
 int main(int argc, char *argv[]) {
@@ -211,9 +258,10 @@ int main(int argc, char *argv[]) {
   winfo.win = win;
 
   SdlImgWidget *img_widget =
-      new SdlImgWidget(win->renderer_, "ddup_player.png", &rect);
-  winfo.image = img_widget;
+      new SdlImgWidget("logo", win->renderer_, "ddup_player.png", &rect);
+  winfo.logo = img_widget;
   img_widget->set_action_callback(handle_image_event, &winfo);
+
   SdlFont *font1 = new SdlFont(win->renderer_, "ddup_font.ttf", 20);
   winfo.font = font1;
   rect.x += 50;
@@ -226,6 +274,7 @@ int main(int argc, char *argv[]) {
   winfo.label = label_widget;
   label_widget->set_action_callback(handle_dir_event, &winfo);
   layer->add_widget(static_cast<Widget *>(label_widget));
+
   layer->add_widget(static_cast<Widget *>(img_widget));
   win->add_layer(static_cast<Layer *>(layer));
   win->show();
