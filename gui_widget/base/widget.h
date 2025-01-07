@@ -42,7 +42,7 @@ class Widget {
   virtual void *get_window() = 0;
   virtual void *get_renderer() = 0;
   virtual void set_show(bool show, int time_ms) {
-    LOGI("Widget", "widget name:%s, set show:%d, delay:%d", name_.c_str(), show,
+    LOGD("Widget", "widget name:%s, set show:%d, delay:%d", name_.c_str(), show,
          time_ms);
     if (show) {
       if (time_ms > 0) {

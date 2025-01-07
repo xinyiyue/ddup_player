@@ -61,7 +61,7 @@ int SdlButton::draw() {
   ret = image_->render_image(&rect_, pos_x_, pos_y_);
   if (!ret) {
     if (hide_delay_time_ > 0) {
-      LOGI(TAG, "button:%s draw, start timer, delay:%d", name_.c_str(),
+      LOGD(TAG, "button:%s draw, start timer, delay:%d", name_.c_str(),
            hide_delay_time_);
       timer_.run(hide_delay_time_,
                  std::bind(&SdlButton::delay_hide_timer_handler, this));
@@ -72,7 +72,7 @@ int SdlButton::draw() {
 }
 
 void SdlButton::set_show(bool show, int time_ms) {
-  LOGI(TAG, "button name:%s set show:%d, delay:%d ms", name_.c_str(), show,
+  LOGD(TAG, "button name:%s set show:%d, delay:%d ms", name_.c_str(), show,
        time_ms);
   Widget::set_show(show, time_ms);
   SDL_Event event;
@@ -88,12 +88,12 @@ int SdlButton::event_handler(void *event) {
     if (dirty_ && e->type == SDL_MOUSEBUTTONDOWN &&
         point_in_rect(e->button.x, e->button.y, &resp_rect_)) {
       action_cb_(user_data_, event);
-      LOGI(TAG, "%s", "button handle inner click");
+      LOGD(TAG, "%s", "button handle inner click");
       return 1;
     }
   }
   if (e->type == SDL_USER_EVENT_REFRESH) {
-    LOGI(TAG, "%s", "catch event 100, force update button");
+    LOGD(TAG, "%s", "catch event 100, force update button");
     return 1;
   }
 

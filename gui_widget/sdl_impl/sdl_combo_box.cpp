@@ -87,6 +87,10 @@ int SdlComboBox::get_action_line_name(char **name) {
   return text_box_->get_action_line_name(name);
 }
 
+const char *SdlComboBox::get_next_url() { return text_box_->get_next_url(); }
+
+const char *SdlComboBox::get_prev_url() { return text_box_->get_prev_url(); }
+
 int SdlComboBox::render_combo_box() {
   if (need_srcollbar_) {
     vscroll_bar_->render_vscroll();

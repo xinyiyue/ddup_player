@@ -12,6 +12,7 @@ class SdlImage {
   int render_image(SDL_Rect *src, SDL_Rect *dst);
   int get_width();
   int get_height();
+  int update_file(const char *filename);
 
  private:
   SDL_Texture *texture_;

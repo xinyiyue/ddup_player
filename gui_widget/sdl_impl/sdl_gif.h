@@ -2,6 +2,7 @@
 #define __SDL_GIF_H_H__
 
 #include <thread>
+#include <vector>
 
 #include "gui_widget/base/widget.h"
 #include "gui_widget/sdl_impl/sdl_texture_builder.h"

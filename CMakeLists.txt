@@ -12,6 +12,7 @@ set(SDL_IMPL_SOURCE
 ./gui_widget/sdl_impl/sdl_audio.cpp
 ./gui_widget/sdl_impl/sdl_gif.cpp
 ./gui_widget/sdl_impl/sdl_playback_panel.cpp
+./gui_widget/sdl_impl/sdl_image_view_panel.cpp
 ./gui_widget/sdl_impl/sdl_progress_bar.cpp
 ./gui_widget/sdl_impl/sdl_rect.cpp
 ./gui_widget/sdl_impl/sdl_image.cpp
@@ -113,6 +114,8 @@ set(RESOURCE
 ./res/win_close.png
 ./res/ddup_font.ttf
 ./res/music.gif
+./res/left.png
+./res/right.png
 )
 set(FFMPEG_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ffmpeg-7.0.1/lib)
 find_library(SDL2_LIBRARY       SDL2       /usr/lib/x86_64-linux-gnu)
