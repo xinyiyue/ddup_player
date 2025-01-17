@@ -10,13 +10,15 @@ class SdlAudio : public Widget, public EventListener {
  public:
   SdlAudio(const char *name, const char *gif, SDL_mutex *renderer_mutex,
            SDL_Renderer *renderer, int x, int y, int w, int h);
+  SdlAudio(const char *name, SdlGif *gif);
   virtual ~SdlAudio();
 
-  virtual int open(const char *url) final;
-  virtual int set_speed(float speed) final;
-  virtual int stop() final;
-  virtual int seek(long long seekTime) final;
-  virtual int close() final;
+  int open(const char *url);
+  int set_speed(float speed);
+  int stop();
+  int seek(long long seekTime);
+  int play_next(const char *url);
+  int close();
 
   virtual int draw() final;
   virtual int get_type() final;
@@ -27,6 +29,8 @@ class SdlAudio : public Widget, public EventListener {
 
   virtual void notify_event(int event_type, void *ret) final;
   virtual void notify_error(int error_type) final;
+
+  ddup_state_t get_state() { return player_->get_state(); };
 
  private:
   SDL_Renderer *renderer_;

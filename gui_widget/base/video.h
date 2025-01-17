@@ -13,6 +13,7 @@ class Video : public Widget {
   virtual int stop() = 0;
   virtual int seek(long long seek_time) = 0;
   virtual int close() = 0;
+  virtual int play_next(const char *url) = 0;
 
   virtual int draw() { return 0; };
   virtual int get_type() { return 0; };

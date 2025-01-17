@@ -41,10 +41,6 @@ bool try_open_audio(int wanted_freq, SDL_AudioFormat wanted_format,
   SDL_zero(wanted_spec);
   SDL_zero(spec);
 
-  if (SDL_Init(SDL_INIT_AUDIO) < 0) {
-    LOGE(TAG, "SDL_Init audio error: %s", SDL_GetError());
-    return -1;
-  }
   wanted_spec.freq = wanted_freq;
   wanted_spec.format = wanted_format;
   wanted_spec.channels = wanted_channels;
@@ -59,8 +55,9 @@ bool try_open_audio(int wanted_freq, SDL_AudioFormat wanted_format,
   }
   LOGI(TAG, "sdl open device success, device id:%d", audio_dev);
   SDL_PauseAudioDevice(audio_dev, 0);  //开始播放
-  sleep(60);
+  sleep(20);
   SDL_CloseAudioDevice(audio_dev);  // 关闭设备，因为我们只是测试
+  LOGI(TAG, "sdl close device success, device id:%d", audio_dev);
 
   if (params != nullptr) {
     params->freq = spec.freq;
@@ -76,14 +73,22 @@ TEST(SDLAudioTest, OpenAudioWithCorrectParams) {
   AudioParams actual_params;
   memset(&actual_params, 0, sizeof(actual_params));
   const char *file_name = "/home/mi/data/ddup_player/res/tianhou.pcm";
-  actual_params.file = fopen(file_name, "rb");
+
   LOGI(TAG, "open file:%s, handle:%p", file_name, actual_params.file);
   EXPECT_NE(actual_params.file, nullptr);
-
-  bool success = try_open_audio(44100, AUDIO_S16SYS, 2, &actual_params);
-  fclose(actual_params.file);
-  EXPECT_TRUE(success);
-  EXPECT_EQ(actual_params.freq, 44100);
-  EXPECT_EQ(actual_params.format, AUDIO_S16SYS);
-  EXPECT_EQ(actual_params.channels, 2);
+  if (SDL_Init(SDL_INIT_AUDIO) < 0) {
+    LOGE(TAG, "SDL_Init audio error: %s", SDL_GetError());
+    return;
+  }
+  int count = 5;
+  while (count > 0) {
+    actual_params.file = fopen(file_name, "rb");
+    bool success = try_open_audio(44100, AUDIO_S16SYS, 2, &actual_params);
+    fclose(actual_params.file);
+    EXPECT_TRUE(success);
+    EXPECT_EQ(actual_params.freq, 44100);
+    EXPECT_EQ(actual_params.format, AUDIO_S16SYS);
+    EXPECT_EQ(actual_params.channels, 2);
+    count--;
+  }
 }

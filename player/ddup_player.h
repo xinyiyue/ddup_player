@@ -24,6 +24,7 @@ class DDupPlayer : public EventListener {
   int seek(long long seek_time);
   int stop();
   int close();
+  ddup_state_t get_state() { return state_; };
   long long get_current_time();
   virtual void notify_event(int event_type, void *ret) final;
   virtual void notify_error(int error_type) final;

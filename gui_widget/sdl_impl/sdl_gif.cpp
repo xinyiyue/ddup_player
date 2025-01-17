@@ -15,7 +15,7 @@ SdlGif::SdlGif(const char *name, const char *url, SDL_mutex *renderer_mutex,
   rect_ = {x, y, w, h};
   renderer_ = renderer;
   exit_ = false;
-  speed_ = 1.0;
+  state_ = GIF_STATE_NULL;
 }
 
 SdlGif::~SdlGif() {
@@ -237,20 +237,31 @@ void SdlGif::render_thread(void) {
     build_texture(buff);
     int sleep_time = 1000 / buff->frame_rate;
     SDL_Delay(sleep_time);  // 50ms
-    if (speed_ > 0.0f) index++;
+    if (state_ == GIF_STATE_PLAY) index++;
     if (index >= size) index = 0;
   }
 }
 
-int SdlGif::render_gif() {
-  LOGI(TAG, "%s", "create render thread");
-  render_thread_id_ = std::thread(std::bind(&SdlGif::render_thread, this));
-  return 0;
-}
-
-int SdlGif::set_speed(float speed) {
-  LOGI(TAG, "%s", "create render thread");
-  speed_ = speed;
+int SdlGif::set_state(gif_state_t state) {
+  LOGI(TAG, "set state %d", state);
+  state_ = state;
+  if (state_ == GIF_STATE_STOP) {
+    LOGI(TAG, "%s", "stop gif");
+    set_show(false, 0);
+    exit_ = true;
+    if (render_thread_id_.joinable()) {
+      render_thread_id_.join();
+    }
+  } else if (state_ == GIF_STATE_PLAY) {
+    {
+      set_show(true, 0);
+      if (!render_thread_id_.joinable()) {
+        LOGI(TAG, "%s", "new thread to render gif");
+        exit_ = false;  // 确保线程启动前重置退出标志
+        render_thread_id_ = std::thread(&SdlGif::render_thread, this);
+      }
+    }
+  }
   return 0;
 }
 

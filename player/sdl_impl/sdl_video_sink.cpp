@@ -59,6 +59,10 @@ void SdlVideoSink::video_render_thread(void) {
       LOGE(TAG, "%s", "consume buffer error or abort");
       continue;
     }
+    if (buff->width == 0 || buff->height == 0) {
+      free(buff);
+      continue;
+    }
     texture_builder_->build_texture(buff);
     int sleep_time = 1000 / buff->frame_rate;
     for (int i = 0; i < 4; ++i) {

@@ -129,7 +129,8 @@ const char *SdlTextBox::get_next_url() {
   LOGI(TAG, "last selected line: %d", selected_line_);
   int i = selected_line_ + 1;
   while (i < text_count_) {
-    if ((*vec_info_)[i]->file_type == (*vec_info_)[selected_line_]->file_type) {
+    if ((*vec_info_)[i]->file_type == 1 || (*vec_info_)[i]->file_type == 2 ||
+        (*vec_info_)[i]->file_type == 3) {
       selected_line_ = i;
       break;
     } else {
@@ -151,10 +152,11 @@ const char *SdlTextBox::get_prev_url() {
   if (selected_line_ <= 0) {
     return nullptr;
   }
-  LOGI(TAG, "last selected line: %d", selected_line_);
+  LOGI(TAG, "xx last selected line: %d", selected_line_);
   int i = selected_line_ - 1;
   while (i >= 0) {
-    if ((*vec_info_)[i]->file_type == (*vec_info_)[selected_line_]->file_type) {
+    if ((*vec_info_)[i]->file_type == 1 || (*vec_info_)[i]->file_type == 2 ||
+        (*vec_info_)[i]->file_type == 3) {
       selected_line_ = i;
       break;
     } else {

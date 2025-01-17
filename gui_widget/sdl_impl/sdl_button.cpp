@@ -88,7 +88,7 @@ int SdlButton::event_handler(void *event) {
     if (dirty_ && e->type == SDL_MOUSEBUTTONDOWN &&
         point_in_rect(e->button.x, e->button.y, &resp_rect_)) {
       action_cb_(user_data_, event);
-      LOGD(TAG, "%s", "button handle inner click");
+      LOGI(TAG, "%s", "button handle inner click");
       return 1;
     }
   }

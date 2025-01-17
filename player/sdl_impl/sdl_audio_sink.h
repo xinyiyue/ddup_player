@@ -22,7 +22,7 @@ class SdlAudioSink : public Sink {
   void audio_render_thread(void);
   bool exit_;
   std::thread render_thread_id_;
-  SDL_AudioDeviceID audio_dev = 0;
+  SDL_AudioDeviceID audio_dev_ = 0;
   audio_format_s aformat;
   bool is_start = false;
   render_buffer_s *last_buff_;
