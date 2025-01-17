@@ -69,6 +69,7 @@ class BufferBase {
   bool abort(int is_producer, fifo_type_t type = COMMON_FIFO);
   bool discard(fifo_type_t type = COMMON_FIFO);
   bool bind(Fifo *fifo, bool flag);
+  bool unbind(Fifo *fifo);
 
  private:
   Fifo *get_fifo(fifo_type_t type);
@@ -88,6 +89,7 @@ class BufferConsumer : public BufferBase {
   ~BufferConsumer(){};
 
   bool bind_fifo(Fifo *fifo);
+  bool unbind_fifo(Fifo *fifo);
   bool consume_buffer(void *data, fifo_type_t type = COMMON_FIFO);
   bool consume_abort(fifo_type_t type = COMMON_FIFO);
   int discard_buffer(fifo_type_t type = COMMON_FIFO);
@@ -98,6 +100,7 @@ class BufferProducer : public BufferBase {
   BufferProducer(const char *name) : BufferBase(name){};
   ~BufferProducer(){};
   bool bind_fifo(Fifo *fifo);
+  bool unbind_fifo(Fifo *fifo);
   bool append_abort(fifo_type_t type = COMMON_FIFO);
   bool append_buffer(void *data, fifo_type_t type = COMMON_FIFO);
 };

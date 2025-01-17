@@ -36,6 +36,7 @@ SdlPlaybackPanel::SdlPlaybackPanel(const char *name, const SDL_Rect &rect,
   bar_->set_bar_rect(bar_rect, gray, 2, white);
   duration_ = 0;
   set_show(true, DELAY_HIDE_TIME);
+  force_hide_ = false;
 }
 
 bool SdlPlaybackPanel::is_dirty() { return dirty_; }
@@ -100,6 +101,10 @@ int SdlPlaybackPanel::draw() {
 int SdlPlaybackPanel::get_type() { return 0; }
 
 int SdlPlaybackPanel::event_handler(void *event) {
+  if (force_hide_) {
+    dirty_ = false;
+    return 0;
+  }
   SDL_Event *e = (SDL_Event *)event;
   if (e->type == SDL_MOUSEBUTTONDOWN) {
     long long temp_time = -1;

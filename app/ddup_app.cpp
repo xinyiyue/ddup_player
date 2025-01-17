@@ -3,7 +3,9 @@
 #include <limits.h>
 #include <unistd.h>
 
+#include <cassert>
 #include <iostream>
+#include <thread>
 
 #include "base_util/media_type.h"
 #include "gui_widget/sdl_impl/sdl_audio.h"
@@ -25,8 +27,6 @@ struct play_pause_bar {
   SdlButton *pause_button;
   SdlButton *play_button;
   SdlButton *reload_button;
-  SdlVideo *video;
-  SdlAudio *audio;
 };
 
 struct dir_window_info {
@@ -34,24 +34,34 @@ struct dir_window_info {
   SdlWindow *win;
   SdlFont *font;
   SdlLayer *layer;
+  SdlLayer *video_layer;
   SdlLabelWidget *label;
   SdlImgWidget *logo;
   SdlDirWinWidget *dir_win;
   SdlImgWidget *image;
+  SdlGif *gif;
+  SdlVideo *video_widget;
+  SdlAudio *audio_widget;
+  SdlPlaybackPanel *prog_bar;
+  struct play_pause_bar *ppb;
 };
 
 struct play_pause_bar ppb;
 
 void handle_bar_event(void *userdata, void *event) {
   action *a = (action *)event;
-  struct play_pause_bar *ppb = (struct play_pause_bar *)userdata;
+  struct dir_window_info *winfo = (struct dir_window_info *)userdata;
+  struct play_pause_bar *ppb = winfo->ppb;
+
   if (a->state == PLAYBACK_PAUSE) {
     LOGI(TAG, "bar_event handler,state:%d,pause----------------------->",
          a->state);
-    if (ppb->video) {
-      ppb->video->set_speed(0.0);
-    } else if (ppb->audio) {
-      ppb->audio->set_speed(0.0);
+    if (winfo->video_widget &&
+        winfo->video_widget->get_state() != DDUP_STATE_STOP) {
+      winfo->video_widget->set_speed(0.0);
+    } else if (winfo->audio_widget &&
+               winfo->audio_widget->get_state() != DDUP_STATE_STOP) {
+      winfo->audio_widget->set_speed(0.0);
     }
     ppb->pause_button->set_show(true, 0);
     ppb->play_button->set_show(false, 0);
@@ -59,10 +69,12 @@ void handle_bar_event(void *userdata, void *event) {
     LOGI(TAG, "bar_event handler,state:%d,play----------------------->",
          a->state);
     if (a->seek_time == 0) {
-      if (ppb->video) {
-        ppb->video->seek(0);
-      } else if (ppb->audio) {
-        ppb->audio->seek(0);
+      if (winfo->video_widget &&
+          winfo->video_widget->get_state() != DDUP_STATE_STOP) {
+        winfo->video_widget->seek(0);
+      } else if (winfo->audio_widget &&
+                 winfo->audio_widget->get_state() != DDUP_STATE_STOP) {
+        winfo->audio_widget->seek(0);
       }
       ppb->reload_button->set_show(false, 0);
       ppb->play_button->set_show(true, 1500);
@@ -70,10 +82,12 @@ void handle_bar_event(void *userdata, void *event) {
       ppb->pause_button->set_show(false, 0);
       ppb->play_button->set_show(true, 1500);
     }
-    if (ppb->video) {
-      ppb->video->set_speed(1.0);
-    } else if (ppb->audio) {
-      ppb->audio->set_speed(1.0);
+    if (winfo->video_widget &&
+        winfo->video_widget->get_state() != DDUP_STATE_STOP) {
+      winfo->video_widget->set_speed(1.0);
+    } else if (winfo->audio_widget &&
+               winfo->audio_widget->get_state() != DDUP_STATE_STOP) {
+      winfo->audio_widget->set_speed(1.0);
     }
   } else if (a->state == PLAYBACK_EOS) {
     LOGI(TAG, "bar_event handler,state:%d,eos", a->state);
@@ -81,10 +95,12 @@ void handle_bar_event(void *userdata, void *event) {
   } else if (a->state == PLAYBACK_SEEK) {
     LOGI(TAG, "bar_event handler,state:%d,seek, seek_time:%lld", a->state,
          a->seek_time);
-    if (ppb->video) {
-      ppb->video->seek(a->seek_time);
-    } else if (ppb->audio) {
-      ppb->audio->seek(a->seek_time);
+    if (winfo->video_widget &&
+        winfo->video_widget->get_state() != DDUP_STATE_STOP) {
+      winfo->video_widget->seek(a->seek_time);
+    } else if (winfo->audio_widget &&
+               winfo->audio_widget->get_state() != DDUP_STATE_STOP) {
+      winfo->audio_widget->seek(a->seek_time);
     }
   }
 }
@@ -92,61 +108,109 @@ void handle_bar_event(void *userdata, void *event) {
 int create_player(struct dir_window_info *winfo, char *url) {
   SdlWindow *win = winfo->win;
   SdlLayer *layer = winfo->layer;
-
-  SdlButton *pause_button =
-      new SdlButton("pause_button", "pause.png", win->renderer_,
-                    win->width_ / 2 - 100, win->height_ / 2 - 100, 200, 200);
-  SdlButton *play_button =
-      new SdlButton("play_button", "resume.png", win->renderer_,
-                    win->width_ / 2 - 100, win->height_ / 2 - 100, 200, 200);
-  SdlButton *reload_button =
-      new SdlButton("reload_button", "reload.png", win->renderer_,
-                    win->width_ / 2 - 100, win->height_ / 2 - 100, 200, 200);
-  SDL_Rect rect;
-  rect.x = 0;
-  rect.y = win->height_ - 20;
-  rect.w = win->width_;
-  rect.h = 20;
-  SdlPlaybackPanel *prog_bar = new SdlPlaybackPanel(
-      "prog_bar", rect, "progress_bar.png", win->renderer_);
-  ppb.pause_button = pause_button;
-  ppb.play_button = play_button;
-  ppb.reload_button = reload_button;
-
-  prog_bar->set_action_callback(handle_bar_event, &ppb);
-  layer->add_widget(static_cast<Widget *>(pause_button));
-  layer->add_widget(static_cast<Widget *>(play_button));
-  layer->add_widget(static_cast<Widget *>(reload_button));
-  layer->add_widget(static_cast<Widget *>(prog_bar));
+  SdlLayer *video_layer = winfo->video_layer;
 
   int file_type = is_media_file(url);
   if (file_type == 1) {
-    SdlLayer *video_layer = new SdlLayer("video_layer");
-    video_layer->set_zorder(1);
-    video_layer->set_show(true);
     SdlVideo *video_widget =
         new SdlVideo("video_widge", win->renderer_mutex_, win->renderer_, 0, 0,
                      win->width_, win->height_);
+    LOGI(TAG, "get url %s , create video widget", url);
+    winfo->video_widget = video_widget;
     video_layer->add_widget(static_cast<Widget *>(video_widget));
-    ppb.video = video_widget;
-    win->add_layer(static_cast<Layer *>(video_layer));
-
     video_widget->open(url);
     video_widget->set_speed(1.0);
-
+    winfo->prog_bar->set_show(true, 5);
   } else if (file_type == 2) {
-    SdlLayer *audio_layer = new SdlLayer("audio_layer");
-    audio_layer->set_zorder(1);
-    audio_layer->set_show(true);
-    SdlAudio *audio_widget =
-        new SdlAudio("audio_widge", "music.gif", win->renderer_mutex_,
-                     win->renderer_, 0, 0, win->width_, win->height_);
-    ppb.audio = audio_widget;
-    audio_layer->add_widget(static_cast<Widget *>(audio_widget));
-    win->add_layer(static_cast<Layer *>(audio_layer));
+    SdlAudio *audio_widget = new SdlAudio("audio_widge", winfo->gif);
+    LOGI(TAG, "get url %s , create audio widget", url);
+    winfo->audio_widget = audio_widget;
+    video_layer->add_widget(static_cast<Widget *>(audio_widget));
     audio_widget->open(url);
     audio_widget->set_speed(1.0);
+    winfo->prog_bar->set_show(true, 5);
+  } else if (file_type == 3) {
+    LOGI(TAG, "get url %s , create image widget", url);
+    SDL_Rect rect;
+    rect.x = 0;
+    rect.y = 0;
+    rect.w = win->width_;
+    rect.h = win->height_;
+    SdlImgWidget *picture_img_widget =
+        new SdlImgWidget("image_viewer", win->renderer_, url, &rect, false);
+    winfo->image = picture_img_widget;
+    video_layer->add_widget(static_cast<Widget *>(picture_img_widget));
   }
+  return 0;
+}
+
+int update_url(const char *url, struct dir_window_info *winfo) {
+  if (url == nullptr) {
+    return -1;
+  }
+
+  int type = is_media_file(url);
+  if (type == 1) {  // video
+    if (winfo->audio_widget != nullptr) {
+      winfo->audio_widget->stop();
+      winfo->audio_widget->set_show(false, 0);
+    }
+
+    if (winfo->image) winfo->image->set_show(false, 0);
+
+    if (winfo->video_widget != nullptr) {
+      winfo->prog_bar->force_hide(false);
+      winfo->prog_bar->set_show(true, 5);
+      winfo->video_widget->set_show(true, 0);
+      winfo->video_widget->play_next(url);
+    } else {
+      winfo->prog_bar->force_hide(false);
+      winfo->prog_bar->set_show(true, 5);
+      create_player(winfo, (char *)url);
+    }
+  } else if (type == 2) {  // audio
+    if (winfo->video_widget) {
+      winfo->video_widget->set_show(false, 0);
+      winfo->video_widget->stop();
+    }
+
+    if (winfo->image) winfo->image->set_show(false, 0);
+
+    if (winfo->audio_widget) {
+      winfo->prog_bar->force_hide(false);
+      winfo->prog_bar->set_show(true, 5);
+      winfo->audio_widget->set_show(true, 0);
+      winfo->audio_widget->play_next(url);
+    } else {
+      winfo->prog_bar->force_hide(false);
+      winfo->prog_bar->set_show(true, 5);
+      create_player(winfo, (char *)url);
+    }
+
+  } else if (type == 3) {  // image
+    if (winfo->audio_widget) {
+      winfo->audio_widget->stop();
+      winfo->audio_widget->set_show(false, 0);
+      winfo->prog_bar->force_hide(true);
+    }
+
+    if (winfo->video_widget) {
+      winfo->video_widget->stop();
+      winfo->video_widget->set_show(false, 0);
+      LOGI(TAG, "video_widget dirty:%d ----------->",
+           winfo->video_widget->is_dirty());
+      winfo->prog_bar->set_show(true, 5);
+      winfo->prog_bar->force_hide(true);
+    }
+
+    if (winfo->image) {
+      winfo->image->set_show(true, 0);
+      winfo->image->update_file(url);
+    } else {
+      create_player(winfo, (char *)url);
+    }
+  }
+
   return 0;
 }
 
@@ -154,53 +218,83 @@ void handle_img_next_event(void *userdata, void *event) {
   struct dir_window_info *winfo = (struct dir_window_info *)userdata;
   const char *url = winfo->dir_win->get_next_url();
   LOGI(TAG, "get new url %s ----------->", url);
-  if (url) winfo->image->update_file(url);
+  update_url(url, winfo);
 }
 
 void handle_img_prev_event(void *userdata, void *event) {
   struct dir_window_info *winfo = (struct dir_window_info *)userdata;
   const char *url = winfo->dir_win->get_prev_url();
   LOGI(TAG, "get new url %s ----------->", url);
-  if (url) winfo->image->update_file(url);
+  update_url(url, winfo);
 }
 
-int create_image_viewer(struct dir_window_info *winfo, char *url) {
-  SdlWindow *win = winfo->win;
+void handle_play_event(void *userdata, void *event) {
+  struct dir_window_info *winfo = (struct dir_window_info *)userdata;
   SdlLayer *layer = winfo->layer;
-
+  winfo->dir_win->set_show(false, 0);
+#if 1
   SdlButton *prev_button =
-      new SdlButton("prev_button", "left.png", win->renderer_, 5,
-                    win->height_ / 2 - 50, 200, 200);
-  SdlButton *next_button =
-      new SdlButton("next_button", "right.png", win->renderer_,
-                    win->width_ - 50, win->height_ / 2 - 50, 200, 200);
+      new SdlButton("prev_button", "left.png", winfo->win->renderer_, 5,
+                    winfo->win->height_ / 2 - 50, 200, 200);
+  SdlButton *next_button = new SdlButton(
+      "next_button", "right.png", winfo->win->renderer_,
+      winfo->win->width_ - 50, winfo->win->height_ / 2 - 50, 200, 200);
   prev_button->set_action_callback(handle_img_prev_event, winfo);
   next_button->set_action_callback(handle_img_next_event, winfo);
 
   SDL_Rect rect;
   rect.x = 0;
   rect.y = 0;
-  rect.w = win->width_;
-  rect.h = win->height_;
+  rect.w = winfo->win->width_;
+  rect.h = winfo->win->height_;
   SdlImageViewPanel *panel = new SdlImageViewPanel("image_panel", rect);
   panel->set_buttons(prev_button, next_button);
-  layer->add_widget(static_cast<Widget *>(panel));
-  SdlImgWidget *picture_img_widget =
-      new SdlImgWidget("image_viewer", win->renderer_, url, &rect, false);
-  winfo->image = picture_img_widget;
-  layer->add_widget(static_cast<Widget *>(picture_img_widget));
   layer->add_widget(static_cast<Widget *>(prev_button));
   layer->add_widget(static_cast<Widget *>(next_button));
-}
+  layer->add_widget(static_cast<Widget *>(panel));
+#endif
 
-void handle_play_event(void *userdata, void *event) {
-  struct dir_window_info *winfo = (struct dir_window_info *)userdata;
-  winfo->dir_win->set_show(false, 0);
+#if 1
+  SdlButton *pause_button = new SdlButton(
+      "pause_button", "pause.png", winfo->win->renderer_,
+      winfo->win->width_ / 2 - 100, winfo->win->height_ / 2 - 100, 200, 200);
+  SdlButton *play_button = new SdlButton(
+      "play_button", "resume.png", winfo->win->renderer_,
+      winfo->win->width_ / 2 - 100, winfo->win->height_ / 2 - 100, 200, 200);
+  SdlButton *reload_button = new SdlButton(
+      "reload_button", "reload.png", winfo->win->renderer_,
+      winfo->win->width_ / 2 - 100, winfo->win->height_ / 2 - 100, 200, 200);
+
+  rect.x = 0;
+  rect.y = winfo->win->height_ - 20;
+  rect.w = winfo->win->width_;
+  rect.h = 20;
+  SdlPlaybackPanel *prog_bar = new SdlPlaybackPanel(
+      "prog_bar", rect, "progress_bar.png", winfo->win->renderer_);
+  ppb.pause_button = pause_button;
+  ppb.play_button = play_button;
+  ppb.reload_button = reload_button;
+  winfo->ppb = &ppb;
+  winfo->prog_bar = prog_bar;
+  prog_bar->set_action_callback(handle_bar_event, winfo);
+  layer->add_widget(static_cast<Widget *>(pause_button));
+  layer->add_widget(static_cast<Widget *>(play_button));
+  layer->add_widget(static_cast<Widget *>(reload_button));
+  layer->add_widget(static_cast<Widget *>(prog_bar));
+#endif
+
+#if 1
+  SdlLayer *video_layer = new SdlLayer("video_layer");
+  video_layer->set_zorder(1);
+  video_layer->set_show(true);
+  winfo->win->add_layer(static_cast<Layer *>(video_layer));
+  winfo->video_layer = video_layer;
+#endif
+
   std::string *url = (std::string *)event;
   LOGI(TAG, "get new url %s ----------->", url->c_str());
   int type = is_media_file((char *)url->c_str());
-  if (type == 1 || type == 2) create_player(winfo, (char *)url->c_str());
-  if (type == 3) create_image_viewer(winfo, (char *)url->c_str());
+  create_player(winfo, (char *)url->c_str());
 }
 
 void handle_image_event(void *userdata, void *event) {
@@ -238,24 +332,40 @@ void handle_dir_event(void *userdata, void *event) {
   winfo->logo->set_show(false, 0);
 }
 
+void resource_thread(struct dir_window_info *winfo) {
+  LOGI(TAG, "resource_thread %p ----------->", winfo);
+  SdlGif *gif_ = new SdlGif("gif", "music.gif", winfo->win->renderer_mutex_,
+                            winfo->win->renderer_, 0, 0, winfo->win->width_,
+                            winfo->win->height_);
+  winfo->gif = gif_;
+  LOGI(TAG, "resource_thread %p, start render gif ----------->", winfo);
+  gif_->decode_gif();
+  LOGI(TAG, "resource_thread %p, end render gif, exit ----------->", winfo);
+}
+
 int main(int argc, char *argv[]) {
+  struct dir_window_info winfo;
   SdlWindow *win = new SdlWindow("DDup Player", 1280, 720);
   win->create();
   SdlLayer *layer = new SdlLayer("button_layer");
   layer->set_zorder(2);
   layer->set_show(true);
 
+  memset(&winfo, 0, sizeof(winfo));
+  winfo.renderer = win->renderer_;
+  winfo.layer = layer;
+  winfo.win = win;
+  winfo.video_widget = nullptr;
+  winfo.audio_widget = nullptr;
+  std::thread resource_thread_id_ =
+      std::thread(std::bind(resource_thread, &winfo));
+  resource_thread_id_.detach();
+
   SDL_Rect rect;
   rect.x = win->width_ / 2 - 150;
   rect.y = win->height_ / 2 - 200;
   rect.w = 300;
   rect.h = 250;
-
-  struct dir_window_info winfo;
-
-  winfo.renderer = win->renderer_;
-  winfo.layer = layer;
-  winfo.win = win;
 
   SdlImgWidget *img_widget =
       new SdlImgWidget("logo", win->renderer_, "ddup_player.png", &rect);
@@ -274,7 +384,6 @@ int main(int argc, char *argv[]) {
   winfo.label = label_widget;
   label_widget->set_action_callback(handle_dir_event, &winfo);
   layer->add_widget(static_cast<Widget *>(label_widget));
-
   layer->add_widget(static_cast<Widget *>(img_widget));
   win->add_layer(static_cast<Layer *>(layer));
   win->show();

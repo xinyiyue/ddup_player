@@ -18,6 +18,7 @@ class SdlVideo : public Video, public EventListener, public SdlTextureBuilder {
   virtual int stop() final;
   virtual int seek(long long seekTime) final;
   virtual int close() final;
+  virtual int play_next(const char *url) final;
 
   virtual int draw() final;
   virtual int get_type() final;
@@ -28,6 +29,8 @@ class SdlVideo : public Video, public EventListener, public SdlTextureBuilder {
 
   virtual void notify_event(int event_type, void *ret) final;
   virtual void notify_error(int error_type) final;
+
+  ddup_state_t get_state() { return player_->get_state(); };
 
  private:
   SDL_Renderer *renderer_;

@@ -97,7 +97,8 @@ int SdlTextureBuilder::set_negotiated_format(video_format_s *format) {
 
 int SdlTextureBuilder::build_texture(render_buffer_s *buff) {
   SDL_PixelFormatEnum pixel = map_to_sdl_pixel_format(buff->pixel);
-  if (!texture_ || pixel != pixel_format_) {
+  if (!texture_ || pixel != pixel_format_ || width_ != buff->width ||
+      height_ != buff->height) {
     if (!texture_) {
       texture_ =
           SDL_CreateTexture(renderer_, pixel, SDL_TEXTUREACCESS_STREAMING,
@@ -105,8 +106,10 @@ int SdlTextureBuilder::build_texture(render_buffer_s *buff) {
       LOGI(TAG, "create texture,w:%d, h:%d, pixel:%s", buff->width,
            buff->height, print_sdl_pixel_name(pixel));
     } else {
-      LOGI(TAG, "format change, recreate texture,w:%d, h:%d, pixel:%s",
+      LOGI(TAG,
+           "------------->format change, recreate texture,w:%d, h:%d, pixel:%s",
            buff->width, buff->height, print_sdl_pixel_name(pixel));
+      AutoLock lock(renderer_mutex_);
       SDL_DestroyTexture(texture_);
       texture_ =
           SDL_CreateTexture(renderer_, pixel, SDL_TEXTUREACCESS_STREAMING,

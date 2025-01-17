@@ -29,7 +29,7 @@ TEST_F(SdlGifTest, gif_test) {
   bool quit = false;
   SDL_Event e;
   gif_->decode_gif();
-  gif_->render_gif();
+  gif_->set_state(GIF_STATE_PLAY);
   while (!quit) {
     // 处理事件
     while (SDL_PollEvent(&e) != 0) {

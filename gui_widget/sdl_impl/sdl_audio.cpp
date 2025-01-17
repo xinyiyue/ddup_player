@@ -20,7 +20,14 @@ SdlAudio::SdlAudio(const char *name, const char *gif, SDL_mutex *renderer_mutex,
   gif_ = new SdlGif(name, gif, renderer_mutex, renderer_, x, y, w, h);
   LOGI(TAG, "%s", "start render gif");
   gif_->decode_gif();
-  gif_->render_gif();
+}
+
+SdlAudio::SdlAudio(const char *name, SdlGif *gif) : EventListener("SdlAudio") {
+  renderer_ = nullptr;
+  listener_ = nullptr;
+  last_pos_ = 0;
+  player_ = new DDupPlayer(static_cast<EventListener *>(this));
+  gif_ = gif;
 }
 
 SdlAudio::~SdlAudio() {
@@ -37,13 +44,24 @@ int SdlAudio::open(const char *url) {
 }
 
 int SdlAudio::set_speed(float speed) {
-  gif_->set_speed(speed);
+  gif_->set_state(speed > 0 ? GIF_STATE_PLAY : GIF_STATE_PAUSE);
   return player_->set_speed(speed);
 }
 
 int SdlAudio::stop() {
-  LOGI(TAG, "%s", "sdl video stop");
+  LOGI(TAG, "%s", "sdl audio stop");
+  gif_->set_state(GIF_STATE_STOP);
   return player_->stop();
+}
+
+int SdlAudio::play_next(const char *url) {
+  LOGI(TAG, "%s", "play next url:%s", url);
+  gif_->set_state(GIF_STATE_PAUSE);
+  player_->stop();
+  player_->prepare(url);
+  player_->set_speed(1.0f);
+  gif_->set_state(GIF_STATE_PLAY);
+  return 0;
 }
 
 int SdlAudio::seek(long long seek_time) { return player_->seek(seek_time); }
@@ -55,7 +73,7 @@ int SdlAudio::close() {
 }
 
 int SdlAudio::draw() {
-  LOGD(TAG, "%s", "sdl video render texutre");
+  LOGI(TAG, "%s", "sdl gif render texutre");
   gif_->draw();
   return 0;
 }

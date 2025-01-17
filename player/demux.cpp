@@ -109,7 +109,7 @@ void Demux::input_thread(void) {
       } else if (ret == DEMUX_EAGAN) {
         LOGE(TAG, "%s", "input thread eagain");
       } else {
-        LOGE(TAG, "input thread read data error:%d", ret);
+        LOGD(TAG, "input thread read data error:%d", ret);
         notify_error((int)ret);
       }
       continue;
@@ -240,7 +240,9 @@ int Demux::seek(long long seek_time) {
 int Demux::stop() {
   LOGI(TAG, "%s", "enter demux stop");
   int ret = 0;
+  set_state(DEMUX_STATE_STOP);
   read_data_abort();
+
   if (audio_stream_) {
     audio_stream_->flush();
     ret = audio_stream_->uninit();
@@ -248,6 +250,8 @@ int Demux::stop() {
       LOGI(TAG, "%s", "audio stream off failed");
       return ret;
     }
+    delete audio_stream_;
+    audio_stream_ = nullptr;
   }
   if (video_stream_) {
     video_stream_->flush();
@@ -256,6 +260,21 @@ int Demux::stop() {
       LOGI(TAG, "%s", "video stream off failed");
       return ret;
     }
+    delete video_stream_;
+    video_stream_ = nullptr;
+  }
+
+  if (audio_fifo_) {
+    assert(audio_fifo_->is_empty());
+    unbind_fifo(audio_fifo_);
+    delete audio_fifo_;
+    audio_fifo_ = nullptr;
+  }
+  if (video_fifo_) {
+    assert(video_fifo_->is_empty());
+    unbind_fifo(video_fifo_);
+    delete video_fifo_;
+    video_fifo_ = nullptr;
   }
   LOGI(TAG, "%s", "leave demux stop end");
   return 0;

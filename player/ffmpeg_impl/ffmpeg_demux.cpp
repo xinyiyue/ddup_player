@@ -95,7 +95,7 @@ int FFmpegDemux::seek_impl(long long seek_time) {
 
 demux_event_t FFmpegDemux::read_input_impl(av_data_s *data) {
   if (!fmt_ctx_) {
-    LOGE(TAG, "%s", "demux ctx is null, return");
+    LOGD(TAG, "%s", "demux ctx is null, return");
     return DEMUX_ERROR;
   }
   int ret;

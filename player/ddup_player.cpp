@@ -26,6 +26,7 @@ int DDupPlayer::open() {
     LOGE(TAG, "create pipeline failed:%d", ret);
     return ret;
   }
+  state_ = DDUP_STATE_OPEN;
   pipeline_->open();
   return 0;
 }
@@ -36,6 +37,7 @@ int DDupPlayer::prepare(const char *url) {
 }
 
 int DDupPlayer::set_speed(float speed) {
+  state_ = speed > 0.0 ? DDUP_STATE_PLAY : DDUP_STATE_PAUSE;
   pipeline_->set_speed(speed);
   return 0;
 }
@@ -46,11 +48,13 @@ int DDupPlayer::seek(long long seek_time) {
 }
 
 int DDupPlayer::stop() {
+  state_ = DDUP_STATE_STOP;
   pipeline_->stop();
   return 0;
 }
 
 int DDupPlayer::close() {
+  state_ = DDUP_STATE_CLOSE;
   pipeline_->close();
   return 0;
 }
@@ -85,6 +89,6 @@ void DDupPlayer::notify_event(int event_type, void *ret) {
 }
 
 void DDupPlayer::notify_error(int error_type) {
-  LOGI(TAG, "got error:%d", error_type);
+  LOGD(TAG, "got error:%d", error_type);
   listener_->notify_error((ddup_error_t)error_type);
 }

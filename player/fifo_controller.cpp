@@ -112,6 +112,24 @@ bool BufferBase::bind(Fifo *fifo, bool flag) {
   return true;
 }
 
+bool BufferBase::unbind(Fifo *fifo) {
+  for (auto it = fifo_arr_.begin(); it != fifo_arr_.end(); ++it) {
+    if (*it == fifo) {
+      fifo_arr_.erase(it);
+      struct epoll_event ev;
+      ev.events = EPOLLIN;
+      int ret = epoll_ctl(epollfd_, EPOLL_CTL_DEL, fifo->efd_read_, &ev);
+      if (ret == -1) {
+        LOGE(TAGF, "del epoll failed, reading fd:%d", fifo->efd_read_);
+        return false;
+      }
+      return true;
+    }
+  }
+  LOGE(TAGF, "unbind failed, fifo:%p not found in list", fifo);
+  return false;
+}
+
 bool BufferBase::is_fifo_full(fifo_type_t type) {
   Fifo *fifo = get_fifo(type);
   if (!fifo) {
@@ -271,6 +289,8 @@ Fifo *BufferBase::get_fifo(fifo_type_t type) {
 
 bool BufferConsumer::bind_fifo(Fifo *fifo) { return bind(fifo, false); }
 
+bool BufferConsumer::unbind_fifo(Fifo *fifo) { return unbind(fifo); }
+
 bool BufferConsumer::consume_abort(fifo_type_t type) {
   return abort(false, type);
 }
@@ -284,6 +304,8 @@ int BufferConsumer::discard_buffer(fifo_type_t type) {
 }
 
 bool BufferProducer::bind_fifo(Fifo *fifo) { return bind(fifo, true); }
+
+bool BufferProducer::unbind_fifo(Fifo *fifo) { return unbind(fifo); }
 
 bool BufferProducer::append_abort(fifo_type_t type) {
   return abort(true, type);

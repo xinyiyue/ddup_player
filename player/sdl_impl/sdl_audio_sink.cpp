@@ -11,19 +11,14 @@ SdlAudioSink::SdlAudioSink(sink_type_t type, EventListener *listener)
   exit_ = false;
   last_buff_ = nullptr;
   last_buff_offset_ = 0;
+  LOGI(TAG, "SdlAudioSink %p", this);
 }
 
-SdlAudioSink::~SdlAudioSink() {}
+SdlAudioSink::~SdlAudioSink() { LOGI(TAG, "%s", "~SdlAudioSink exit"); }
 
 int SdlAudioSink::init() {
   // render_thread_id_ =
   //    std::thread(std::bind(&SdlAudioSink::audio_render_thread, this));
-
-  if (SDL_Init(SDL_INIT_AUDIO) < 0) {
-    LOGE(TAG, "SDL_Init audio error: %s", SDL_GetError());
-    return -1;
-  }
-
   SDL_AudioSpec desired_spec;
   SDL_AudioSpec have_spec;
 
@@ -35,9 +30,9 @@ int SdlAudioSink::init() {
   desired_spec.callback = &SdlAudioSink::audio_callback;
   desired_spec.userdata = this;
 
-  if ((audio_dev = SDL_OpenAudioDevice(NULL, 0, &desired_spec, &have_spec,
-                                       SDL_AUDIO_ALLOW_ANY_CHANGE)) < 2) {
-    LOGE(TAG, "SDL_OpenAudioDevice with error deviceID : %d", audio_dev);
+  if ((audio_dev_ = SDL_OpenAudioDevice(NULL, 0, &desired_spec, &have_spec,
+                                        SDL_AUDIO_ALLOW_ANY_CHANGE)) < 2) {
+    LOGE(TAG, "SDL_OpenAudioDevice with error deviceID : %d", audio_dev_);
     return -1;
   }
 
@@ -53,15 +48,17 @@ int SdlAudioSink::init() {
   aformat.channel_number = have_spec.channels;
   aformat.sample_rate = have_spec.freq;
   aformat.sample_format = have_spec.format;
-  SDL_PauseAudioDevice(audio_dev, 0);
+  SDL_PauseAudioDevice(audio_dev_, 0);
   return 0;
 }
 
 int SdlAudioSink::uninit() {
   LOGI(TAG, "%s", "uninit");
   exit_ = true;
-  SDL_CloseAudio();
   consume_abort(AUDIO_FIFO);
+  SDL_Delay(20);
+  SDL_CloseAudioDevice(audio_dev_);
+  LOGI(TAG, "%s", "uninit finish");
   // if (render_thread_id_.joinable()) render_thread_id_.join();
   return 0;
 }
@@ -113,7 +110,7 @@ void SdlAudioSink::audio_callback(void *userdata, Uint8 *stream, int len) {
       render_buffer_s *new_buff = nullptr;
       bool ret = sink->consume_buffer(&new_buff, AUDIO_FIFO);
       if (!ret) {
-        LOGE(TAG, "%s", "Consume buffer error or abort");
+        LOGD(TAG, "%s", "Consume buffer error or abort");
         continue;
       }
       LOGD(TAG, "consume new buffer:%p len: %d, wanted:%d last_buff: %p",
@@ -149,6 +146,7 @@ void SdlAudioSink::audio_callback(void *userdata, Uint8 *stream, int len) {
       }
     }
   }
+  // LOGE(TAG, "%s", "callback out");
 }
 
 void SdlAudioSink::audio_render_thread(void) {
@@ -165,12 +163,12 @@ void SdlAudioSink::audio_render_thread(void) {
       continue;
     }
 
-    if (!is_start && audio_dev != 0) {
-      SDL_PauseAudioDevice(audio_dev, 0);
+    if (!is_start && audio_dev_ != 0) {
+      SDL_PauseAudioDevice(audio_dev_, 0);
       is_start = true;
     }
     listener_->notify_event(DDUP_EVENT_POSITION, (void *)&(buff->pts));
-    SDL_QueueAudio(audio_dev, buff->data[0], buff->len[0]);
+    SDL_QueueAudio(audio_dev_, buff->data[0], buff->len[0]);
     for (int i = 0; i < 4; ++i) {
       if (buff->data[i]) free(buff->data[i]);
     }

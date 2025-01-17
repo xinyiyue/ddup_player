@@ -54,7 +54,7 @@ class EventListener {
     return this;
   }
   void print_name() {
-    LOGI("EventListener", "current listener name:%s", name_.c_str());
+    LOGD("EventListener", "current listener name:%s", name_.c_str());
   }
 
  protected:

@@ -48,6 +48,7 @@ class SdlPlaybackPanel : public ProgBar {
   virtual void set_duration(long long duration) final;
   virtual void set_current_time(long long current) final;
   void delay_hide_timer_handler();
+  void force_hide(bool force_hide) { force_hide_ = force_hide; };
 
  private:
   SdlRect *s_rect_;
@@ -56,6 +57,7 @@ class SdlPlaybackPanel : public ProgBar {
   SdlFont *font_;
   char time_str_[11];
   char duration_str_[11];
+  bool force_hide_;
 };
 
 #endif
