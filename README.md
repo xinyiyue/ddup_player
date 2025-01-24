@@ -22,6 +22,8 @@ cd ${your_path}/ddup_player/build/result
 ./ddup_app
 ```
 
+1111
+
 ![open](./logo_page.png)
 ![select](./start_page.png "click play button to play media file")
 ![play](./player1.png "playback controls")
