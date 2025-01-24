@@ -15,6 +15,9 @@ make
 make install
 ```
 
+
+
+
 # run
 ```
 export LD_LIBRARY_PATH=${your_path}/ddup_player/third_party/ffmpeg-7.0.1/lib:$LD_LIBRARY_PATH
